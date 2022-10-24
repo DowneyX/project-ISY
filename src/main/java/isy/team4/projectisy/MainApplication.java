@@ -40,15 +40,23 @@ public class MainApplication extends Application {
             System.out.println("request success");
         }
 
-        System.out.println("request game list");
-        if (server.RequestGamelist()) {
-            System.out.println("request success");
+        System.out.println("getting game list");
+        try {
+            server.getGamelist();
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
         }
+        System.out.println("request success");
 
-        System.out.println("request player list");
-        if (server.RequestPlayerlist()) {
-            System.out.println("request success");
+        System.out.println("getting player list");
+        try {
+            server.getPlayerlist();
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
         }
+        System.out.println("request success");
 
         System.out.println("request find game tic-tac-toe");
         if (server.RequestSubscribeTictactoe()) {

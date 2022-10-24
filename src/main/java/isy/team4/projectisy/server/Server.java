@@ -1,16 +1,17 @@
 package isy.team4.projectisy.server;
 
 import java.io.IOException;
-import java.util.Arrays;
 
 public class Server extends ServerIO {
-    // private String gameMode; // reversi of tic-tac-toe
+    // private String gameType; // reversi of tic-tac-toe
     // private boolean isPlaying = false;
     // private Player localPlayer;
     // private Player remotePlayer;
     private static Thread serverThread;
     private String response;
     private String ack = "";
+    private String[] playerList;
+    private String[] gameList;
 
     public Server(String ip, int port) throws IOException {
         super(ip, port);
@@ -57,10 +58,10 @@ public class Server extends ServerIO {
                         temp = temp.replace("\"", "");
 
                         // usefull data
-                        String[] players = temp.split(", ");
+                        String[] playerList = temp.split(", ");
 
                         // send playerlist somewhere
-                        System.out.println(Arrays.toString(players));
+                        this.playerList = playerList;
                         continue;
                     }
 
@@ -72,10 +73,10 @@ public class Server extends ServerIO {
                         temp = temp.replace("\"", "");
 
                         // usefull data
-                        String[] games = temp.split(", ");
+                        String[] gameList = temp.split(", ");
 
                         // send gamelist somewhere
-                        System.out.println(Arrays.toString(games));
+                        this.gameList = gameList;
                         continue;
                     }
 
@@ -114,7 +115,7 @@ public class Server extends ServerIO {
                             continue;
                         }
                         if (responseParts[2].equals("CHALLENGE")) {
-                            // signal that there is invitation to play a game
+                            // signal user that they have been challenged
                             continue;
                         }
 
@@ -131,19 +132,40 @@ public class Server extends ServerIO {
         return handleAck();
     }
 
-    public boolean RequestPlayerList() {
+    public String[] getPlayerlist() throws Exception {
+        playerList = null;
         sendMessage("get playerlist");
-        return handleAck();
+        if (handleAck()) {
+            while (playerList == null) {
+                try {
+                    Thread.sleep(200);
+                } catch (InterruptedException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+            }
+            return playerList;
+        } else {
+            throw new Exception("acknowledgement getPlayerlist failed");
+        }
     }
 
-    public boolean RequestPlayerlist() {
-        sendMessage("get playerlist");
-        return handleAck();
-    }
-
-    public boolean RequestGamelist() {
+    public String[] getGamelist() throws Exception {
+        gameList = null;
         sendMessage("get gamelist");
-        return handleAck();
+        if (handleAck()) {
+            while (gameList == null) {
+                try {
+                    Thread.sleep(200);
+                } catch (InterruptedException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+            }
+            return gameList;
+        } else {
+            throw new Exception("acknowledgement getGameList failed");
+        }
     }
 
     public boolean RequestSubscribeTictactoe() {
@@ -158,6 +180,11 @@ public class Server extends ServerIO {
 
     public boolean RequestAcceptChallenge(int challengeNr) {
         sendMessage("challenge accept " + challengeNr);
+        return handleAck();
+    }
+
+    public boolean RequestChallenge(String username, String gameType) {
+        sendMessage("challenge " + username + " " + gameType);
         return handleAck();
     }
 
