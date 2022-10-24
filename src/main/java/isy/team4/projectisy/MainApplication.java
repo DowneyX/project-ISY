@@ -4,8 +4,10 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import isy.team4.projectisy.server.Server;
 
 import java.io.IOException;
+import java.util.Scanner;
 
 public class MainApplication extends Application {
     @Override
@@ -18,6 +20,39 @@ public class MainApplication extends Application {
     }
 
     public static void main(String[] args) {
-        launch();
+        // launch();
+        MainApplication app = new MainApplication();
+        try {
+            app.testServer();
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
+
+    public void testServer() throws IOException {
+        Server server = new Server("localhost", 7789);
+        Scanner scanner = new Scanner(System.in);
+
+        String username = scanner.nextLine();
+        System.out.println("request login");
+        if (server.Requestlogin(username)) {
+            System.out.println("request success");
+        }
+
+        System.out.println("request game list");
+        if (server.RequestGamelist()) {
+            System.out.println("request success");
+        }
+
+        System.out.println("request player list");
+        if (server.RequestPlayerlist()) {
+            System.out.println("request success");
+        }
+
+        System.out.println("request find game tic-tac-toe");
+        if (server.RequestSubscribeTictactoe()) {
+            System.out.println("request success");
+        }
     }
 }
