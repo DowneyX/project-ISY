@@ -35,4 +35,17 @@ public class Board {
     public char[][] get_grid() {
         return grid;
     }
+
+    public boolean isFull() {
+        for (char[] row : grid) {
+            for (char col : row) {
+                // note that \u0000 is the default value that a char array is populated with.
+                // this is essentially an "empty" value
+                if (col == '\u0000') {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
 }
