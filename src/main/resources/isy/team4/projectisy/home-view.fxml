@@ -11,5 +11,5 @@
     </padding>
    <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Welkom" />
 
-    <Button fx:id="tictactoe" text="Boter kaas en eieren spelen" onAction="#navigate"/>
+    <Button fx:id="tictactoe" text="Boter kaas en eieren spelen" onAction="#navigateToTicTacToe"/>
 </VBox>
