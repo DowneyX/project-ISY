@@ -1,5 +1,7 @@
 package isy.team4.projectisy.util;
 
+import java.util.Arrays;
+
 public class Board {
     protected int width;  // Could be private if no specific boards are needed
     protected int height;  // Could be private if no specific boards are needed
@@ -24,5 +26,17 @@ public class Board {
         }
 
         this.board[y][x] = value;
+    }
+
+    /**
+     * For debugging purposes
+     * @return The board array displayed as a string with linebreaks
+     */
+    public String toString() {
+        StringBuilder res = new StringBuilder();
+        for(String[] row : board) {
+            res.append(Arrays.toString(row)).append("\n");
+        }
+        return res.toString();
     }
 }
