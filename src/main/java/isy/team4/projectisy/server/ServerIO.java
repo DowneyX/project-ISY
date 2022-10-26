@@ -25,8 +25,6 @@ public class ServerIO {
             this.socket = new Socket(this.ip, this.port);
             this.out = new PrintWriter(socket.getOutputStream(), true);
             this.in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            System.out.println(in.readLine()); // title line
-            System.out.println(in.readLine()); // copyright line
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
