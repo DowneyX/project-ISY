@@ -7,5 +7,6 @@ module isy.team4.projectisy {
     requires org.kordamp.bootstrapfx.core;
 
     opens isy.team4.projectisy to javafx.fxml;
+    opens isy.team4.projectisy.controller to javafx.fxml;
     exports isy.team4.projectisy;
 }
