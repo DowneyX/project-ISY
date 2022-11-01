@@ -5,11 +5,11 @@ import java.util.Arrays;
 
 public class Server extends ServerIO {
     private String name;
-    private TictactoeManager game;
+    private TictactoeManager game; // should be a game class but for right now i put tictactoe here
     private String gameType; // reversi of tic-tac-toe
     public boolean isPlaying = false;
     private Player playerLocal;
-    private PlayerRemote PlayerRemote;
+    private PlayerRemote PlayerRemote; // technically dont need a remote player but its nice to have for the name
     private static Thread serverThread;
     private String response;
     private String[] playerList;
@@ -45,8 +45,7 @@ public class Server extends ServerIO {
 
                 // ERR
                 if (responseParts[0].equals("ERR")) {
-                    new Exception(response);
-                    continue;
+                    throw new Exception(response);
                 }
 
                 // SRV
