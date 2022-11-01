@@ -11,6 +11,7 @@ public interface IRuleSet {
     boolean isWon();
     boolean getWinningPlayer() throws NullPointerException;
     boolean isDraw();
+    IPlayer getNextTurn();
     Board[] getBoardHistory();
     IPlayer[] getTurnHistory();
 }

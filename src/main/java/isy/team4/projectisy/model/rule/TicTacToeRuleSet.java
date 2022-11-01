@@ -36,6 +36,11 @@ public final class TicTacToeRuleSet implements IRuleSet {
     }
 
     @Override
+    public IPlayer getNextTurn() {
+        return null;
+    }
+
+    @Override
     public Board[] getBoardHistory() {
         return new Board[0];
     }
