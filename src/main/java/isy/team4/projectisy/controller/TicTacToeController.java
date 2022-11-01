@@ -99,6 +99,7 @@ public class TicTacToeController extends Controller {
         // TODO: check if won
         if(winner()) {
             gameinfo.setText(currentPlayer + " heeft gewonnen!");
+            boardDisabled = true;
             return;
         }
 
