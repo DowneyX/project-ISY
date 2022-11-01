@@ -1,53 +1,39 @@
-2022-10-24 09:45:20.083  INFO 18865 --- [MessageBroker-1] o.s.w.s.c.WebSocketMessageBrokerStats    : WebSocketSession[0 current WS(0)-HttpStream(0)-HttpPoll(0), 0 total, 0 closed abnormally (0 connect failure, 0 send limit, 0 transport error)], stompSubProtocol[processed CONNECT(0)-CONNECTED(0)-DISCONNECT(0)], stompBrokerRelay[null], inboundChannel[pool size = 0, active threads = 0, queued tasks = 0, completed tasks = 0], outboundChannel[pool size = 0, active threads = 0, queued tasks = 0, completed tasks = 0], sockJsScheduler[pool size = 2, active threads = 1, queued tasks = 0, completed tasks = 1]
-2022-10-24 09:51:28.819  INFO 18865 --- [main] main                                     : new client connected from /127.0.0.1:40654
-2022-10-24 09:51:34.813  INFO 18865 --- [Thread-7] client-thread <not logged in>            : issues command: 'login downey'
-2022-10-24 10:15:20.086  INFO 18865 --- [MessageBroker-2] o.s.w.s.c.WebSocketMessageBrokerStats    : WebSocketSession[0 current WS(0)-HttpStream(0)-HttpPoll(0), 0 total, 0 closed abnormally (0 connect failure, 0 send limit, 0 transport error)], stompSubProtocol[processed CONNECT(0)-CONNECTED(0)-DISCONNECT(0)], stompBrokerRelay[null], inboundChannel[pool size = 0, active threads = 0, queued tasks = 0, completed tasks = 0], outboundChannel[pool size = 0, active threads = 0, queued tasks = 0, completed tasks = 0], sockJsScheduler[pool size = 3, active threads = 1, queued tasks = 0, completed tasks = 2]
-2022-10-24 10:45:20.087  INFO 18865 --- [MessageBroker-1] o.s.w.s.c.WebSocketMessageBrokerStats    : WebSocketSession[0 current WS(0)-HttpStream(0)-HttpPoll(0), 0 total, 0 closed abnormally (0 connect failure, 0 send limit, 0 transport error)], stompSubProtocol[processed CONNECT(0)-CONNECTED(0)-DISCONNECT(0)], stompBrokerRelay[null], inboundChannel[pool size = 0, active threads = 0, queued tasks = 0, completed tasks = 0], outboundChannel[pool size = 0, active threads = 0, queued tasks = 0, completed tasks = 0], sockJsScheduler[pool size = 4, active threads = 1, queued tasks = 0, completed tasks = 3]
-2022-10-24 11:13:02.255  INFO 18865 --- [main] main                                     : new client connected from /127.0.0.1:40244
-2022-10-24 11:13:07.861  INFO 18865 --- [Thread-8] client-thread <not logged in>            : issues command: 'login downey'
-2022-10-24 11:13:07.862  INFO 18865 --- [Thread-8] login-command                            : reviving downey from offline player list! Welcome back.
-2022-10-24 11:13:40.301  INFO 18865 --- [main] main                                     : new client connected from /127.0.0.1:56574
-2022-10-24 11:13:45.531  INFO 18865 --- [Thread-9] client-thread <not logged in>            : issues command: 'login downey'
-2022-10-24 11:13:45.532  INFO 18865 --- [Thread-9] login-command                            : reviving downey from offline player list! Welcome back.
-2022-10-24 11:13:50.515  INFO 18865 --- [Thread-9] client-thread downey                     : issues command: 'get playerlist'
-2022-10-24 11:15:20.087  INFO 18865 --- [MessageBroker-3] o.s.w.s.c.WebSocketMessageBrokerStats    : WebSocketSession[0 current WS(0)-HttpStream(0)-HttpPoll(0), 0 total, 0 closed abnormally (0 connect failure, 0 send limit, 0 transport error)], stompSubProtocol[processed CONNECT(0)-CONNECTED(0)-DISCONNECT(0)], stompBrokerRelay[null], inboundChannel[pool size = 0, active threads = 0, queued tasks = 0, completed tasks = 0], outboundChannel[pool size = 0, active threads = 0, queued tasks = 0, completed tasks = 0], sockJsScheduler[pool size = 5, active threads = 1, queued tasks = 0, completed tasks = 4]
-2022-10-24 11:15:41.465  WARN 18865 --- [Thread-9] client-thread downey                     : Server exception: Connection reset, disconnecting client
-2022-10-24 11:15:42.891  INFO 18865 --- [main] main                                     : new client connected from /127.0.0.1:35826
-2022-10-24 11:15:50.278  INFO 18865 --- [Thread-10] client-thread <not logged in>            : issues command: 'login downey'
-2022-10-24 11:15:50.278  INFO 18865 --- [Thread-10] login-command                            : reviving downey from offline player list! Welcome back.
-2022-10-24 11:15:53.115  INFO 18865 --- [Thread-10] client-thread downey                     : issues command: 'get playerlist'
-2022-10-24 11:18:04.362  INFO 18865 --- [main] main                                     : new client connected from /127.0.0.1:35550
-2022-10-24 11:18:12.150  INFO 18865 --- [Thread-11] client-thread <not logged in>            : issues command: 'login Doweny'
-2022-10-24 11:18:13.838  INFO 18865 --- [Thread-11] client-thread Doweny                     : issues command: 'get playerlist'
-2022-10-24 11:18:37.794  INFO 18865 --- [main] main                                     : new client connected from /127.0.0.1:57994
-2022-10-24 11:18:41.250  INFO 18865 --- [Thread-12] client-thread <not logged in>            : issues command: 'login adfs'
-2022-10-24 11:18:43.499  INFO 18865 --- [Thread-12] client-thread adfs                       : issues command: 'get playerlist'
-2022-10-24 11:19:03.265  INFO 18865 --- [main] main                                     : new client connected from /127.0.0.1:40418
-2022-10-24 11:19:07.134  INFO 18865 --- [Thread-13] client-thread <not logged in>            : issues command: 'login sfsf'
-2022-10-24 11:19:07.959  INFO 18865 --- [Thread-13] client-thread sfsf                       : issues command: 'get playerlist'
-2022-10-24 11:22:55.126  INFO 18865 --- [main] main                                     : new client connected from /127.0.0.1:50380
-2022-10-24 11:23:00.722  INFO 18865 --- [Thread-14] client-thread <not logged in>            : issues command: 'login adsfs'
-2022-10-24 11:23:01.912  INFO 18865 --- [Thread-14] client-thread adsfs                      : issues command: 'get playerlist'
-2022-10-24 11:25:10.842  INFO 18865 --- [Thread-14] client-thread adsfs                      : issues command: 'get playerlist'
-2022-10-24 11:25:12.125  INFO 18865 --- [Thread-14] client-thread adsfs                      : issues command: 'get playerlist'
-2022-10-24 11:25:13.145  INFO 18865 --- [Thread-14] client-thread adsfs                      : issues command: 'get playerlist'
-2022-10-24 11:25:14.078  INFO 18865 --- [Thread-14] client-thread adsfs                      : issues command: 'get playerlist'
-2022-10-24 11:25:15.091  INFO 18865 --- [Thread-14] client-thread adsfs                      : issues command: 'get playerlist'
-2022-10-24 11:25:16.148  INFO 18865 --- [Thread-14] client-thread adsfs                      : issues command: 'get playerlist'
-2022-10-24 11:25:17.464  INFO 18865 --- [Thread-14] client-thread adsfs                      : issues command: 'get playerlist'
-2022-10-24 11:25:19.102  INFO 18865 --- [Thread-14] client-thread adsfs                      : issues command: 'get playerlist'
-2022-10-24 11:26:43.253  INFO 18865 --- [main] main                                     : new client connected from /127.0.0.1:36478
-2022-10-24 11:26:55.541  INFO 18865 --- [main] main                                     : new client connected from /127.0.0.1:46860
-2022-10-24 11:27:01.279  INFO 18865 --- [Thread-16] client-thread <not logged in>            : issues command: 'login downy'
-2022-10-24 11:27:06.332  INFO 18865 --- [Thread-16] client-thread downy                      : issues command: 'get playerlist'
-2022-10-24 11:36:00.399  INFO 18865 --- [main] main                                     : new client connected from /127.0.0.1:49436
-2022-10-24 11:36:07.603  INFO 18865 --- [Thread-17] client-thread <not logged in>            : issues command: 'login downey'
-2022-10-24 11:36:07.603  INFO 18865 --- [Thread-17] login-command                            : reviving downey from offline player list! Welcome back.
-2022-10-24 11:36:13.204  INFO 18865 --- [main] main                                     : new client connected from /127.0.0.1:55114
-2022-10-24 11:36:19.134  INFO 18865 --- [Thread-18] client-thread <not logged in>            : issues command: 'login downey'
-2022-10-24 11:36:19.135  INFO 18865 --- [Thread-18] login-command                            : reviving downey from offline player list! Welcome back.
-2022-10-24 11:36:48.164  INFO 18865 --- [Thread-18] client-thread downey                     : issues command: 'get playerlist'
-2022-10-24 11:45:20.088  INFO 18865 --- [MessageBroker-2] o.s.w.s.c.WebSocketMessageBrokerStats    : WebSocketSession[0 current WS(0)-HttpStream(0)-HttpPoll(0), 0 total, 0 closed abnormally (0 connect failure, 0 send limit, 0 transport error)], stompSubProtocol[processed CONNECT(0)-CONNECTED(0)-DISCONNECT(0)], stompBrokerRelay[null], inboundChannel[pool size = 0, active threads = 0, queued tasks = 0, completed tasks = 0], outboundChannel[pool size = 0, active threads = 0, queued tasks = 0, completed tasks = 0], sockJsScheduler[pool size = 6, active threads = 1, queued tasks = 0, completed tasks = 5]
-2022-10-24 12:09:16.852  INFO 18865 --- [main] main                                     : new client connected from /127.0.0.1:45426
-2022-10-24 12:15:20.089  INFO 18865 --- [MessageBroker-4] o.s.w.s.c.WebSocketMessageBrokerStats    : WebSocketSession[0 current WS(0)-HttpStream(0)-HttpPoll(0), 0 total, 0 closed abnormally (0 connect failure, 0 send limit, 0 transport error)], stompSubProtocol[processed CONNECT(0)-CONNECTED(0)-DISCONNECT(0)], stompBrokerRelay[null], inboundChannel[pool size = 0, active threads = 0, queued tasks = 0, completed tasks = 0], outboundChannel[pool size = 0, active threads = 0, queued tasks = 0, completed tasks = 0], sockJsScheduler[pool size = 7, active threads = 1, queued tasks = 0, completed tasks = 6]
-2022-10-24 12:45:20.090  INFO 18865 --- [MessageBroker-1] o.s.w.s.c.WebSocketMessageBrokerStats    : WebSocketSession[0 current WS(0)-HttpStream(0)-HttpPoll(0), 0 total, 0 closed abnormally (0 connect failure, 0 send limit, 0 transport error)], stompSubProtocol[processed CONNECT(0)-CONNECTED(0)-DISCONNECT(0)], stompBrokerRelay[null], inboundChannel[pool size = 0, active threads = 0, queued tasks = 0, completed tasks = 0], outboundChannel[pool size = 0, active threads = 0, queued tasks = 0, completed tasks = 0], sockJsScheduler[pool size = 8, active threads = 1, queued tasks = 0, completed tasks = 7]
+2022-10-27 14:51:20.804  INFO 18235 --- [main] nl.hanze.newgameserver.Main              : Starting Main on archlinux with PID 18235 (/home/downey/Desktop/skool/hbo_ICT_j2/OOP1/project/project-ISY/src/test/newgameserver-1.0.jar started by downey in /home/downey/Desktop/skool/hbo_ICT_j2/OOP1/project/project-ISY/src/test)
+2022-10-27 14:51:20.815  INFO 18235 --- [main] nl.hanze.newgameserver.Main              : No active profile set, falling back to default profiles: default
+2022-10-27 14:51:22.151  INFO 18235 --- [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port(s): 8081 (http)
+2022-10-27 14:51:22.169  INFO 18235 --- [main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2022-10-27 14:51:22.170  INFO 18235 --- [main] org.apache.catalina.core.StandardEngine  : Starting Servlet engine: [Apache Tomcat/9.0.39]
+2022-10-27 14:51:22.276  INFO 18235 --- [main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2022-10-27 14:51:22.277  INFO 18235 --- [main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 1334 ms
+2022-10-27 14:51:22.466  INFO 18235 --- [main] o.s.s.concurrent.ThreadPoolTaskExecutor  : Initializing ExecutorService 'clientInboundChannelExecutor'
+2022-10-27 14:51:22.470  INFO 18235 --- [main] o.s.s.concurrent.ThreadPoolTaskExecutor  : Initializing ExecutorService 'clientOutboundChannelExecutor'
+2022-10-27 14:51:22.518  INFO 18235 --- [main] o.s.s.c.ThreadPoolTaskScheduler          : Initializing ExecutorService 'messageBrokerTaskScheduler'
+2022-10-27 14:51:22.596  INFO 18235 --- [main] o.s.s.concurrent.ThreadPoolTaskExecutor  : Initializing ExecutorService 'brokerChannelExecutor'
+2022-10-27 14:51:23.245  INFO 18235 --- [main] o.s.b.a.w.s.WelcomePageHandlerMapping    : Adding welcome page: class path resource [public/index.html]
+2022-10-27 14:51:23.724  INFO 18235 --- [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port(s): 8081 (http) with context path ''
+2022-10-27 14:51:23.730  INFO 18235 --- [main] o.s.m.s.b.SimpleBrokerMessageHandler     : Starting...
+2022-10-27 14:51:23.731  INFO 18235 --- [main] o.s.m.s.b.SimpleBrokerMessageHandler     : BrokerAvailabilityEvent[available=true, SimpleBrokerMessageHandler [DefaultSubscriptionRegistry[cache[0 destination(s)], registry[0 sessions]]]]
+2022-10-27 14:51:23.734  INFO 18235 --- [main] o.s.m.s.b.SimpleBrokerMessageHandler     : Started.
+2022-10-27 14:51:23.864  INFO 18235 --- [main] nl.hanze.newgameserver.Main              : Started Main in 3.51 seconds (JVM running for 4.002)
+2022-10-27 14:51:23.881  INFO 18235 --- [main] main                                     : gameserver is now listening on port 7789
+2022-10-27 14:52:22.595  INFO 18235 --- [MessageBroker-1] o.s.w.s.c.WebSocketMessageBrokerStats    : WebSocketSession[0 current WS(0)-HttpStream(0)-HttpPoll(0), 0 total, 0 closed abnormally (0 connect failure, 0 send limit, 0 transport error)], stompSubProtocol[processed CONNECT(0)-CONNECTED(0)-DISCONNECT(0)], stompBrokerRelay[null], inboundChannel[pool size = 0, active threads = 0, queued tasks = 0, completed tasks = 0], outboundChannel[pool size = 0, active threads = 0, queued tasks = 0, completed tasks = 0], sockJsScheduler[pool size = 1, active threads = 1, queued tasks = 0, completed tasks = 0]
+2022-10-27 14:52:59.672  INFO 18235 --- [main] main                                     : new client connected from /127.0.0.1:45720
+2022-10-27 14:54:58.664  INFO 18235 --- [Thread-2] client-thread <not logged in>            : issues command: 'login player'
+2022-10-27 14:55:12.034  INFO 18235 --- [Thread-2] client-thread player                     : issues command: 'get playerlist'
+2022-10-27 14:56:11.265  INFO 18235 --- [Thread-2] client-thread player                     : issues command: 'get playerlist'
+2022-10-27 14:58:07.967  INFO 18235 --- [main] main                                     : new client connected from /127.0.0.1:49598
+2022-10-27 14:58:14.916  INFO 18235 --- [Thread-3] client-thread <not logged in>            : issues command: 'login googa'
+2022-10-27 14:58:18.804  INFO 18235 --- [Thread-3] client-thread googa                      : issues command: 'subscribe tic-tac-toe'
+2022-10-27 14:58:26.150  INFO 18235 --- [Thread-2] client-thread player                     : issues command: 'subscribe tic-tac-toe'
+2022-10-27 14:58:26.195  INFO 18235 --- [Thread-2] game [1,player,googa]                    : started
+2022-10-27 14:58:26.200  INFO 18235 --- [Thread-2] client-thread player                     : issues command: 'subscribe tic-tac-toe'
+2022-10-27 14:58:26.200  INFO 18235 --- [Thread-2] client-thread player                     : issues command: 'subscribe tic-tac-toe'
+2022-10-27 14:58:36.200  INFO 18235 --- [Timer-0] game [1,player,googa]                    : winner: googa; Turn timelimit reached
+2022-10-27 14:58:50.163  INFO 18235 --- [main] main                                     : new client connected from /127.0.0.1:52636
+2022-10-27 15:19:30.779  INFO 18235 --- [SpringContextShutdownHook] o.s.m.s.b.SimpleBrokerMessageHandler     : Stopping...
+2022-10-27 15:19:30.780  INFO 18235 --- [SpringContextShutdownHook] o.s.m.s.b.SimpleBrokerMessageHandler     : BrokerAvailabilityEvent[available=false, SimpleBrokerMessageHandler [DefaultSubscriptionRegistry[cache[0 destination(s)], registry[0 sessions]]]]
+2022-10-27 15:19:30.780  INFO 18235 --- [SpringContextShutdownHook] o.s.m.s.b.SimpleBrokerMessageHandler     : Stopped.
+2022-10-27 15:19:30.845  INFO 18235 --- [SpringContextShutdownHook] o.s.s.concurrent.ThreadPoolTaskExecutor  : Shutting down ExecutorService 'brokerChannelExecutor'
+2022-10-27 15:19:30.846  INFO 18235 --- [SpringContextShutdownHook] o.s.s.c.ThreadPoolTaskScheduler          : Shutting down ExecutorService 'messageBrokerTaskScheduler'
+2022-10-27 15:19:30.847  INFO 18235 --- [SpringContextShutdownHook] o.s.s.concurrent.ThreadPoolTaskExecutor  : Shutting down ExecutorService 'clientOutboundChannelExecutor'
+2022-10-27 15:19:30.847  INFO 18235 --- [SpringContextShutdownHook] o.s.s.concurrent.ThreadPoolTaskExecutor  : Shutting down ExecutorService 'clientInboundChannelExecutor'

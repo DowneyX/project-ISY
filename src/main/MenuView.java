@@ -4,11 +4,11 @@ import java.util.Scanner;
 
 public class MenuView {
 
-    private ApplicationController application;
+    private ApplicationManager application;
     private Server server;
     private Scanner scanner;
 
-    MenuView(ApplicationController application, Server server) {
+    MenuView(ApplicationManager application, Server server) {
         this.application = application;
         this.server = server;
         scanner = new Scanner(System.in);
@@ -79,13 +79,9 @@ public class MenuView {
         System.out.println("please log in with your username");
         String username = scanner.next();
         System.out.println("loging in on server...");
-        if (!server.login(username)) {
-            System.out.println("login error");
-            selectionMainMenu();
-        } else {
-            System.out.println("succes!");
-            selectionOnlineMenu();
-        }
+        server.Requestlogin(username);
+        System.out.println("succes!");
+        selectionOnlineMenu();
     }
 
     void selectionOnlineMenu() {
@@ -101,10 +97,15 @@ public class MenuView {
 
         switch (choice) {
             case 1:
-                server.showPlayers();
+                try {
+                    server.getPlayerlist();
+                } catch (Exception e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
                 selectionOnlineMenu();
             case 2:
-                server.subscribeTictactoe();
+                server.requestSubscribeTictactoe();
                 System.out.println("please wait for an opponent...");
         }
 
