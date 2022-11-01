@@ -1,18 +1,13 @@
 package isy.team4.projectisy;
 
+import isy.team4.projectisy.server.Server;
 import javafx.application.Application;
-import javafx.event.ActionEvent;
-import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import isy.team4.projectisy.server.Server;
 
 import java.io.IOException;
 import java.util.Scanner;
-import java.util.Objects;
 
 public class MainApplication extends Application {
     @Override
@@ -27,12 +22,16 @@ public class MainApplication extends Application {
     public static void main(String[] args) {
         // launch();
         MainApplication app = new MainApplication();
-        try {
-            app.testServer();
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
+
+        // TODO: SERVER
+//        try {
+//            app.testServer();
+//        } catch (IOException e) {
+//            // TODO Auto-generated catch block
+//            e.printStackTrace();
+//        }
+
+        launch();
     }
 
     public void testServer() throws IOException {
