@@ -5,8 +5,8 @@ import isy.team4.projectisy.util.Board;
 import isy.team4.projectisy.util.Vector2D;
 
 public interface IRuleSet {
-    int getMinPlayerSize();  // Nullable
-    int getMaxPlayerSize();  // Nullable
+    Integer getMinPlayerSize();  // Nullable
+    Integer getMaxPlayerSize();  // Nullable
     char[] getAllowedInitials();  // Nullable if all allowed
     Board getStartingBoard();
 
