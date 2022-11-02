@@ -5,7 +5,10 @@ import isy.team4.projectisy.util.Vector2D;
 
 public interface IPlayer {
     String getName();
-    char getInitial();
+
+    String getInitial();
+
     Vector2D getMove(Board board);
-    void setInitial(char initial);
+
+    void setInitial(String initial);
 }

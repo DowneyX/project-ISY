@@ -5,7 +5,7 @@ import isy.team4.projectisy.util.Vector2D;
 
 public class AIPlayer implements IPlayer {
     private final String name;
-    private char initial;
+    private String initial;
 
     public AIPlayer(String name) {
         this.name = name;
@@ -17,7 +17,7 @@ public class AIPlayer implements IPlayer {
     }
 
     @Override
-    public char getInitial() {
+    public String getInitial() {
         return this.initial;
     }
 
@@ -25,79 +25,162 @@ public class AIPlayer implements IPlayer {
     public Vector2D getMove(Board board) {
         // TODO: AI Move
         // welcome to if hell
-        if (initial == 'X') {
-            // if there is a winning move play winning move
-            for (int i = 0; i < 3; i++) {
-                // horizontal
-                if (board.getElement(i, 0) == "X" && board.getElement(i, 1) == "X" && board.getElement(i, 2) == null) {
-                    return new Vector2D(i, 2);
-                }
+        // if there is a winning move play winning move
+        String opInitial = initial.equals("X") ? "O" : "X";
 
-                if (board.getElement(i, 0) == "X" && board.getElement(i, 1) == null && board.getElement(i, 2) == "X") {
-                    return new Vector2D(i, 1);
-                }
-
-                if (board.getElement(i, 0) == null && board.getElement(i, 1) == "X" && board.getElement(i, 2) == "X") {
-                    return new Vector2D(i, 0);
-                }
-
-                // vertical
-                if (board.getElement(0, i) == null && board.getElement(1, i) == "X" && board.getElement(2, i) == "X") {
-                    return new Vector2D(0, i);
-                }
-
-                if (board.getElement(0, i) == "X" && board.getElement(1, i) == null && board.getElement(2, i) == "X") {
-                    return new Vector2D(1, i);
-                }
-
-                if (board.getElement(0, i) == "X" && board.getElement(1, i) == "X" && board.getElement(2, i) == null) {
-                    return new Vector2D(2, i);
-                }
-
+        // horrizontal / vertical
+        for (int i = 0; i < 3; i++) {
+            if (board.getElement(i, 0).equals(initial) && board.getElement(i, 1).equals(initial)
+                    && board.getElement(i, 2) == null) {
+                return new Vector2D(i, 2);
             }
 
-            // diagonal
-            if (board.getElement(0, 0) == null && board.getElement(1, 1) == "X" && board.getElement(2, 2) == "X") {
-                return new Vector2D(0, 0);
+            if (board.getElement(i, 0).equals(initial) && board.getElement(i, 1) == null
+                    && board.getElement(i, 2).equals(initial)) {
+                return new Vector2D(i, 1);
             }
 
-            if (board.getElement(0, 0) == "X" && board.getElement(1, 1) == null && board.getElement(2, 2) == "X") {
-                return new Vector2D(1, 1);
+            if (board.getElement(i, 0) == null && board.getElement(i, 1).equals(initial)
+                    && board.getElement(i, 2).equals(initial)) {
+                return new Vector2D(i, 0);
             }
 
-            if (board.getElement(0, 0) == "X" && board.getElement(1, 1) == "X" && board.getElement(2, 2) == null) {
-                return new Vector2D(2, 2);
+            if (board.getElement(0, i) == null && board.getElement(1, i).equals(initial)
+                    && board.getElement(2, i).equals(initial)) {
+                return new Vector2D(0, i);
             }
 
-            // anti diagonal
-
-            if (board.getElement(0, 2) == null && board.getElement(1, 1) == "X" && board.getElement(2, 0) == "X") {
-                return new Vector2D(0, 2);
+            if (board.getElement(0, i).equals(initial) && board.getElement(1, i) == null
+                    && board.getElement(2, i).equals(initial)) {
+                return new Vector2D(1, i);
             }
 
-            if (board.getElement(0, 2) == "X" && board.getElement(1, 1) == null && board.getElement(2, 0) == "X") {
-                return new Vector2D(1, 1);
+            if (board.getElement(0, i).equals(initial) && board.getElement(1, i).equals(initial)
+                    && board.getElement(2, i) == null) {
+                return new Vector2D(2, i);
             }
 
-            if (board.getElement(0, 2) == "X" && board.getElement(1, 1) == "X" && board.getElement(2, 0) == null) {
-                return new Vector2D(2, 0);
+        }
+
+        // diagonal
+        if (board.getElement(0, 0) == null && board.getElement(1, 1).equals(initial)
+                && board.getElement(2, 2).equals(initial)) {
+            return new Vector2D(0, 0);
+        }
+
+        if (board.getElement(0, 0).equals(initial) && board.getElement(1, 1) == null
+                && board.getElement(2, 2).equals(initial)) {
+            return new Vector2D(1, 1);
+        }
+
+        if (board.getElement(0, 0).equals(initial) && board.getElement(1, 1).equals(initial)
+                && board.getElement(2, 2) == null) {
+            return new Vector2D(2, 2);
+        }
+
+        // anti diagonal
+
+        if (board.getElement(0, 2) == null && board.getElement(1, 1).equals(initial)
+                && board.getElement(2, 0).equals(initial)) {
+            return new Vector2D(0, 2);
+        }
+
+        if (board.getElement(0, 2).equals(initial) && board.getElement(1, 1) == null
+                && board.getElement(2, 0).equals(initial)) {
+            return new Vector2D(1, 1);
+        }
+
+        if (board.getElement(0, 2).equals(initial) && board.getElement(1, 1).equals(initial)
+                && board.getElement(2, 0) == null) {
+            return new Vector2D(2, 0);
+        }
+
+        // if there is a move that should be blocked block it
+
+        // horrizontal / vertical
+        for (int i = 0; i < 3; i++) {
+            if (board.getElement(i, 0).equals(initial) && board.getElement(i, 1).equals(initial)
+                    && board.getElement(i, 2) == null) {
+                return new Vector2D(i, 2);
             }
 
-            // if there is a move that should be blocked block it
+            if (board.getElement(i, 0).equals(initial) && board.getElement(i, 1) == null
+                    && board.getElement(i, 2).equals(initial)) {
+                return new Vector2D(i, 1);
+            }
 
-            // if board is empty pick bottom left corner
+            if (board.getElement(i, 0) == null && board.getElement(i, 1).equals(initial)
+                    && board.getElement(i, 2).equals(initial)) {
+                return new Vector2D(i, 0);
+            }
 
-            // if bottom left has X and middle is not filled (we've won)
+            if (board.getElement(0, i) == null && board.getElement(1, i).equals(initial)
+                    && board.getElement(2, i).equals(initial)) {
+                return new Vector2D(0, i);
+            }
 
-            // if bottom left has X and middle is filled (probably a tie)
+            if (board.getElement(0, i).equals(initial) && board.getElement(1, i) == null
+                    && board.getElement(2, i).equals(initial)) {
+                return new Vector2D(1, i);
+            }
 
+            if (board.getElement(0, i).equals(initial) && board.getElement(1, i).equals(initial)
+                    && board.getElement(2, i) == null) {
+                return new Vector2D(2, i);
+            }
+
+        }
+
+        // diagonal
+        if (board.getElement(0, 0) == null && board.getElement(1, 1).equals(opInitial)
+                && board.getElement(2, 2).equals(opInitial)) {
+            return new Vector2D(0, 0);
+        }
+
+        if (board.getElement(0, 0).equals(opInitial) && board.getElement(1, 1) == null
+                && board.getElement(2, 2).equals(opInitial)) {
+            return new Vector2D(1, 1);
+        }
+
+        if (board.getElement(0, 0).equals(opInitial) && board.getElement(1, 1).equals(opInitial)
+                && board.getElement(2, 2) == null) {
+            return new Vector2D(2, 2);
+        }
+
+        // anti diagonal
+
+        if (board.getElement(0, 2) == null && board.getElement(1, 1).equals(opInitial)
+                && board.getElement(2, 0).equals(opInitial)) {
+            return new Vector2D(0, 2);
+        }
+
+        if (board.getElement(0, 2).equals(opInitial) && board.getElement(1, 1) == null
+                && board.getElement(2, 0).equals(opInitial)) {
+            return new Vector2D(1, 1);
+        }
+
+        if (board.getElement(0, 2).equals(opInitial) && board.getElement(1, 1).equals(opInitial)
+                && board.getElement(2, 0) == null) {
+            return new Vector2D(2, 0);
+        }
+
+        // do a move
+
+        int[][] possibleMoves = {
+                { 1, 1 }, { 0, 0 }, { 0, 2 }, { 2, 0 }, { 2, 2 },
+                { 0, 1 }, { 1, 0 }, { 1, 2 }, { 2, 1 } };
+
+        for (int[] move : possibleMoves) {
+            if (board.getElement(move[0], move[1]) == null) {
+                return new Vector2D(move[0], move[0]);
+            }
         }
 
         return new Vector2D(0, 0);
     }
 
     @Override
-    public void setInitial(char initial) {
+    public void setInitial(String initial) {
         this.initial = initial;
     }
 }
