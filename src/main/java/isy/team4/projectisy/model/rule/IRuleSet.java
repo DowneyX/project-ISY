@@ -5,8 +5,11 @@ import isy.team4.projectisy.util.Board;
 import isy.team4.projectisy.util.Vector2D;
 
 public interface IRuleSet {
-    char[] getAllowedInitials();
-    Vector2D getBoardSize();
+    int getMinPlayerSize();  // Nullable
+    int getMaxPlayerSize();  // Nullable
+    char[] getAllowedInitials();  // Nullable if all allowed
+    Board getStartingBoard();
+
     void setTurn(Board board, Board newBoard);
     boolean isLegal();
     Board handleBoard(Board board);
