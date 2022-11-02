@@ -173,6 +173,20 @@ public class PlayerSmartTictactoe extends Player {
             return move;
         }
 
+        // try to block a fork
+
+        if (board.getElement(2, 2) == antiTurn && board.getElement(0, 0) == antiTurn
+                && board.getElement(1, 1) == turn && board.getElement(1, 0) == '\u0000') {
+            int[] move = { 1, 0 };
+            return move;
+        }
+
+        if (board.getElement(2, 0) == antiTurn && board.getElement(0, 2) == antiTurn
+                && board.getElement(1, 1) == turn && board.getElement(1, 0) == '\u0000') {
+            int[] move = { 1, 0 };
+            return move;
+        }
+
         // do a move
 
         int[][] possibleMoves = {

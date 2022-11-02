@@ -56,3 +56,27 @@
 2022-11-02 16:31:08.910  INFO 15082 --- [Thread-16] client-thread deez                       : issues command: 'move 1'
 2022-11-02 16:31:08.951  INFO 15082 --- [Thread-15] client-thread figma                      : issues command: 'move 7'
 2022-11-02 16:31:08.951  INFO 15082 --- [Thread-15] game [2,figma,deez]                      : winner: null; 
+2022-11-02 16:57:58.627  INFO 15082 --- [MessageBroker-2] o.s.w.s.c.WebSocketMessageBrokerStats    : WebSocketSession[0 current WS(0)-HttpStream(0)-HttpPoll(0), 0 total, 0 closed abnormally (0 connect failure, 0 send limit, 0 transport error)], stompSubProtocol[processed CONNECT(0)-CONNECTED(0)-DISCONNECT(0)], stompBrokerRelay[null], inboundChannel[pool size = 0, active threads = 0, queued tasks = 0, completed tasks = 0], outboundChannel[pool size = 0, active threads = 0, queued tasks = 0, completed tasks = 0], sockJsScheduler[pool size = 3, active threads = 1, queued tasks = 0, completed tasks = 2]
+2022-11-02 17:16:56.608  INFO 15082 --- [main] main                                     : new client connected from /127.0.0.1:39112
+2022-11-02 17:27:58.629  INFO 15082 --- [MessageBroker-1] o.s.w.s.c.WebSocketMessageBrokerStats    : WebSocketSession[0 current WS(0)-HttpStream(0)-HttpPoll(0), 0 total, 0 closed abnormally (0 connect failure, 0 send limit, 0 transport error)], stompSubProtocol[processed CONNECT(0)-CONNECTED(0)-DISCONNECT(0)], stompBrokerRelay[null], inboundChannel[pool size = 0, active threads = 0, queued tasks = 0, completed tasks = 0], outboundChannel[pool size = 0, active threads = 0, queued tasks = 0, completed tasks = 0], sockJsScheduler[pool size = 4, active threads = 1, queued tasks = 0, completed tasks = 3]
+2022-11-02 17:57:58.630  INFO 15082 --- [MessageBroker-3] o.s.w.s.c.WebSocketMessageBrokerStats    : WebSocketSession[0 current WS(0)-HttpStream(0)-HttpPoll(0), 0 total, 0 closed abnormally (0 connect failure, 0 send limit, 0 transport error)], stompSubProtocol[processed CONNECT(0)-CONNECTED(0)-DISCONNECT(0)], stompBrokerRelay[null], inboundChannel[pool size = 0, active threads = 0, queued tasks = 0, completed tasks = 0], outboundChannel[pool size = 0, active threads = 0, queued tasks = 0, completed tasks = 0], sockJsScheduler[pool size = 5, active threads = 1, queued tasks = 0, completed tasks = 4]
+2022-11-02 18:24:27.864  INFO 15082 --- [main] main                                     : new client connected from /127.0.0.1:39410
+2022-11-02 18:26:12.185  INFO 15082 --- [main] main                                     : new client connected from /127.0.0.1:44218
+2022-11-02 18:27:02.401  INFO 15082 --- [main] main                                     : new client connected from /127.0.0.1:55718
+2022-11-02 18:27:58.631  INFO 15082 --- [MessageBroker-2] o.s.w.s.c.WebSocketMessageBrokerStats    : WebSocketSession[0 current WS(0)-HttpStream(0)-HttpPoll(0), 0 total, 0 closed abnormally (0 connect failure, 0 send limit, 0 transport error)], stompSubProtocol[processed CONNECT(0)-CONNECTED(0)-DISCONNECT(0)], stompBrokerRelay[null], inboundChannel[pool size = 0, active threads = 0, queued tasks = 0, completed tasks = 0], outboundChannel[pool size = 0, active threads = 0, queued tasks = 0, completed tasks = 0], sockJsScheduler[pool size = 6, active threads = 1, queued tasks = 0, completed tasks = 5]
+2022-11-02 18:31:23.294  INFO 15082 --- [Thread-29] client-thread <not logged in>            : issues command: 'login levi'
+2022-11-02 18:31:25.997  INFO 15082 --- [Thread-29] client-thread levi                       : issues command: 'subscribe tic-tac-toe'
+2022-11-02 18:31:33.347  INFO 15082 --- [main] main                                     : new client connected from /127.0.0.1:56888
+2022-11-02 18:31:38.105  INFO 15082 --- [Thread-30] client-thread <not logged in>            : issues command: 'login douwe'
+2022-11-02 18:31:41.458  INFO 15082 --- [Thread-30] client-thread douwe                      : issues command: 'subscribe tic-tac-toe'
+2022-11-02 18:31:41.460  INFO 15082 --- [Thread-30] game [3,levi,douwe]                      : started
+2022-11-02 18:31:41.462  INFO 15082 --- [Thread-29] client-thread levi                       : issues command: 'move 4'
+2022-11-02 18:31:41.467  INFO 15082 --- [Thread-30] client-thread douwe                      : issues command: 'move 0'
+2022-11-02 18:31:41.510  INFO 15082 --- [Thread-29] client-thread levi                       : issues command: 'move 2'
+2022-11-02 18:31:41.513  INFO 15082 --- [Thread-30] client-thread douwe                      : issues command: 'move 6'
+2022-11-02 18:31:41.553  INFO 15082 --- [Thread-29] client-thread levi                       : issues command: 'move 3'
+2022-11-02 18:31:41.556  INFO 15082 --- [Thread-30] client-thread douwe                      : issues command: 'move 5'
+2022-11-02 18:31:41.603  INFO 15082 --- [Thread-29] client-thread levi                       : issues command: 'move 8'
+2022-11-02 18:31:41.605  INFO 15082 --- [Thread-30] client-thread douwe                      : issues command: 'move 1'
+2022-11-02 18:31:41.651  INFO 15082 --- [Thread-29] client-thread levi                       : issues command: 'move 7'
+2022-11-02 18:31:41.652  INFO 15082 --- [Thread-29] game [3,levi,douwe]                      : winner: null; 
