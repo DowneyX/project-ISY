@@ -25,14 +25,15 @@ public class MainApplication extends Application {
     }
 
     public static void main(String[] args) {
-        // launch();
-        MainApplication app = new MainApplication();
-        try {
-            app.testServer();
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
+         launch();
+//        MainApplication app = new MainApplication();
+//        try {
+//            app.testServer();
+//        } catch (IOException e) {
+//            // TODO Auto-generated catch block
+//            // TODO offline mode?
+//            e.printStackTrace();
+//        }
     }
 
     public void testServer() throws IOException {
