@@ -25,47 +25,8 @@ public class MainApplication extends Application {
     }
 
     public static void main(String[] args) {
-        // launch();
+        launch();
         MainApplication app = new MainApplication();
-        try {
-            app.testServer();
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-    }
 
-    public void testServer() throws IOException {
-        Server server = new Server("localhost", 7789);
-        Scanner scanner = new Scanner(System.in);
-
-        String username = scanner.nextLine();
-        System.out.println("request login");
-        if (server.Requestlogin(username)) {
-            System.out.println("request success");
-        }
-
-        System.out.println("getting game list");
-        try {
-            server.getGamelist();
-        } catch (Exception e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-        System.out.println("request success");
-
-        System.out.println("getting player list");
-        try {
-            server.getPlayerlist();
-        } catch (Exception e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-        System.out.println("request success");
-
-        System.out.println("request find game tic-tac-toe");
-        if (server.RequestSubscribeTictactoe()) {
-            System.out.println("request success");
-        }
     }
 }
