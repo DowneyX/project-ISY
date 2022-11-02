@@ -3,13 +3,14 @@ package isy.team4.projectisy.server;
 import java.io.IOException;
 import java.util.Arrays;
 
-import isy.team4.projectisy.game.TictactoeManager;
 import isy.team4.projectisy.player.*;
+import isy.team4.projectisy.util.Board;
 
 public class Server extends ServerIO {
-    private String name;
-    private TictactoeManager game; // should be a game class but for right now i put tictactoe here
-    private String gameType; // reversi of tic-tac-toe
+    private char symbol;
+    private Board board;
+    private String userName;
+    private String gameType; // reversi or tic-tac-toe
     public boolean isPlaying = false;
     private Player playerLocal;
     private PlayerRemote PlayerRemote; // technically dont need a remote player but its nice to have for the name
@@ -105,17 +106,17 @@ public class Server extends ServerIO {
                             // signal that a game has been started
                             if (gameType.equals("Tic-tac-toe")) {
 
-                                if (playerToMove.equals(name)) {
-                                    playerLocal = new PlayerSmartTictactoe(name, 'X');
+                                if (playerToMove.equals(userName)) {
+                                    playerLocal = new PlayerSmartTictactoe(userName, 'X');
                                     PlayerRemote = new PlayerRemote(opponent, 'O');
                                 } else {
-                                    playerLocal = new PlayerSmartTictactoe(name, 'O');
+                                    playerLocal = new PlayerSmartTictactoe(userName, 'O');
                                     PlayerRemote = new PlayerRemote(opponent, 'X');
                                 }
-
+                                symbol = 'X';
                                 isPlaying = true;
-                                game = new TictactoeManager(playerLocal, PlayerRemote);
-                                playerLocal.setBoard(game.getBoard());
+                                board = new Board(3, 3);
+                                playerLocal.setBoard(board);
 
                             }
                             continue;
@@ -147,9 +148,9 @@ public class Server extends ServerIO {
                             if (gameType.equals("Tic-tac-toe")) {
                                 int[] move = convertIntToXY(moveInt, 3);
                                 System.out.println(Arrays.toString(move));
-                                game.instertMove(move);
-                                game.incrementTurn();
-                                System.out.println(game.getBoard().toString());
+                                board.setElement(move[0], move[1], symbol);
+                                symbol = symbol == 'X' ? 'O' : 'X';
+                                System.out.println(board.toString());
                             }
 
                             continue;
@@ -161,7 +162,7 @@ public class Server extends ServerIO {
                             gameType = null;
                             playerLocal = null;
                             PlayerRemote = null;
-                            game = null;
+                            board = null;
 
                             // signal the result of a game
                             continue;
@@ -179,9 +180,9 @@ public class Server extends ServerIO {
         serverThread.start();
     }
 
-    public void Requestlogin(String Username) {
-        sendMessage("login " + Username);
-        name = Username;
+    public void Requestlogin(String username) {
+        sendMessage("login " + username);
+        this.userName = username;
     }
 
     public String[] getPlayerlist() throws Exception {
