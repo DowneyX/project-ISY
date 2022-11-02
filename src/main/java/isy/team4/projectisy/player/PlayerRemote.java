@@ -1,10 +1,8 @@
-package src.main;
-
-import java.util.Scanner;
+package isy.team4.projectisy.player;
 
 public class PlayerRemote extends Player {
 
-    PlayerRemote(String name, char turn) {
+    public PlayerRemote(String name, char turn) {
         super(name, turn);
     }
 

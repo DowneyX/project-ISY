@@ -1,4 +1,7 @@
-package src.main;
+package isy.team4.projectisy.game;
+
+import isy.team4.projectisy.player.Player;
+import isy.team4.projectisy.util.Board;
 
 public class TictactoeManager {
     private Board board = new Board(3, 3);
@@ -6,22 +9,22 @@ public class TictactoeManager {
     private Player player1;
     private Player player2;
 
-    TictactoeManager(Player player1, Player player2) {
+    public TictactoeManager(Player player1, Player player2) {
         this.player1 = player1;
         this.player2 = player2;
     }
 
-    public void start_game() {
+    public void startGame() {
         while (true) {
             System.out.println(board.toString());
             System.out.println("it's [" + getPlayerWithTurn().getName() + "] their turn");
-            player_move();
-            if (has_won(turn)) {
+            playerMove();
+            if (hasWon(turn)) {
                 System.out.println(board.toString());
                 System.out.println("[" + getPlayerWithTurn().getName() + "] won!");
                 break;
             }
-            increment_turn();
+            incrementTurn();
         }
     }
 
@@ -34,15 +37,15 @@ public class TictactoeManager {
     }
 
     public void instertMove(int[] move) {
-        board.set_element(move[0], move[1], turn);
+        board.setElement(move[0], move[1], turn);
     }
 
-    public void player_move() {
+    public void playerMove() {
         int[] move = getPlayerWithTurn().getMove();
 
-        if (!is_valid_move(move[0], move[1])) {
+        if (!isValidMove(move[0], move[1])) {
             System.out.println("invallid move.");
-            player_move();
+            playerMove();
         } else {
             instertMove(move);
         }
@@ -57,7 +60,7 @@ public class TictactoeManager {
         return turn;
     }
 
-    public void increment_turn() {
+    public void incrementTurn() {
         if (turn == 'X') {
             turn = 'O';
         } else {
@@ -65,8 +68,8 @@ public class TictactoeManager {
         }
     }
 
-    public boolean is_valid_move(int x, int y) {
-        char[][] grid = board.get_grid();
+    public boolean isValidMove(int x, int y) {
+        char[][] grid = board.getGrid();
         if (!(grid.length > x)) {
             return false;
         }
@@ -79,7 +82,7 @@ public class TictactoeManager {
         return true;
     }
 
-    public boolean has_won(char ch) {
+    public boolean hasWon(char ch) {
         // check rows
         if (has_3row_row(ch)) {
             return true;
@@ -102,7 +105,7 @@ public class TictactoeManager {
     }
 
     private boolean has_3row_row(char ch) {
-        char[][] grid = board.get_grid();
+        char[][] grid = board.getGrid();
         int count = 0;
         for (int row = 0; row < 3; row++) {
             for (int col = 0; col < 3; col++) {
@@ -121,7 +124,7 @@ public class TictactoeManager {
     }
 
     private boolean has_3row_col(char ch) {
-        char[][] grid = board.get_grid();
+        char[][] grid = board.getGrid();
         int count = 0;
 
         for (int col = 0; col < 3; col++) {
@@ -141,7 +144,7 @@ public class TictactoeManager {
     }
 
     private boolean has_3row_diagonal(char ch) {
-        char[][] grid = board.get_grid();
+        char[][] grid = board.getGrid();
         for (int i = 0; i < 3; i++) {
             if (grid[i][i] != ch) {
                 return false;
@@ -151,7 +154,7 @@ public class TictactoeManager {
     }
 
     private boolean has_3row_anti_diagonal(char ch) {
-        char[][] grid = board.get_grid();
+        char[][] grid = board.getGrid();
         for (int i = 2; i >= 0; i--) {
             if (grid[i][i] != ch) {
                 return false;

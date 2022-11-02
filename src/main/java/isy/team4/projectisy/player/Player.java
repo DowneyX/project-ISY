@@ -1,8 +1,10 @@
-package src.main;
+package isy.team4.projectisy.player;
+
+import isy.team4.projectisy.util.Board;
 
 public abstract class Player {
     private String name;
-    private char turn;
+    protected char turn;
     public Board board;
 
     Player(String name, char turn) {

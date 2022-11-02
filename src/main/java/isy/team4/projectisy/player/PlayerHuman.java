@@ -1,4 +1,4 @@
-package src.main;
+package isy.team4.projectisy.player;
 
 import java.util.Scanner;
 
@@ -6,7 +6,7 @@ public class PlayerHuman extends Player {
 
     Scanner scanner = new Scanner(System.in);
 
-    PlayerHuman(String name, char turn) {
+    public PlayerHuman(String name, char turn) {
         super(name, turn);
     }
 

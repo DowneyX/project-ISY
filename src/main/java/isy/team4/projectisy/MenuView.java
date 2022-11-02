@@ -1,14 +1,16 @@
-package src.main;
+package isy.team4.projectisy;
 
 import java.util.Scanner;
 
+import isy.team4.projectisy.server.Server;
+
 public class MenuView {
 
-    private ApplicationManager application;
+    private MainApplication application;
     private Server server;
     private Scanner scanner;
 
-    MenuView(ApplicationManager application, Server server) {
+    MenuView(MainApplication application, Server server) {
         this.application = application;
         this.server = server;
         scanner = new Scanner(System.in);

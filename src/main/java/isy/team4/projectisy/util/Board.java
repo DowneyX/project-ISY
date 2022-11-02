@@ -1,17 +1,17 @@
-package src.main;
+package isy.team4.projectisy.util;
 
 public class Board {
     private char[][] grid;
 
-    Board(int x, int y) {
+    public Board(int x, int y) {
         this.grid = new char[x][y];
     }
 
-    public void set_element(int x, int y, char value) {
+    public void setElement(int x, int y, char value) {
         this.grid[x][y] = value;
     }
 
-    public char get_element(int x, int y) {
+    public char getElement(int x, int y) {
         return grid[x][y];
     }
 
@@ -32,7 +32,7 @@ public class Board {
         return string;
     }
 
-    public char[][] get_grid() {
+    public char[][] getGrid() {
         return grid;
     }
 

@@ -1,11 +1,10 @@
-package src.main;
+package isy.team4.projectisy.server;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
-import java.net.UnknownHostException;
 
 public class ServerIO {
     String ip;

@@ -1,7 +1,10 @@
-package src.main;
+package isy.team4.projectisy.server;
 
 import java.io.IOException;
 import java.util.Arrays;
+
+import isy.team4.projectisy.game.TictactoeManager;
+import isy.team4.projectisy.player.*;
 
 public class Server extends ServerIO {
     private String name;
@@ -45,7 +48,12 @@ public class Server extends ServerIO {
 
                 // ERR
                 if (responseParts[0].equals("ERR")) {
-                    throw new Exception(response);
+                    try {
+                        throw new Exception(response);
+                    } catch (Exception e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    }
                 }
 
                 // SRV
@@ -133,14 +141,14 @@ public class Server extends ServerIO {
                             temp = temp.replace("MOVE: ", "");
 
                             String[] tempArr = temp.split(", ");
-                            String playerName = tempArr[0];
+                            // String playerName = tempArr[0];
                             int moveInt = Integer.parseInt(tempArr[1]);
 
                             if (gameType.equals("Tic-tac-toe")) {
                                 int[] move = convertIntToXY(moveInt, 3);
                                 System.out.println(Arrays.toString(move));
                                 game.instertMove(move);
-                                game.increment_turn();
+                                game.incrementTurn();
                                 System.out.println(game.getBoard().toString());
                             }
 
