@@ -4,14 +4,10 @@ import isy.team4.projectisy.model.player.IPlayer;
 import isy.team4.projectisy.util.Board;
 
 public interface IRuleSet {
-    void setTurn(IPlayer player, Board board, Board newBoard);
-
+    void setTurn(Board board, Board newBoard);
     boolean isLegal();
     Board handleBoard(Board board);
     boolean isWon();
-    boolean getWinningPlayer() throws NullPointerException;
+    IPlayer getWinningPlayer() throws NullPointerException;
     boolean isDraw();
-    IPlayer getNextTurn();
-    Board[] getBoardHistory();
-    IPlayer[] getTurnHistory();
 }
