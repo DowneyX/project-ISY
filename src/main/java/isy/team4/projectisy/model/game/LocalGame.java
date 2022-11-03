@@ -63,6 +63,10 @@ public class LocalGame implements IGame {
         this.running = false;
     }
 
+    public Board getBoard() {
+        return this.board;
+    }
+
     @Override
     public IPlayer getCurrentPlayer() {
         return this.currentPlayer;
