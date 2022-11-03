@@ -45,7 +45,7 @@ public class TicTacToeController extends Controller {
         int row = id % 3;
         int col = id / 3;
 
-        this.board.setElement("X", row, col);
+        this.board.setElement('X', row, col);
 
         System.out.println(this.board.toString());
 
