@@ -3,6 +3,8 @@ package isy.team4.projectisy.util;
 import isy.team4.projectisy.model.player.IPlayer;
 
 import java.util.Arrays;
+import java.util.Objects;
+import java.util.stream.Stream;
 
 public class Board {
     protected int width;  // Could be private if no specific boards are needed
@@ -50,6 +52,31 @@ public class Board {
         }
 
         return chars;
+    }
+
+    public int getTotalMovesMade() {
+        return (int) this.getFlatData()
+                .filter(Objects::nonNull)
+                .count();
+    }
+
+    /** 'Rotates' board 90deg to read data **/
+    public IPlayer[][] getRotatedData() {
+        IPlayer[][] currentData = this.getData();
+        IPlayer[][] out = new IPlayer[this.height][this.width];
+
+        for (int x = 0; x < this.getWidth(); x++) {
+            for (int y = 0; y < this.getHeight(); y++) {
+                out[x][y] = currentData[y][x];
+            }
+        }
+
+        return out;
+    }
+
+    public Stream<IPlayer> getFlatData() {
+        return Arrays.stream(this.board)
+                .flatMap(Stream::of);
     }
 
     /**
