@@ -5,7 +5,7 @@ import java.util.Arrays;
 public class Board {
     protected int width;  // Could be private if no specific boards are needed
     protected int height;  // Could be private if no specific boards are needed
-    protected String[][] board;  // Could be private if no specific boards are needed
+    public String[][] board;  // Could be private if no specific boards are needed
 
     public Board(int width, int height) {
         this.width = width;
