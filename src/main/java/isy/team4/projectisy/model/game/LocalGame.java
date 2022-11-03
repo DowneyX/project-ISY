@@ -41,7 +41,8 @@ public class LocalGame implements IGame {
         char[] initials = this.ruleSet.getAllowedInitials();
         for (int i = 0; i < this.players.length; i++) {
             this.players[i].setInitial(initials[0]);
-            initials[0] = initials[i + 1];
+
+            initials[0] = initials[(i + 1) % initials.length];
         }
 
         // Initializing turn
