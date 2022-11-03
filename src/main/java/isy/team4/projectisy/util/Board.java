@@ -35,11 +35,16 @@ public class Board {
         this.board[y][x] = player;
     }
 
-    public char[][] toChars() {
-        char[][] chars = new char[this.height][this.width];
+    public Character[][] toChars() {
+        Character[][] chars = new Character[this.height][this.width];
 
         for (int y = 0; y < this.height; y++) {
             for (int x = 0; x < this.width; x++) {
+                if (this.board[y][x] == null) {
+                    chars[y][x] = null;
+                    continue;
+                }
+
                 chars[y][x] = this.board[y][x].getInitial();
             }
         }
