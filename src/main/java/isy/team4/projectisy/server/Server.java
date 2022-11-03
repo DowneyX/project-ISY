@@ -1,15 +1,18 @@
 package isy.team4.projectisy.server;
 
 import java.io.IOException;
+import java.util.Arrays;
 
 public class Server extends ServerIO {
-    // private String gameType; // reversi of tic-tac-toe
-    // private boolean isPlaying = false;
-    // private Player localPlayer;
-    // private Player remotePlayer;
+    private String name;
+    // private TictactoeManager game; // should be a game class but for right now i
+    // put tictactoe here
+    private String gameType; // reversi of tic-tac-toe
+    public boolean isPlaying = false;
+    // private Player playerLocal;
+    // private PlayerRemote PlayerRemote; // only used for name
     private static Thread serverThread;
     private String response;
-    private String ack = "";
     private String[] playerList;
     private String[] gameList;
 
@@ -38,14 +41,17 @@ public class Server extends ServerIO {
 
                 // OK
                 if (responseParts[0].equals("OK")) {
-                    ack = "OK";
                     continue;
                 }
 
                 // ERR
                 if (responseParts[0].equals("ERR")) {
-                    ack = "ERR";
-                    continue;
+                    try {
+                        throw new Exception(response);
+                    } catch (Exception e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    }
                 }
 
                 // SRV
@@ -91,25 +97,69 @@ public class Server extends ServerIO {
 
                             // usefull data
                             String playerToMove = tempArr[0].replace("PLAYERTOMOVE: ", "");
-                            String gameType = tempArr[1].replace("GAMETYPE: ", "");
+                            gameType = tempArr[1].replace("GAMETYPE: ", "");
                             String opponent = tempArr[2].replace("OPPONENT: ", "");
 
                             // signal that a game has been started
+                            if (gameType.equals("Tic-tac-toe")) {
 
+                                if (playerToMove.equals(name)) {
+                                    // playerLocal = new PlayerSmartTictactoe(name, 'X');
+                                    // PlayerRemote = new PlayerRemote(opponent, 'O');
+                                } else {
+                                    // playerLocal = new PlayerSmartTictactoe(name, 'O');
+                                    // PlayerRemote = new PlayerRemote(opponent, 'X');
+                                }
+
+                                isPlaying = true;
+                                // game = new TictactoeManager(playerLocal, PlayerRemote);
+                                // playerLocal.setBoard(game.getBoard());
+
+                            }
                             continue;
                         }
 
                         if (responseParts[2].equals("YOURTURN")) {
                             // signal ai to make a turn
+
+                            if (gameType.equals("Tic-tac-toe")) {
+                                // int[] move = playerLocal.getMove();
+                                // int moveInt = convertXYToInt(move, 3);
+                                // requestMove(moveInt);
+                            }
                             continue;
                         }
                         if (responseParts[2].equals("MOVE")) {
                             // signal game that there as been a move
+                            String temp = response.replace("SVR GAME MOVE {", "");
+                            temp = temp.replace("}", "");
+                            temp = temp.replace("\"", "");
+                            temp = temp.replace("PLAYER: ", "");
+                            temp = temp.replace("DETAILS: ", "");
+                            temp = temp.replace("MOVE: ", "");
+
+                            String[] tempArr = temp.split(", ");
+                            String playerName = tempArr[0];
+                            int moveInt = Integer.parseInt(tempArr[1]);
+
+                            if (gameType.equals("Tic-tac-toe")) {
+                                int[] move = convertIntToXY(moveInt, 3);
+                                System.out.println(Arrays.toString(move));
+                                // game.instertMove(move);
+                                // game.increment_turn();
+                                // System.out.println(game.getBoard().toString());
+                            }
 
                             continue;
                         }
                         if (responseParts[2].equals("WIN") || responseParts[2].equals("DRAW")
                                 || responseParts[2].equals("LOSS")) {
+
+                            isPlaying = false;
+                            gameType = null;
+                            // playerLocal = null;
+                            // PlayerRemote = null;
+                            // game = null;
 
                             // signal the result of a game
                             continue;
@@ -127,83 +177,68 @@ public class Server extends ServerIO {
         serverThread.start();
     }
 
-    public boolean Requestlogin(String Username) {
+    public void Requestlogin(String Username) {
         sendMessage("login " + Username);
-        return handleAck();
+        name = Username;
     }
 
     public String[] getPlayerlist() throws Exception {
         playerList = null;
         sendMessage("get playerlist");
-        if (handleAck()) {
-            while (playerList == null) {
-                try {
-                    Thread.sleep(200);
-                } catch (InterruptedException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                }
+        while (playerList == null) {
+            try {
+                Thread.sleep(200);
+            } catch (InterruptedException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
             }
-            return playerList;
-        } else {
-            throw new Exception("acknowledgement getPlayerlist failed");
         }
+        return playerList;
     }
 
     public String[] getGamelist() throws Exception {
         gameList = null;
         sendMessage("get gamelist");
-        if (handleAck()) {
-            while (gameList == null) {
-                try {
-                    Thread.sleep(200);
-                } catch (InterruptedException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                }
+
+        while (gameList == null) {
+            try {
+                Thread.sleep(200);
+            } catch (InterruptedException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
             }
-            return gameList;
-        } else {
-            throw new Exception("acknowledgement getGameList failed");
         }
+        return gameList;
     }
 
-    public boolean RequestSubscribeTictactoe() {
+    public void requestSubscribeTictactoe() {
         sendMessage("subscribe tic-tac-toe");
-        return handleAck();
     }
 
-    public boolean RequestSubscribeReversi() {
+    public void requestSubscribeReversi() {
         sendMessage("subscribe reversi");
-        return handleAck();
     }
 
-    public boolean RequestAcceptChallenge(int challengeNr) {
+    public void RequestAcceptChallenge(int challengeNr) {
         sendMessage("challenge accept " + challengeNr);
-        return handleAck();
     }
 
-    public boolean RequestChallenge(String username, String gameType) {
+    public void requestChallenge(String username, String gameType) {
         sendMessage("challenge " + username + " " + gameType);
-        return handleAck();
     }
 
-    private Boolean handleAck() {
-        while (true) {
-            if (ack.equals("OK")) {
-                ack = "";
-                return true;
-            } else if (ack.equals("ERR")) {
-                ack = "";
-                return false;
-            } else {
-                try {
-                    Thread.sleep(200);
-                } catch (InterruptedException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                }
-            }
-        }
+    public void requestMove(int move) {
+        sendMessage("move " + move);
+    }
+
+    public int convertXYToInt(int[] move, int lenght) {
+        return move[0] * lenght + move[1];
+    }
+
+    public int[] convertIntToXY(int incommingMove, int lenght) {
+        int y = (incommingMove) % lenght;
+        int x = (incommingMove) / lenght;
+        int[] move = { x, y };
+        return move;
     }
 }

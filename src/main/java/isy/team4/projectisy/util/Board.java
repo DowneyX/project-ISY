@@ -9,6 +9,7 @@ public class Board {
     protected int height;  // Could be private if no specific boards are needed
     protected IPlayer[][] board;  // Could be private if no specific boards are needed
 
+
     public Board(int width, int height) {
         this.width = width;
         this.height = height;
