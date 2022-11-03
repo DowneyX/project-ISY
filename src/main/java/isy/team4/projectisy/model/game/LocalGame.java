@@ -123,6 +123,7 @@ public class LocalGame implements IGame {
         }
 
         // If game not ended, we continue on
+        this.currentTurn++;
         this.rotateCurrentPlayer();
     }
 }
