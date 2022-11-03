@@ -3,16 +3,44 @@ package isy.team4.projectisy.model.rule;
 import isy.team4.projectisy.model.player.IPlayer;
 import isy.team4.projectisy.util.Board;
 
-public final class TicTacToeRuleSet implements IRuleSet {
-    // TODO: Implement methods
-    @Override
-    public void setTurn(IPlayer player, Board board, Board newBoard) {
+import java.util.Arrays;
+import java.util.Objects;
+import java.util.stream.Stream;
 
+public final class TicTacToeRuleSet implements IRuleSet {
+    private Board oldBoard;
+
+    private Board newBoard;
+
+    @Override
+    public Integer getMinPlayerSize() {
+        return 2;
+    }
+
+    @Override
+    public Integer getMaxPlayerSize() {
+        return 2;
+    }
+
+    @Override
+    public char[] getAllowedInitials() {
+        return new char[]{'X', 'O'};
+    }
+
+    @Override
+    public Board getStartingBoard() {
+        return new Board(3, 3);
+    }
+
+    @Override
+    public void setTurn(Board board, Board newBoard) {
+        this.oldBoard = board;
+        this.newBoard = newBoard;
     }
 
     @Override
     public boolean isLegal() {
-        return false;
+        return this.newBoard.getTotalMovesMade() > this.oldBoard.getTotalMovesMade();
     }
 
     @Override
@@ -22,31 +50,57 @@ public final class TicTacToeRuleSet implements IRuleSet {
 
     @Override
     public boolean isWon() {
-        return false;
+        return this.winningSet() != null;
+    }
+
+    private IPlayer[] winningSet() {
+        Board board = this.newBoard;
+        IPlayer[][] data = this.newBoard.getData();
+        IPlayer[][] rotatedData = this.newBoard.getRotatedData();
+        IPlayer[] output = null;
+
+        // Check if horizontal or vertical has matching symbols
+        for (int i = 0; i < board.getHeight(); i++) {
+            if (this.hasAllSymbols(data[i])) {
+                output = data[i];
+            } else if (this.hasAllSymbols(rotatedData[i])) {
+                output = rotatedData[i];
+            }
+        }
+
+        IPlayer[] leftDiagMoves = new IPlayer[]{data[0][0], data[1][1], data[2][2]};
+        IPlayer[] rightDiagMoves = new IPlayer[]{data[2][0], data[1][1], data[0][2]};
+
+        // Check if diagonal has matching symbols.
+        if (this.hasAllSymbols(leftDiagMoves)) {
+            output = leftDiagMoves;
+        } else if (this.hasAllSymbols(rightDiagMoves)) {
+            output = rightDiagMoves;
+        }
+
+        return output;
+    }
+
+    private boolean hasAllSymbols(IPlayer[] moves) {
+        Stream<IPlayer> stream = Arrays.stream(moves);
+        return stream.noneMatch(Objects::isNull) && stream.map(IPlayer::getInitial).distinct().count() == 1;
     }
 
     @Override
-    public boolean getWinningPlayer() throws NullPointerException {
-        return false;
+    public IPlayer getWinningPlayer() throws NullPointerException {
+        IPlayer[] winningSet = this.winningSet();
+
+        if (winningSet != null) {
+            return winningSet[0];
+        }
+
+        throw new NullPointerException();
     }
 
     @Override
     public boolean isDraw() {
-        return false;
-    }
-
-    @Override
-    public IPlayer getNextTurn() {
-        return null;
-    }
-
-    @Override
-    public Board[] getBoardHistory() {
-        return new Board[0];
-    }
-
-    @Override
-    public IPlayer[] getTurnHistory() {
-        return new IPlayer[0];
+        return ! this.isWon() &&  this.newBoard
+                .getFlatData()
+                .noneMatch(Objects::isNull);
     }
 }
