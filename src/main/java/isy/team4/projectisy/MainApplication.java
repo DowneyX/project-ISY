@@ -1,18 +1,13 @@
 package isy.team4.projectisy;
 
+import isy.team4.projectisy.server.Server;
 import javafx.application.Application;
-import javafx.event.ActionEvent;
-import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import isy.team4.projectisy.server.Server;
 
 import java.io.IOException;
 import java.util.Scanner;
-import java.util.Objects;
 
 public class MainApplication extends Application {
     @Override
