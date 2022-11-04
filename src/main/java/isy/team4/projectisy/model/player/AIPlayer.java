@@ -9,8 +9,9 @@ public class AIPlayer implements IPlayer {
     private final String name;
     private char initial;
     private int[][] possibleMoves = {
-            { 1, 1 }, { 0, 0 }, { 0, 2 }, { 2, 0 }, { 2, 2 },
-            { 0, 1 }, { 1, 0 }, { 1, 2 }, { 2, 1 } };
+            { 0, 0 }, { 1, 0 }, { 2, 0 },
+            { 0, 1 }, { 1, 1 }, { 2, 1 },
+            { 0, 2 }, { 1, 2 }, { 2, 2 } };
 
     public AIPlayer(String name) {
         this.name = name;
@@ -26,18 +27,22 @@ public class AIPlayer implements IPlayer {
         return this.initial;
     }
 
+    public String toString() {
+        return "AIplayer";
+    }
+
     @Override
     public Vector2D getMove(Board board, IPlayer opponent) {
-        // TODO: AI Move
+        System.out.println(board.toString());
 
-        Vector2D BestMove = new Vector2D(0, 0);
         int bestVal = Integer.MIN_VALUE;
-        Board newBoard = board.copyBoard();
+        Board newBoard = new Board(board);
+        Vector2D BestMove = new Vector2D(0, 0);
 
         for (int[] move : possibleMoves) {
-            if (newBoard.getData()[move[0]][move[1]] == null) {
+            if (newBoard.getElement(move[0], move[1]) == null) {
                 newBoard.setElement(this, move[0], move[1]);
-                int moveVal = Math.max(bestVal, miniMax(newBoard, 0, false, opponent));
+                int moveVal = miniMax(newBoard, 0, false, opponent);
                 newBoard.setElement(null, move[0], move[1]);
 
                 if (moveVal > bestVal) {
@@ -48,6 +53,7 @@ public class AIPlayer implements IPlayer {
         }
 
         return BestMove;
+
     }
 
     @Override
@@ -55,24 +61,26 @@ public class AIPlayer implements IPlayer {
         this.initial = initial;
     }
 
-    private int miniMax(Board board, int depth, boolean isCurrentPlayer, IPlayer opponent) {
+    private int miniMax(Board board, int depth, boolean isMax, IPlayer opponent) {
 
-        int score = 0;
-        Board newBoard = board.copyBoard();
-
-        if (!hasWon(board) || board.isFull() || !hasLost(board)) { // terminal state of the board
-            score += isCurrentPlayer && hasWon(newBoard) ? 10 : 0;
-            score -= !isCurrentPlayer && hasWon(newBoard) ? 10 : 0;
+        if (hasWon(board, this) || hasWon(board, opponent) || board.isFull()) { // terminal state of the board
+            int score = 0;
+            if (hasWon(board, opponent)) {
+                score = Integer.MIN_VALUE + depth;
+            }
+            if (hasWon(board, this)) {
+                score = Integer.MAX_VALUE - depth;
+            }
             return score;
         }
 
-        if (isCurrentPlayer) { // if we are max player
+        if (isMax) { // if we are max player
             int bestVal = Integer.MIN_VALUE;
             for (int[] move : possibleMoves) {
-                if (newBoard.getData()[move[0]][move[1]] == null) {
-                    newBoard.setElement(this, move[0], move[1]);
-                    bestVal = Math.max(bestVal, miniMax(newBoard, depth + 1, !isCurrentPlayer, opponent));
-                    newBoard.setElement(null, move[0], move[1]);
+                if (board.getElement(move[0], move[1]) == null) {
+                    board.setElement(this, move[0], move[1]);
+                    bestVal = Math.max(bestVal, miniMax(board, depth + 1, false, opponent));
+                    board.setElement(null, move[0], move[1]);
                 }
             }
             return bestVal;
@@ -80,40 +88,25 @@ public class AIPlayer implements IPlayer {
         } else { // if we are min player
             int bestVal = Integer.MAX_VALUE;
             for (int[] move : possibleMoves) {
-                if (newBoard.getData()[move[0]][move[1]] == null) {
-                    newBoard.setElement(opponent, move[0], move[1]);
-                    bestVal = Math.min(bestVal, miniMax(newBoard, depth + 1, !isCurrentPlayer, opponent));
-                    newBoard.setElement(null, move[0], move[1]);
-
+                if (board.getElement(move[0], move[1]) == null) {
+                    board.setElement(opponent, move[0], move[1]);
+                    bestVal = Math.min(bestVal, miniMax(board, depth + 1, true, opponent));
+                    board.setElement(null, move[0], move[1]);
                 }
             }
             return bestVal;
         }
     }
 
-    private boolean hasWon(Board board) {
+    private boolean hasWon(Board board, IPlayer player) {
         IPlayer[][] grid = board.getData();
-
-        return grid[0][0] == grid[0][1] && grid[0][1] == grid[0][2] && grid[0][0] == this ||
-                grid[1][0] == grid[1][1] && grid[1][1] == grid[1][2] && grid[1][0] == this ||
-                grid[2][0] == grid[2][1] && grid[2][1] == grid[2][2] && grid[2][0] == this ||
-                grid[0][0] == grid[1][0] && grid[1][0] == grid[2][0] && grid[0][0] == this ||
-                grid[0][1] == grid[1][1] && grid[1][1] == grid[2][1] && grid[0][1] == this ||
-                grid[0][2] == grid[1][2] && grid[1][2] == grid[2][2] && grid[0][2] == this ||
-                grid[0][0] == grid[1][1] && grid[1][1] == grid[2][2] && grid[0][0] == this ||
-                grid[0][2] == grid[1][1] && grid[1][1] == grid[2][0] && grid[0][2] == this;
-    }
-
-    private boolean hasLost(Board board) {
-        IPlayer[][] grid = board.getData();
-
-        return grid[0][0] == grid[0][1] && grid[0][1] == grid[0][2] && grid[0][0] != this && grid[0][0] != null ||
-                grid[1][0] == grid[1][1] && grid[1][1] == grid[1][2] && grid[1][0] != this && grid[0][0] != null ||
-                grid[2][0] == grid[2][1] && grid[2][1] == grid[2][2] && grid[2][0] != this && grid[0][0] != null ||
-                grid[0][0] == grid[1][0] && grid[1][0] == grid[2][0] && grid[0][0] != this && grid[0][0] != null ||
-                grid[0][1] == grid[1][1] && grid[1][1] == grid[2][1] && grid[0][1] != this && grid[0][0] != null ||
-                grid[0][2] == grid[1][2] && grid[1][2] == grid[2][2] && grid[0][2] != this && grid[0][0] != null ||
-                grid[0][0] == grid[1][1] && grid[1][1] == grid[2][2] && grid[0][0] != this && grid[0][0] != null ||
-                grid[0][2] == grid[1][1] && grid[1][1] == grid[2][0] && grid[0][2] != this && grid[0][0] != null;
+        return grid[0][0] == grid[0][1] && grid[0][1] == grid[0][2] && grid[0][0] == player ||
+                grid[1][0] == grid[1][1] && grid[1][1] == grid[1][2] && grid[1][0] == player ||
+                grid[2][0] == grid[2][1] && grid[2][1] == grid[2][2] && grid[2][0] == player ||
+                grid[0][0] == grid[1][0] && grid[1][0] == grid[2][0] && grid[0][0] == player ||
+                grid[0][1] == grid[1][1] && grid[1][1] == grid[2][1] && grid[0][1] == player ||
+                grid[0][2] == grid[1][2] && grid[1][2] == grid[2][2] && grid[0][2] == player ||
+                grid[0][0] == grid[1][1] && grid[1][1] == grid[2][2] && grid[0][0] == player ||
+                grid[0][2] == grid[1][1] && grid[1][1] == grid[2][0] && grid[0][2] == player;
     }
 }

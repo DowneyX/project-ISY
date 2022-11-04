@@ -33,6 +33,7 @@ public class RemotePlayer implements IPlayer {
         this.initial = initial;
     }
 
+    @Override
     public String toString() {
         return "Remoteplayer";
     }

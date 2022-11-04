@@ -105,7 +105,8 @@ public class LocalGame implements IGame {
                     String.format("Player %s went out of bounds", this.currentPlayer.getName()));
         }
 
-        // Make copy of board to temp set the move (this is to check it with the ruleset)
+        // Make copy of board to temp set the move (this is to check it with the
+        // ruleset)
         Board newBoard = new Board(board); // Using deep copy now
 
         System.out.println(this.board.toString()); // initial board

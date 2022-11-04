@@ -19,6 +19,7 @@ public class Board {
 
     /**
      * Copy constructor to create a deep copy for checking if a move is valid
+     * 
      * @param board
      */
     public Board(Board board) {
@@ -26,10 +27,9 @@ public class Board {
         this.height = board.height;
         this.board = new IPlayer[height][width];
 
-        for(int i = 0; i < board.height; i++) {
+        for (int i = 0; i < board.height; i++) {
             System.arraycopy(board.board[i], 0, this.board[i], 0, board.height);
         }
-
 
     }
 
@@ -52,16 +52,6 @@ public class Board {
         return true;
     }
 
-    public Board copyBoard() {
-        Board newboard = new Board(width, height);
-        for (int x = 0; x < height; x++) {
-            for (int y = 0; y < height; y++) {
-                newboard.setElement(board[x][y], x, y);
-            }
-        }
-        return newboard;
-    }
-
     /**
      * @throws ArrayIndexOutOfBoundsException when x or y out of bounds
      */
@@ -71,6 +61,14 @@ public class Board {
         }
 
         this.board[y][x] = player;
+    }
+
+    public IPlayer getElement(int x, int y) {
+        if (x >= this.width || y >= this.height) {
+            throw new ArrayIndexOutOfBoundsException();
+        }
+
+        return this.board[y][x];
     }
 
     public Character[][] toChars() {
@@ -122,10 +120,11 @@ public class Board {
      */
     public String toString() {
         StringBuilder res = new StringBuilder();
-        for(IPlayer[] row : getData()) {
-//            res.append(Arrays.stream(row).map(IPlayer::getInitial).toString()).append("\n");  // TODO: fix this
-            for(IPlayer cell : row) {
-                if(cell == null) {
+        for (IPlayer[] row : getData()) {
+            // res.append(Arrays.stream(row).map(IPlayer::getInitial).toString()).append("\n");
+            // // TODO: fix this
+            for (IPlayer cell : row) {
+                if (cell == null) {
                     res.append("null ");
                 } else {
                     res.append(cell.toString()).append(" ");
