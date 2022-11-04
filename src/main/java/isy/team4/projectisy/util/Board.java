@@ -18,6 +18,22 @@ public class Board {
         this.board = new IPlayer[height][width];  // reversed for proper x-y notation
     }
 
+    /**
+     * Copy constructor to create a deep copy for checking if a move is valid
+     * @param board
+     */
+    public Board(Board board) {
+        this.width = board.width;
+        this.height = board.height;
+        this.board = new IPlayer[height][width];
+
+        for(int i = 0; i < board.height; i++) {
+            System.arraycopy(board.board[i], 0, this.board[i], 0, board.height);
+        }
+
+
+    }
+
     public IPlayer[][] getData() {
         return this.board;
     }
@@ -85,8 +101,16 @@ public class Board {
      */
     public String toString() {
         StringBuilder res = new StringBuilder();
-        for(IPlayer[] row : board) {
-            res.append(Arrays.stream(row).map(IPlayer::getInitial).toString()).append("\n");  // TODO not sure if this works
+        for(IPlayer[] row : getData()) {
+//            res.append(Arrays.stream(row).map(IPlayer::getInitial).toString()).append("\n");  // TODO: fix this
+            for(IPlayer cell : row) {
+                if(cell == null) {
+                    res.append("null ");
+                } else {
+                    res.append(cell.toString()).append(" ");
+                }
+            }
+            res.append("\n");
         }
         return res.toString();
     }

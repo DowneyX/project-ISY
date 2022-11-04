@@ -96,8 +96,14 @@ public class LocalGame implements IGame {
         }
 
         // Make copy of board to temp set the move (this is to check it with the ruleset)
-        Board newBoard = this.board;
+        Board newBoard = new Board(board); // Using deep copy now
+
+        System.out.println(this.board.toString()); // initial board
+
         newBoard.setElement(this.currentPlayer, move.x, move.y);
+
+        System.out.println(newBoard.toString()); // new board after setElement
+
         this.ruleSet.setTurn(this.board, newBoard);
 
         // Check if set was legal by rules

@@ -32,4 +32,8 @@ public class LocalPlayer implements IPlayer {
     public void setInitial(char initial) {
         this.initial = initial;
     }
+
+    public String toString() {
+        return "Localplayer";
+    }
 }
