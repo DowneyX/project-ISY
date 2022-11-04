@@ -42,7 +42,6 @@ public class HomeController extends Controller {
     @FXML
     public void navigateToTicTacToe(ActionEvent actionEvent, String gametype) {
         try {
-            //        Stage stage = (Stage)((Node)actionEvent.getSource()).getScene().getWindow(); // for button
             Stage stage = (Stage) dropdown.getScene().getWindow(); // for dropdown using menubutton
             FXMLLoader fxmlLoader = new FXMLLoader(MainApplication.class.getResource("tictactoe-view.fxml"));
             Parent root = fxmlLoader.load();

@@ -3,6 +3,8 @@ package isy.team4.projectisy.model.player;
 import isy.team4.projectisy.util.Board;
 import isy.team4.projectisy.util.Vector2D;
 
+import java.util.Random;
+
 public class AIPlayer implements IPlayer {
     private final String name;
     private char initial;

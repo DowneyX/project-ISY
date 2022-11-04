@@ -30,6 +30,7 @@
          <Text fx:id="player2Text" strokeType="OUTSIDE" strokeWidth="0.0" text="Not set" GridPane.columnIndex="1" GridPane.rowIndex="1" />
       </children>
    </GridPane>
+   <Button cancelButton="true" onAction="#startGame" text="Start" />
     <GridPane fx:id="grid" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="150.0" prefWidth="150.0">
         <columnConstraints>
             <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />

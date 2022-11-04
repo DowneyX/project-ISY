@@ -2,6 +2,8 @@ package isy.team4.projectisy.model.game;
 
 import isy.team4.projectisy.model.player.IPlayer;
 import isy.team4.projectisy.model.rule.IRuleSet;
+import isy.team4.projectisy.util.Board;
+import isy.team4.projectisy.util.Result;
 
 public class RemoteGame implements IGame {
     private final IPlayer player;
@@ -28,6 +30,11 @@ public class RemoteGame implements IGame {
     }
 
     @Override
+    public Board getBoard() {
+        return null;
+    }
+
+    @Override
     public IPlayer getCurrentPlayer() {
         // TODO
         return null;
@@ -37,6 +44,11 @@ public class RemoteGame implements IGame {
     public IPlayer[] getPlayers() {
         // TODO
         return new IPlayer[0];
+    }
+
+    @Override
+    public Result getResult() {
+        return null;
     }
 
     public void setGameHandler(IGameHandler gameHandler) {
