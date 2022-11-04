@@ -24,7 +24,7 @@ public class RemotePlayer implements IPlayer {
     }
 
     @Override
-    public Vector2D getMove(Board board) {
+    public Vector2D getMove(Board board, IPlayer opponent) {
         return this.playerTurnHandler.getPlayerMove();
     }
 

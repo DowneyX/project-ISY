@@ -7,15 +7,14 @@ import java.util.Objects;
 import java.util.stream.Stream;
 
 public class Board {
-    protected int width;  // Could be private if no specific boards are needed
-    protected int height;  // Could be private if no specific boards are needed
-    protected IPlayer[][] board;  // Could be private if no specific boards are needed
-
+    protected int width; // Could be private if no specific boards are needed
+    protected int height; // Could be private if no specific boards are needed
+    protected IPlayer[][] board; // Could be private if no specific boards are needed
 
     public Board(int width, int height) {
         this.width = width;
         this.height = height;
-        this.board = new IPlayer[height][width];  // reversed for proper x-y notation
+        this.board = new IPlayer[height][width]; // reversed for proper x-y notation
     }
 
     public IPlayer[][] getData() {
@@ -24,6 +23,27 @@ public class Board {
 
     public void clear() {
         this.board = new IPlayer[this.height][this.width];
+    }
+
+    public boolean isFull() {
+        for (int x = 0; x < height; x++) {
+            for (int y = 0; y < height; y++) {
+                if (board[x][y] == null) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    public Board copyBoard() {
+        Board newboard = new Board(width, height);
+        for (int x = 0; x < height; x++) {
+            for (int y = 0; y < height; y++) {
+                newboard.setElement(board[x][y], x, y);
+            }
+        }
+        return newboard;
     }
 
     /**
@@ -81,12 +101,14 @@ public class Board {
 
     /**
      * For debugging purposes
+     * 
      * @return The board array displayed as a string with linebreaks
      */
     public String toString() {
         StringBuilder res = new StringBuilder();
-        for(IPlayer[] row : board) {
-            res.append(Arrays.stream(row).map(IPlayer::getInitial).toString()).append("\n");  // TODO not sure if this works
+        for (IPlayer[] row : board) {
+            res.append(Arrays.stream(row).map(IPlayer::getInitial).toString()).append("\n"); // TODO not sure if this
+                                                                                             // works
         }
         return res.toString();
     }
