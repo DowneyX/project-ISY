@@ -24,12 +24,16 @@ public class LocalPlayer implements IPlayer {
     }
 
     @Override
-    public Vector2D getMove(Board board) {
+    public Vector2D getMove(Board board, IPlayer opponent) {
         return this.playerTurnHandler.getPlayerMove();
     }
 
     @Override
     public void setInitial(char initial) {
         this.initial = initial;
+    }
+
+    public String toString() {
+        return "Localplayer";
     }
 }

@@ -7,15 +7,30 @@ import java.util.Objects;
 import java.util.stream.Stream;
 
 public class Board {
-    protected int width;  // Could be private if no specific boards are needed
-    protected int height;  // Could be private if no specific boards are needed
-    protected IPlayer[][] board;  // Could be private if no specific boards are needed
-
+    protected int width; // Could be private if no specific boards are needed
+    protected int height; // Could be private if no specific boards are needed
+    protected IPlayer[][] board; // Could be private if no specific boards are needed
 
     public Board(int width, int height) {
         this.width = width;
         this.height = height;
-        this.board = new IPlayer[height][width];  // reversed for proper x-y notation
+        this.board = new IPlayer[height][width]; // reversed for proper x-y notation
+    }
+
+    /**
+     * Copy constructor to create a deep copy for checking if a move is valid
+     * 
+     * @param board
+     */
+    public Board(Board board) {
+        this.width = board.width;
+        this.height = board.height;
+        this.board = new IPlayer[height][width];
+
+        for (int i = 0; i < board.height; i++) {
+            System.arraycopy(board.board[i], 0, this.board[i], 0, board.height);
+        }
+
     }
 
     public IPlayer[][] getData() {
@@ -24,6 +39,17 @@ public class Board {
 
     public void clear() {
         this.board = new IPlayer[this.height][this.width];
+    }
+
+    public boolean isFull() {
+        for (int x = 0; x < height; x++) {
+            for (int y = 0; y < height; y++) {
+                if (board[x][y] == null) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
     /**
@@ -35,6 +61,14 @@ public class Board {
         }
 
         this.board[y][x] = player;
+    }
+
+    public IPlayer getElement(int x, int y) {
+        if (x >= this.width || y >= this.height) {
+            throw new ArrayIndexOutOfBoundsException();
+        }
+
+        return this.board[y][x];
     }
 
     public Character[][] toChars() {
@@ -81,12 +115,22 @@ public class Board {
 
     /**
      * For debugging purposes
+     * 
      * @return The board array displayed as a string with linebreaks
      */
     public String toString() {
         StringBuilder res = new StringBuilder();
-        for(IPlayer[] row : board) {
-            res.append(Arrays.stream(row).map(IPlayer::getInitial).toString()).append("\n");  // TODO not sure if this works
+        for (IPlayer[] row : getData()) {
+            // res.append(Arrays.stream(row).map(IPlayer::getInitial).toString()).append("\n");
+            // // TODO: fix this
+            for (IPlayer cell : row) {
+                if (cell == null) {
+                    res.append("null ");
+                } else {
+                    res.append(cell.toString()).append(" ");
+                }
+            }
+            res.append("\n");
         }
         return res.toString();
     }

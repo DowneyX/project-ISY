@@ -1,7 +1,18 @@
 package isy.team4.projectisy.controller;
 
 import isy.team4.projectisy.MainApplication;
+import isy.team4.projectisy.model.game.IGame;
+import isy.team4.projectisy.model.game.IGameHandler;
+import isy.team4.projectisy.model.game.LocalGame;
+import isy.team4.projectisy.model.player.AIPlayer;
+import isy.team4.projectisy.model.player.IPlayer;
+import isy.team4.projectisy.model.player.IPlayerTurnHandler;
+import isy.team4.projectisy.model.player.LocalPlayer;
+import isy.team4.projectisy.model.rule.IRuleSet;
+import isy.team4.projectisy.model.rule.TicTacToeRuleSet;
 import isy.team4.projectisy.util.Board;
+import isy.team4.projectisy.util.Vector2D;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -18,7 +29,7 @@ import java.io.IOException;
 import java.util.Objects;
 import java.util.Random;
 
-public class TicTacToeController extends Controller {
+public class TicTacToeController extends Controller implements IGameHandler, IPlayerTurnHandler {
 
     @FXML
     public Text player1Text;
@@ -33,7 +44,11 @@ public class TicTacToeController extends Controller {
     public String p2;
     private String gametype;
     private String currentPlayer = "X";
-    private boolean boardDisabled = false;
+    private boolean boardDisabled = true;
+
+    private IGame game;
+
+    private volatile int playermove = -1;
 
     public TicTacToeController() {
         this.board = new Board(3, 3);
@@ -68,7 +83,6 @@ public class TicTacToeController extends Controller {
 
     @FXML
     public void initialize() {
-        gameinfo.setText(currentPlayer + " is aan de beurt");
     }
 
     // TODO: refactoring?
@@ -92,92 +106,105 @@ public class TicTacToeController extends Controller {
 
         int idx = Integer.parseInt(btn.getId());
         btn.setText(currentPlayer); // set btn text
-        int row = idx % 3;
-        int col = idx / 3;
-        this.turn(col, row); // set an actual move
 
-        // TODO: check if won
-        if(winner()) {
-            gameinfo.setText(currentPlayer + " heeft gewonnen!");
-            boardDisabled = true;
-            return;
-        }
+        playermove = idx;
 
-        // change current player
-        switchPlayer();
+    }
 
-        boardDisabled = true;
-
-        // set info text
+    /**
+     * Game is stared using the start button.
+     *
+     * @param actionEvent
+     */
+    public void startGame(ActionEvent actionEvent) {
         gameinfo.setText(currentPlayer + " is aan de beurt");
+        System.out.println(gametype);
 
-        handleOppositeTurn();
+        IRuleSet ruleset = new TicTacToeRuleSet();
+        IPlayer[] players = new IPlayer[2];
 
-        boardDisabled = false;
-
-        // TODO: check if won
-        if(winner()) {
-            gameinfo.setText(currentPlayer + " heeft gewonnen!");
+        if (Objects.equals(gametype, "local_pvai")) {
+            players[0] = new LocalPlayer(p1, this);
+            players[1] = new AIPlayer(p2);
+            ruleset = new TicTacToeRuleSet();
+            game = new LocalGame(players, ruleset);
+            game.setGameHandler(this);
+            game.start();
+        } else {
             return;
         }
+
+        // enable board
+        boardDisabled = false;
     }
 
-    // TODO: Alles hieronder is tijdelijk als vervanging van een nog te schrijven code
+    @Override
+    public void onUpdate() {
+        board = game.getBoard(); // set new board
 
-    public void turn(int row, int col) {
-        this.board.setElement(currentPlayer, col, row);
-    }
+        // draw new board. runlater because called from another thread
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                for (int i = 0; i < board.getWidth() * board.getHeight(); i++) {
+                    int x = i % 3;
+                    int y = i / 3;
+                    IPlayer currentplayer = board.getData()[y][x];
 
-    public String getCurrentPlayer() {
-        return currentPlayer;
-    }
-
-    public boolean winner() {
-        return board.board[0][0] == board.board[0][1] && board.board[0][1] == board.board[0][2] && board.board[0][0] != null ||
-                board.board[1][0] == board.board[1][1] && board.board[1][1] == board.board[1][2] && board.board[1][0] != null ||
-                board.board[2][0] == board.board[2][1] && board.board[2][1] == board.board[2][2] && board.board[2][0] != null ||
-
-                board.board[0][0] == board.board[1][0] && board.board[1][0] == board.board[2][0] && board.board[0][0] != null ||
-                board.board[0][1] == board.board[1][1] && board.board[1][1] == board.board[2][1] && board.board[0][1] != null ||
-                board.board[0][2] == board.board[1][2] && board.board[1][2] == board.board[2][2] && board.board[0][2] != null ||
-
-                board.board[0][0] == board.board[1][1] && board.board[1][1] == board.board[2][2] && board.board[0][0] != null ||
-                board.board[0][2] == board.board[1][1] && board.board[1][1] == board.board[2][0] && board.board[0][2] != null;
-    }
-
-    public void switchPlayer() {
-        if (Objects.equals(currentPlayer, "X")) {
-            currentPlayer = "O";
-        } else {
-            currentPlayer = "X";
-        }
-    }
-
-    public void handleOppositeTurn() {
-        System.out.println(gametype);
-        if(Objects.equals(gametype, "local_pvp")) {
-            boardDisabled = false;
-        } else if(Objects.equals(gametype, "local_pvai")) {
-            // let the ai make a turn
-            Random rand = new Random();
-
-            // very stupid ai TODO: refactor
-            while(true) {
-                int row = rand.nextInt(3);
-                int col = rand.nextInt(3);
-                System.out.println(row + " " + col);
-                if(board.board[row][col] == null) {
-
-                    turn(row, col);
-                    int idx = 3*row + col;
-                    Button btn = (Button) grid.getChildren().get(idx);
-                    System.out.println(row + " - " + col + " = " + idx);
-                    btn.setText(currentPlayer);
-                    System.out.println(board.toString());
-                    switchPlayer();
-                    return;
+                    if (currentplayer != null) {
+                        Button btn = (Button) grid.getChildren().get(i);
+                        btn.setText(Character.toString(currentplayer.getInitial()));
+                    }
                 }
             }
+        });
+
+    }
+
+    @Override
+    public void onFinished() {
+        gameinfo.setText(game.getResult().toString());
+        stopGame();
+    }
+
+    @Override
+    public void onIllegal() {
+        gameinfo.setText("Illegale zet!");
+    }
+
+    @Override
+    public Vector2D getPlayerMove() {
+        // -1 means no move has been made yet
+//        this.gameinfo.setText("DOE EEN ZET"); // array index -1 undefined?
+
+        while (this.playermove == -1) {
+            try {
+                Thread.sleep(50);
+            } catch (Exception e) {
+                System.out.println("error: " + e);
+            }
         }
+
+        System.out.println(this.playermove);
+
+        int x = this.playermove % 3;
+        int y = this.playermove / 3;
+
+        this.playermove = -1;
+
+        return new Vector2D(x, y);
+    }
+
+    public void emptyBoard() {
+        for (int i = 0; i < board.getWidth() * board.getHeight(); i++) {
+            Button btn = (Button) grid.getChildren().get(i);
+            btn.setText("");
+        }
+    }
+
+    public void stopGame() {
+        emptyBoard();
+        boardDisabled = true;
+        game.stop();
     }
 }

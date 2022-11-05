@@ -234,7 +234,7 @@ public class Server extends ServerIO {
     }
 
     private void makeMoveTictacToe() {
-        Vector2D move = localPlayer.getMove(board);
+        Vector2D move = localPlayer.getMove(board, remotePlayer);
         int moveInt = convertVector2DToInt(move, 3);
         requestMove(moveInt);
     }

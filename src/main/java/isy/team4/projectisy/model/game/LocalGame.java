@@ -28,13 +28,11 @@ public class LocalGame implements IGame {
     public void start() throws IllegalArgumentException, ArrayIndexOutOfBoundsException {
         // Check if Player count is correct
         if ((this.ruleSet.getMinPlayerSize() != null && this.players.length < this.ruleSet.getMinPlayerSize())
-            || (this.ruleSet.getMaxPlayerSize() != null && this.players.length > ruleSet.getMaxPlayerSize())) {
+                || (this.ruleSet.getMaxPlayerSize() != null && this.players.length > ruleSet.getMaxPlayerSize())) {
             throw new IllegalArgumentException(String.format(
                     "Player count needs to be between %o and %o",
                     this.ruleSet.getMinPlayerSize(),
-                    this.ruleSet.getMaxPlayerSize()
-                    )
-            );
+                    this.ruleSet.getMaxPlayerSize()));
         }
 
         // Set initials to players
@@ -47,14 +45,15 @@ public class LocalGame implements IGame {
 
         // Initializing turn
         this.currentTurn = 0;
-        this.rotateCurrentPlayer();  // Initially sets player
+        this.rotateCurrentPlayer(); // Initially sets player
 
         // Start thread and run the loop
         this.running = true;
         new Thread(() -> {
             while (this.running) {
                 this.loop();
-            };
+            }
+            ;
         }).start();
     }
 
@@ -84,29 +83,48 @@ public class LocalGame implements IGame {
     public void setGameHandler(IGameHandler gameHandler) {
         this.gameHandler = gameHandler;
     }
+
     private void rotateCurrentPlayer() {
         this.currentPlayer = this.players[this.currentTurn % this.players.length];
     }
 
+    private IPlayer getOpponent() { // TODO fix this
+        for (IPlayer player : players) {
+            if (player != currentPlayer) {
+                return player;
+            }
+        }
+        return null;
+    }
+
     private void loop() throws ArrayIndexOutOfBoundsException {
         // Get current player move and check if within bounds of board
-        Vector2D move = this.currentPlayer.getMove(this.board);
+        Vector2D move = this.currentPlayer.getMove(this.board, getOpponent());
         if (move.x >= board.getWidth() || move.y >= board.getHeight()) {
-            throw new ArrayIndexOutOfBoundsException(String.format("Player %s went out of bounds", this.currentPlayer.getName()));
+            throw new ArrayIndexOutOfBoundsException(
+                    String.format("Player %s went out of bounds", this.currentPlayer.getName()));
         }
 
-        // Make copy of board to temp set the move (this is to check it with the ruleset)
-        Board newBoard = this.board;
+        // Make copy of board to temp set the move (this is to check it with the
+        // ruleset)
+        Board newBoard = new Board(board); // Using deep copy now
+
+        System.out.println(this.board.toString()); // initial board
+
         newBoard.setElement(this.currentPlayer, move.x, move.y);
+
+        System.out.println(newBoard.toString()); // new board after setElement
+
         this.ruleSet.setTurn(this.board, newBoard);
 
         // Check if set was legal by rules
         if (!this.ruleSet.isLegal()) {
             this.gameHandler.onIllegal();
-            return;  // Starts loop again
+            return; // Starts loop again
         }
 
-        // Set the new board with potential changes that came from the move of the player
+        // Set the new board with potential changes that came from the move of the
+        // player
         Board handledBoard = this.ruleSet.handleBoard(newBoard);
         this.board = (handledBoard != null) ? handledBoard : newBoard;
         this.gameHandler.onUpdate();

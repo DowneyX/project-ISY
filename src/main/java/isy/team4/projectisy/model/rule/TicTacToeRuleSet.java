@@ -24,7 +24,7 @@ public final class TicTacToeRuleSet implements IRuleSet {
 
     @Override
     public char[] getAllowedInitials() {
-        return new char[]{'X', 'O'};
+        return new char[] { 'X', 'O' };
     }
 
     @Override
@@ -50,7 +50,7 @@ public final class TicTacToeRuleSet implements IRuleSet {
 
     @Override
     public boolean isWon() {
-        return this.winningSet() != null;
+        return false; // TODO fix this
     }
 
     private IPlayer[] winningSet() {
@@ -68,8 +68,8 @@ public final class TicTacToeRuleSet implements IRuleSet {
             }
         }
 
-        IPlayer[] leftDiagMoves = new IPlayer[]{data[0][0], data[1][1], data[2][2]};
-        IPlayer[] rightDiagMoves = new IPlayer[]{data[2][0], data[1][1], data[0][2]};
+        IPlayer[] leftDiagMoves = new IPlayer[] { data[0][0], data[1][1], data[2][2] };
+        IPlayer[] rightDiagMoves = new IPlayer[] { data[2][0], data[1][1], data[0][2] };
 
         // Check if diagonal has matching symbols.
         if (this.hasAllSymbols(leftDiagMoves)) {
@@ -99,7 +99,7 @@ public final class TicTacToeRuleSet implements IRuleSet {
 
     @Override
     public boolean isDraw() {
-        return ! this.isWon() &&  this.newBoard
+        return !this.isWon() && this.newBoard
                 .getFlatData()
                 .noneMatch(Objects::isNull);
     }
