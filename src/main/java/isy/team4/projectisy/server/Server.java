@@ -205,12 +205,12 @@ public class Server extends ServerIO {
     }
 
     public int convertVector2DToInt(Vector2D move, int lenght) {
-        return move.x * lenght + move.y;
+        return move.y * lenght + move.x;
     }
 
-    public Vector2D convertIntToVector2D(int incommingMove, int lenght) {
-        int y = (incommingMove) % lenght;
-        int x = (incommingMove) / lenght;
+    public Vector2D convertIntToVector2D(int incommingMove, int length) {
+        int y = (incommingMove) / length;
+        int x = (incommingMove) % length;
         Vector2D move = new Vector2D(x, y);
         return move;
     }
@@ -241,8 +241,7 @@ public class Server extends ServerIO {
 
     private void insertMove(int moveInt) {
         Vector2D move = convertIntToVector2D(moveInt, board.getWidth());
-        board.setElement(playerWithTurn, move.y, move.x);
+        board.setElement(playerWithTurn, move.x, move.y);
         playerWithTurn = playerWithTurn == localPlayer ? remotePlayer : localPlayer;
-        System.out.println(board.toString());
     }
 }

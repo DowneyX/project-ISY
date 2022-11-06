@@ -34,6 +34,9 @@ public class LocalPlayer implements IPlayer {
     }
 
     public String toString() {
+        if(this.name != null) {
+            return this.name;
+        }
         return "Localplayer";
     }
 }
