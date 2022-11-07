@@ -42,9 +42,9 @@ public class MainApplication extends Application {
 
         String username = scanner.nextLine();
         System.out.println("request login");
-        if (server.Requestlogin(username)) {
-            System.out.println("request success");
-        }
+//        if (server.Requestlogin(username)) {
+//            System.out.println("request success");
+//        }
 
         System.out.println("getting game list");
         try {
@@ -65,8 +65,8 @@ public class MainApplication extends Application {
         System.out.println("request success");
 
         System.out.println("request find game tic-tac-toe");
-        if (server.RequestSubscribeTictactoe()) {
-            System.out.println("request success");
-        }
+//        if (server.RequestSubscribeTictactoe()) {
+//            System.out.println("request success");
+//        }
     }
 }

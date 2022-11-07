@@ -145,6 +145,9 @@ public class TicTacToeController extends Controller {
                 board.board[0][2] == board.board[1][1] && board.board[1][1] == board.board[2][0] && board.board[0][2] != null;
     }
 
+    /**
+     * Switches player TODO: refactoring
+     */
     public void switchPlayer() {
         if (Objects.equals(currentPlayer, "X")) {
             currentPlayer = "O";
