@@ -9,9 +9,9 @@ public class AIPlayer implements IPlayer {
     private final String name;
     private char initial;
     private int[][] possibleMoves = {
-            { 0, 0 }, { 1, 0 }, { 2, 0 },
-            { 0, 1 }, { 1, 1 }, { 2, 1 },
-            { 0, 2 }, { 1, 2 }, { 2, 2 } };
+            { 0, 0 }, { 0, 1 }, { 0, 2 },
+            { 1, 0 }, { 1, 1 }, { 1, 2 },
+            { 2, 0 }, { 2, 1 }, { 2, 2 }, };
 
     public AIPlayer(String name) {
         this.name = name;
@@ -28,16 +28,17 @@ public class AIPlayer implements IPlayer {
     }
 
     public String toString() {
+        if(this.name != null) {
+            return this.name;
+        }
         return "AIplayer";
     }
 
     @Override
     public Vector2D getMove(Board board, IPlayer opponent) {
-        System.out.println(board.toString());
-
         int bestVal = Integer.MIN_VALUE;
         Board newBoard = new Board(board);
-        Vector2D BestMove = new Vector2D(0, 0);
+        Vector2D BestMove = new Vector2D(-1, -1);
 
         for (int[] move : possibleMoves) {
             if (newBoard.getElement(move[0], move[1]) == null) {
