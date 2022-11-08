@@ -25,7 +25,7 @@ public final class TicTacToeRuleSet implements IRuleSet {
 
     @Override
     public char[] getAllowedInitials() {
-        return new char[] { 'X', 'O' };
+        return new char[]{'X', 'O'};
     }
 
     @Override
@@ -54,21 +54,20 @@ public final class TicTacToeRuleSet implements IRuleSet {
         boolean won = false;
         IPlayer[][] grid = this.newBoard.getData();
 
-        if (
-                grid[0][0] == grid[0][1] && grid[0][1] == grid[0][2] && grid[0][0] != null ||
-                grid[1][0] == grid[1][1] && grid[1][1] == grid[1][2] && grid[1][0] != null ||
-                grid[2][0] == grid[2][1] && grid[2][1] == grid[2][2] && grid[2][0] != null ||
-                grid[0][0] == grid[1][0] && grid[1][0] == grid[2][0] && grid[0][0] != null ||
-                grid[0][1] == grid[1][1] && grid[1][1] == grid[2][1] && grid[0][1] != null ||
-                grid[0][2] == grid[1][2] && grid[1][2] == grid[2][2] && grid[0][2] != null ||
-                grid[0][0] == grid[1][1] && grid[1][1] == grid[2][2] && grid[0][0] != null ||
-                grid[0][2] == grid[1][1] && grid[1][1] == grid[2][0] && grid[0][2] != null
-        ) {
-            this.winningPlayer = (grid[0][0] != null) ? grid[0][0] : (grid[1][1] != null) ? grid[1][1] : grid[2][2];
-            won = true;
+        //            this.winningPlayer = (grid[0][0] != null) ? grid[0][0] : (grid[1][1] != null) ? grid[1][1] : grid[2][2];
+        // This did not work. It returns either the 0,0 1,1 or 2,2 player if it is not null.
+
+        // the following is not very clean, but does the job for now. TODO: refactoring
+
+        if (grid[0][0] == grid[0][1] && grid[0][1] == grid[0][2] && grid[0][0] != null || grid[0][0] == grid[1][1] && grid[1][1] == grid[2][2] && grid[0][0] != null || grid[0][0] == grid[1][0] && grid[1][0] == grid[2][0] && grid[0][0] != null) {
+            this.winningPlayer = grid[0][0];
+        } else if (grid[1][0] == grid[1][1] && grid[1][1] == grid[1][2] && grid[1][0] != null || grid[0][1] == grid[1][1] && grid[1][1] == grid[2][1] && grid[0][1] != null || grid[0][2] == grid[1][1] && grid[1][1] == grid[2][0] && grid[0][2] != null) {
+            this.winningPlayer = grid[1][1];
+        } else if (grid[2][0] == grid[2][1] && grid[2][1] == grid[2][2] && grid[2][0] != null || grid[0][2] == grid[1][2] && grid[1][2] == grid[2][2] && grid[0][2] != null) {
+            this.winningPlayer = grid[2][2];
         }
 
-        return won;
+        return this.winningPlayer != null;
     }
 
     @Override
@@ -82,8 +81,6 @@ public final class TicTacToeRuleSet implements IRuleSet {
 
     @Override
     public boolean isDraw() {
-        return !this.isWon() && this.newBoard
-                .getFlatData()
-                .noneMatch(Objects::isNull);
+        return !this.isWon() && this.newBoard.getFlatData().noneMatch(Objects::isNull);
     }
 }

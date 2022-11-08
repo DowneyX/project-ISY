@@ -22,4 +22,12 @@ public class Result {
     public void setWinningPlayer(IPlayer winningPlayer) {
         this.winningPlayer = winningPlayer;
     }
+
+    public String toString() {
+        if(getResult() == EResult.DRAW) {
+            return "Gelijkspel";
+        } else {
+            return getWinningPlayer() + " heeft gewonnen";
+        }
+    }
 }

@@ -40,10 +40,10 @@ public class TicTacToeController extends Controller implements IGameHandler, IPl
     public Text gameinfo;
     public GridPane grid;
     private Board board;
-    public String p1;
-    public String p2;
+    public String p1 = "Player 1";
+    public String p2 = "Player 2";
     private String gametype;
-    private String currentPlayer = "X";
+    private String currentPlayer;
     private boolean boardDisabled = true;
 
     private IGame game;
@@ -117,8 +117,10 @@ public class TicTacToeController extends Controller implements IGameHandler, IPl
      * @param actionEvent
      */
     public void startGame(ActionEvent actionEvent) {
-        gameinfo.setText(currentPlayer + " is aan de beurt");
-        System.out.println(gametype);
+        if(this.game != null) {
+            setGameInfo("Game is al begonnen!");
+            return;
+        }
 
         IRuleSet ruleset = new TicTacToeRuleSet();
         IPlayer[] players = new IPlayer[2];
@@ -130,7 +132,14 @@ public class TicTacToeController extends Controller implements IGameHandler, IPl
             game = new LocalGame(players, ruleset);
             game.setGameHandler(this);
             game.start();
-        } else {
+        } else if (Objects.equals(gametype, "local_pvp")) {
+                players[0] = new LocalPlayer(p1, this);
+                players[1] = new LocalPlayer(p2, this);
+                ruleset = new TicTacToeRuleSet();
+                game = new LocalGame(players, ruleset);
+                game.setGameHandler(this);
+                game.start();
+        }else {
             return;
         }
 
@@ -140,21 +149,19 @@ public class TicTacToeController extends Controller implements IGameHandler, IPl
 
     @Override
     public void onUpdate() {
+        updateCurrentPlayer();
         board = game.getBoard(); // set new board
 
         // draw new board. runlater because called from another thread
-        Platform.runLater(new Runnable() {
-            @Override
-            public void run() {
-                for (int i = 0; i < board.getWidth() * board.getHeight(); i++) {
-                    int x = i % 3;
-                    int y = i / 3;
-                    IPlayer currentplayer = board.getData()[y][x];
+        Platform.runLater(() -> {
+            for (int i = 0; i < board.getWidth() * board.getHeight(); i++) {
+                int x = i % 3;
+                int y = i / 3;
+                IPlayer currentplayer = board.getData()[y][x];
 
-                    if (currentplayer != null) {
-                        Button btn = (Button) grid.getChildren().get(i);
-                        btn.setText(Character.toString(currentplayer.getInitial()));
-                    }
+                if (currentplayer != null) {
+                    Button btn = (Button) grid.getChildren().get(i);
+                    btn.setText(Character.toString(currentplayer.getInitial()));
                 }
             }
         });
@@ -174,9 +181,9 @@ public class TicTacToeController extends Controller implements IGameHandler, IPl
 
     @Override
     public Vector2D getPlayerMove() {
-        // -1 means no move has been made yet
-//        this.gameinfo.setText("DOE EEN ZET"); // array index -1 undefined?
+        updateCurrentPlayer();
 
+        // wait until move has been made. TODO: promise resolve / eventbus instead of this?
         while (this.playermove == -1) {
             try {
                 Thread.sleep(50);
@@ -184,8 +191,6 @@ public class TicTacToeController extends Controller implements IGameHandler, IPl
                 System.out.println("error: " + e);
             }
         }
-
-        System.out.println(this.playermove);
 
         int x = this.playermove % 3;
         int y = this.playermove / 3;
@@ -196,15 +201,26 @@ public class TicTacToeController extends Controller implements IGameHandler, IPl
     }
 
     public void emptyBoard() {
-        for (int i = 0; i < board.getWidth() * board.getHeight(); i++) {
-            Button btn = (Button) grid.getChildren().get(i);
-            btn.setText("");
-        }
+        Platform.runLater(() -> {
+            for (int i = 0; i < board.getWidth() * board.getHeight(); i++) {
+                Button btn = (Button) grid.getChildren().get(i);
+                btn.setText("");
+            }
+        });
     }
 
     public void stopGame() {
         emptyBoard();
         boardDisabled = true;
-        game.stop();
+        game = null;
+    }
+
+    public void setGameInfo(String text) {
+        this.gameinfo.setText(text);
+    }
+
+    public void updateCurrentPlayer() {
+        currentPlayer = this.game.getCurrentPlayer().getName();
+        setGameInfo(currentPlayer + " is aan de beurt.");
     }
 }
