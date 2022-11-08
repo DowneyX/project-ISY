@@ -20,8 +20,8 @@ public class MainApplication extends Application {
     }
 
     public static void main(String[] args) throws IOException {
-//        launch();
-        tournament();
+        launch();
+//        tournament();
     }
 
     /**
@@ -30,13 +30,12 @@ public class MainApplication extends Application {
     public static void tournament() {
         Server server;
         try {
-            server = new Server("145.33.225.170", 7789);
+            server = new Server("ip", 7789);
         } catch(Exception e) {
             System.out.println("Kon de server niet starten: " + e);
             return;
         }
 
-        server.Requestlogin("ITV1ATeam4");
-        server.requestSubscribeTictactoe();
+        server.Requestlogin("name");
     }
 }
