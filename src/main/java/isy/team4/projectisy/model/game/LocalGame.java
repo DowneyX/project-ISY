@@ -127,7 +127,7 @@ public class LocalGame implements IGame {
 
         // If win or draw: set result, fire event and stop game
         if (this.ruleSet.isWon()) {
-            this.result = new Result(EResult.DRAW);
+            this.result = new Result(EResult.WIN);
             this.result.setWinningPlayer(this.ruleSet.getWinningPlayer());
 
             this.gameHandler.onFinished();
