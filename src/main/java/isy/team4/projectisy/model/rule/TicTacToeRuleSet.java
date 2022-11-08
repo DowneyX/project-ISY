@@ -9,8 +9,9 @@ import java.util.stream.Stream;
 
 public final class TicTacToeRuleSet implements IRuleSet {
     private Board oldBoard;
-
     private Board newBoard;
+    private IPlayer[] players;
+    private IPlayer winningPlayer;
 
     @Override
     public Integer getMinPlayerSize() {
@@ -50,51 +51,33 @@ public final class TicTacToeRuleSet implements IRuleSet {
 
     @Override
     public boolean isWon() {
-        return false; // TODO fix this
-    }
+        boolean won = false;
+        IPlayer[][] grid = this.newBoard.getData();
 
-    private IPlayer[] winningSet() {
-        Board board = this.newBoard;
-        IPlayer[][] data = this.newBoard.getData();
-        IPlayer[][] rotatedData = this.newBoard.getRotatedData();
-        IPlayer[] output = null;
-
-        // Check if horizontal or vertical has matching symbols
-        for (int i = 0; i < board.getHeight(); i++) {
-            if (this.hasAllSymbols(data[i])) {
-                output = data[i];
-            } else if (this.hasAllSymbols(rotatedData[i])) {
-                output = rotatedData[i];
-            }
+        if (
+                grid[0][0] == grid[0][1] && grid[0][1] == grid[0][2] && grid[0][0] != null ||
+                grid[1][0] == grid[1][1] && grid[1][1] == grid[1][2] && grid[1][0] != null ||
+                grid[2][0] == grid[2][1] && grid[2][1] == grid[2][2] && grid[2][0] != null ||
+                grid[0][0] == grid[1][0] && grid[1][0] == grid[2][0] && grid[0][0] != null ||
+                grid[0][1] == grid[1][1] && grid[1][1] == grid[2][1] && grid[0][1] != null ||
+                grid[0][2] == grid[1][2] && grid[1][2] == grid[2][2] && grid[0][2] != null ||
+                grid[0][0] == grid[1][1] && grid[1][1] == grid[2][2] && grid[0][0] != null ||
+                grid[0][2] == grid[1][1] && grid[1][1] == grid[2][0] && grid[0][2] != null
+        ) {
+            this.winningPlayer = (grid[0][0] != null) ? grid[0][0] : (grid[1][1] != null) ? grid[1][1] : grid[2][2];
+            won = true;
         }
 
-        IPlayer[] leftDiagMoves = new IPlayer[] { data[0][0], data[1][1], data[2][2] };
-        IPlayer[] rightDiagMoves = new IPlayer[] { data[2][0], data[1][1], data[0][2] };
-
-        // Check if diagonal has matching symbols.
-        if (this.hasAllSymbols(leftDiagMoves)) {
-            output = leftDiagMoves;
-        } else if (this.hasAllSymbols(rightDiagMoves)) {
-            output = rightDiagMoves;
-        }
-
-        return output;
-    }
-
-    private boolean hasAllSymbols(IPlayer[] moves) {
-        Stream<IPlayer> stream = Arrays.stream(moves);
-        return stream.noneMatch(Objects::isNull) && stream.map(IPlayer::getInitial).distinct().count() == 1;
+        return won;
     }
 
     @Override
     public IPlayer getWinningPlayer() throws NullPointerException {
-        IPlayer[] winningSet = this.winningSet();
-
-        if (winningSet != null) {
-            return winningSet[0];
+        if (this.winningPlayer == null) {
+            throw new NullPointerException();
         }
 
-        throw new NullPointerException();
+        return this.winningPlayer;
     }
 
     @Override

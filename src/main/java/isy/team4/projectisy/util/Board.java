@@ -15,6 +15,13 @@ public class Board {
         this.width = width;
         this.height = height;
         this.board = new IPlayer[height][width]; // reversed for proper x-y notation
+
+        // Fill in with null values
+        for(int y = 0; y < this.height; ++y) {
+            for(int x = 0; x < this.width; ++x) {
+                this.board[y][x] = null;
+            }
+        }
     }
 
     /**
@@ -92,20 +99,6 @@ public class Board {
         return (int) this.getFlatData()
                 .filter(Objects::nonNull)
                 .count();
-    }
-
-    /** 'Rotates' board 90deg to read data **/
-    public IPlayer[][] getRotatedData() {
-        IPlayer[][] currentData = this.getData();
-        IPlayer[][] out = new IPlayer[this.height][this.width];
-
-        for (int x = 0; x < this.getWidth(); x++) {
-            for (int y = 0; y < this.getHeight(); y++) {
-                out[x][y] = currentData[y][x];
-            }
-        }
-
-        return out;
     }
 
     public Stream<IPlayer> getFlatData() {
