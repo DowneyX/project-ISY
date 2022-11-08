@@ -20,7 +20,7 @@ public class MainApplication extends Application {
     }
 
     public static void main(String[] args) throws IOException {
-//        launch();
+        // launch();
         tournament();
     }
 
@@ -31,12 +31,15 @@ public class MainApplication extends Application {
         Server server;
         try {
             server = new Server("145.33.225.170", 7789);
-        } catch(Exception e) {
+        } catch (Exception e) {
             System.out.println("Kon de server niet starten: " + e);
             return;
         }
 
-        server.Requestlogin("ITV1ATeam4");
-        server.requestSubscribeTictactoe();
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.println("username: ");
+        server.login(scanner.nextLine());
+        server.subscribeTictactoe();
     }
 }

@@ -24,7 +24,7 @@ public class LocalPlayer implements IPlayer {
     }
 
     @Override
-    public Vector2D getMove(Board board, IPlayer opponent) {
+    public Vector2D getMove(Board board) {
         return this.playerTurnHandler.getPlayerMove();
     }
 
@@ -34,7 +34,7 @@ public class LocalPlayer implements IPlayer {
     }
 
     public String toString() {
-        if(this.name != null) {
+        if (this.name != null) {
             return this.name;
         }
         return "Localplayer";

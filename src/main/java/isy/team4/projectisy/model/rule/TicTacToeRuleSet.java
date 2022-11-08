@@ -3,9 +3,7 @@ package isy.team4.projectisy.model.rule;
 import isy.team4.projectisy.model.player.IPlayer;
 import isy.team4.projectisy.util.Board;
 
-import java.util.Arrays;
 import java.util.Objects;
-import java.util.stream.Stream;
 
 public final class TicTacToeRuleSet implements IRuleSet {
     private Board oldBoard;
@@ -54,16 +52,14 @@ public final class TicTacToeRuleSet implements IRuleSet {
         boolean won = false;
         IPlayer[][] grid = this.newBoard.getData();
 
-        if (
-                grid[0][0] == grid[0][1] && grid[0][1] == grid[0][2] && grid[0][0] != null ||
+        if (grid[0][0] == grid[0][1] && grid[0][1] == grid[0][2] && grid[0][0] != null ||
                 grid[1][0] == grid[1][1] && grid[1][1] == grid[1][2] && grid[1][0] != null ||
                 grid[2][0] == grid[2][1] && grid[2][1] == grid[2][2] && grid[2][0] != null ||
                 grid[0][0] == grid[1][0] && grid[1][0] == grid[2][0] && grid[0][0] != null ||
                 grid[0][1] == grid[1][1] && grid[1][1] == grid[2][1] && grid[0][1] != null ||
                 grid[0][2] == grid[1][2] && grid[1][2] == grid[2][2] && grid[0][2] != null ||
                 grid[0][0] == grid[1][1] && grid[1][1] == grid[2][2] && grid[0][0] != null ||
-                grid[0][2] == grid[1][1] && grid[1][1] == grid[2][0] && grid[0][2] != null
-        ) {
+                grid[0][2] == grid[1][1] && grid[1][1] == grid[2][0] && grid[0][2] != null) {
             this.winningPlayer = (grid[0][0] != null) ? grid[0][0] : (grid[1][1] != null) ? grid[1][1] : grid[2][2];
             won = true;
         }

@@ -3,17 +3,17 @@ package isy.team4.projectisy.model.player;
 import isy.team4.projectisy.util.Board;
 import isy.team4.projectisy.util.Vector2D;
 
-import java.util.Random;
-
 public class AIPlayer implements IPlayer {
     private final String name;
     private char initial;
+    private IPlayer opponent;
     private int[][] possibleMoves = {
             { 0, 0 }, { 0, 1 }, { 0, 2 },
             { 1, 0 }, { 1, 1 }, { 1, 2 },
             { 2, 0 }, { 2, 1 }, { 2, 2 }, };
 
-    public AIPlayer(String name) {
+    public AIPlayer(String name, IPlayer opponent) {
+        this.opponent = opponent;
         this.name = name;
     }
 
@@ -28,14 +28,14 @@ public class AIPlayer implements IPlayer {
     }
 
     public String toString() {
-        if(this.name != null) {
+        if (this.name != null) {
             return this.name;
         }
         return "AIplayer";
     }
 
     @Override
-    public Vector2D getMove(Board board, IPlayer opponent) {
+    public Vector2D getMove(Board board) {
         int bestVal = Integer.MIN_VALUE;
         Board newBoard = new Board(board);
         Vector2D BestMove = new Vector2D(-1, -1);
@@ -43,7 +43,7 @@ public class AIPlayer implements IPlayer {
         for (int[] move : possibleMoves) {
             if (newBoard.getElement(move[0], move[1]) == null) {
                 newBoard.setElement(this, move[0], move[1]);
-                int moveVal = miniMax(newBoard, 0, false, opponent);
+                int moveVal = miniMax(newBoard, 0, false);
                 newBoard.setElement(null, move[0], move[1]);
 
                 if (moveVal > bestVal) {
@@ -62,7 +62,7 @@ public class AIPlayer implements IPlayer {
         this.initial = initial;
     }
 
-    private int miniMax(Board board, int depth, boolean isMax, IPlayer opponent) {
+    private int miniMax(Board board, int depth, boolean isMax) {
 
         if (hasWon(board, this) || hasWon(board, opponent) || board.isFull()) { // terminal state of the board
             int score = 0;
@@ -80,7 +80,7 @@ public class AIPlayer implements IPlayer {
             for (int[] move : possibleMoves) {
                 if (board.getElement(move[0], move[1]) == null) {
                     board.setElement(this, move[0], move[1]);
-                    bestVal = Math.max(bestVal, miniMax(board, depth + 1, false, opponent));
+                    bestVal = Math.max(bestVal, miniMax(board, depth + 1, false));
                     board.setElement(null, move[0], move[1]);
                 }
             }
@@ -91,7 +91,7 @@ public class AIPlayer implements IPlayer {
             for (int[] move : possibleMoves) {
                 if (board.getElement(move[0], move[1]) == null) {
                     board.setElement(opponent, move[0], move[1]);
-                    bestVal = Math.min(bestVal, miniMax(board, depth + 1, true, opponent));
+                    bestVal = Math.min(bestVal, miniMax(board, depth + 1, true));
                     board.setElement(null, move[0], move[1]);
                 }
             }

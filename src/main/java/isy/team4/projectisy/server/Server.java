@@ -3,21 +3,18 @@ package isy.team4.projectisy.server;
 import java.io.IOException;
 import isy.team4.projectisy.util.Board;
 import isy.team4.projectisy.util.Vector2D;
-import isy.team4.projectisy.model.player.*;;
+import isy.team4.projectisy.model.game.RemoteGame;
+import isy.team4.projectisy.model.player.*;
+import isy.team4.projectisy.model.rule.*;
 
-public class Server extends ServerIO {
-    private IPlayer playerWithTurn;
-    private Board board;
+public class Server extends ServerIO implements IPlayerTurnHandler {
     private String userName;
-    private String gameType; // reversi or tic-tac-toe
-    public boolean isPlaying = false;
-    private AIPlayer localPlayer;
-    private AIPlayer remotePlayer; // technically dont need a remotePlayer
+    public RemoteGame game;
     private static Thread serverThread;
     private String response;
     private String[] playerList;
     private String[] gameList;
-    private String lastGameResult;
+    private Vector2D RemoteMove;
 
     public Server(String ip, int port) throws IOException {
         super(ip, port);
@@ -26,25 +23,14 @@ public class Server extends ServerIO {
         // Thread for the server
         serverThread = new Thread(() -> {
             while (true) {
-                response = onMessage();
-                if (response == null) {
-                    // Nothing yet, sleep 0.2 sec and continue
-                    try {
-                        Thread.sleep(200);
-                    } catch (InterruptedException e) {
-                        // Sleep interrupted, ignore
-                    }
-                    continue;
-                }
-                // We got a response! Parse and handle
-                System.out.println(response);
-                String[] responseParts = response.split(" ");
+                response = onMessage(); // wait for a message
+                System.out.println(response); // we have recieved a message
 
-                if (responseParts[0].equals("OK")) { // OK all is good
+                if (response.contains("OK")) { // OK all is good
                     continue;
                 }
 
-                if (responseParts[0].equals("ERR")) { // ERR something bad happened
+                if (response.contains("ERR")) { // ERR something bad happened
                     try {
                         throw new Exception(response);
                     } catch (Exception e) {
@@ -52,196 +38,184 @@ public class Server extends ServerIO {
                     }
                 }
 
-                if (responseParts[0].equals("SVR")) { // SVR server signal
+                if (response.contains("SVR GAMELIST")) { // update game list
+                    // extract usefull data
+                    String temp = response.replace("SVR GAMELIST [", "");
+                    temp = temp.replace("]", "");
+                    temp = temp.replace("\"", "");
 
-                    if (responseParts[1].equals("PLAYERLIST")) { // playerlist has been requested
+                    // usefull data
+                    String[] gameList = temp.split(", ");
 
-                        // extract usefull data
-                        String temp = response.replace("SVR PLAYERLIST [", "");
-                        temp = temp.replace("]", "");
-                        temp = temp.replace("\"", "");
-
-                        // usefull data
-                        String[] playerList = temp.split(", ");
-
-                        // send playerlist somewhere
-                        this.playerList = playerList;
-                        continue;
-                    }
-                    if (responseParts[1].equals("GAMELIST")) { // gamelist has been requested
-
-                        // extract usefull data
-                        String temp = response.replace("SVR GAMELIST [", "");
-                        temp = temp.replace("]", "");
-                        temp = temp.replace("\"", "");
-
-                        // usefull data
-                        String[] gameList = temp.split(", ");
-
-                        // send gamelist somewhere
-                        this.gameList = gameList;
-                        continue;
-                    }
-                    if (responseParts[1].equals("GAME")) { // something game related happend
-                        if (responseParts[2].equals("MATCH")) { // game started
-
-                            // extract usefull data
-                            String[] stringsToRemove = { "SVR GAME MATCH {", "}", "\"", "PLAYERTOMOVE: ", "GAMETYPE: ",
-                                    "OPPONENT: " };
-                            String temp = response;
-                            for (String txt : stringsToRemove) {
-                                temp = temp.replace(txt, "");
-                            }
-                            String[] data = temp.split(", ");
-                            // playerToMove = data[0]; gameType = data[1]; opponentName = data[2]
-
-                            // setup game
-                            if (data[1].equals("Tic-tac-toe")) {
-                                setupTictactoe(data[2], data[0]);
-                            }
-                            continue;
-                        }
-                        if (responseParts[2].equals("YOURTURN")) { // its our turn
-
-                            // make a move
-                            if (gameType.equals("Tic-tac-toe")) {
-                                makeMoveTictacToe();
-                            }
-                            continue;
-                        }
-                        if (responseParts[2].equals("MOVE")) { // a move has been made (both us or them)
-
-                            // extract usefull data
-                            String[] stringsToRemove = { "SVR GAME MOVE {", "}", "\"", "PLAYER: ", "DETAILS: ",
-                                    "MOVE: " };
-                            String temp = response;
-                            for (String txt : stringsToRemove) {
-                                temp = temp.replace(txt, "");
-                            }
-                            String[] data = temp.split(", ");
-                            // playerName = data[0]; moveInt = data[1]; details = data[2]
-
-                            // insert move
-                            insertMove(Integer.parseInt(data[1]));
-                            continue;
-                        }
-                        if (responseParts[2].equals("WIN") || responseParts[2].equals("DRAW")
-                                || responseParts[2].equals("LOSS")) { // the game has ended
-
-                            lastGameResult = responseParts[2];
-                            cleanUp();
-                            continue;
-                        }
-                        if (responseParts[2].equals("CHALLENGE")) { // a player has challenged us
-                            // signal user that they have been challenged
-                            continue;
-                        }
-
-                    }
+                    // send gamelist somewhere
+                    this.gameList = gameList;
+                    continue;
                 }
+
+                if (response.contains("SVR PLAYERLIST")) { // update playerlist
+                    // extract usefull data
+                    String temp = response.replace("SVR PLAYERLIST [", "");
+                    temp = temp.replace("]", "");
+                    temp = temp.replace("\"", "");
+
+                    // usefull data
+                    String[] playerList = temp.split(", ");
+
+                    // send playerlist somewhere
+                    this.playerList = playerList;
+                    continue;
+                }
+
+                if (response.contains("SVR GAME MATCH")) { // a match has started
+                    // extract usefull data
+                    String[] stringsToRemove = { "SVR GAME MATCH {", "}", "\"", "PLAYERTOMOVE: ", "GAMETYPE: ",
+                            "OPPONENT: " };
+                    String temp = response;
+                    for (String txt : stringsToRemove) {
+                        temp = temp.replace(txt, "");
+                    }
+                    String[] data = temp.split(", ");
+                    // playerToMove = data[0]; gameType = data[1]; opponentName = data[2]
+
+                    // setup game
+                    setupGame(data[1], data[2], data[0]);
+                    continue;
+                }
+
+                if (response.contains("SVR GAME MOVE")) { // a move has been made (us or them)
+                    // extract usefull data
+                    String[] stringsToRemove = { "SVR GAME MOVE {", "}", "\"", "PLAYER: ", "DETAILS: ",
+                            "MOVE: " };
+                    String temp = response;
+                    for (String txt : stringsToRemove) {
+                        temp = temp.replace(txt, "");
+                    }
+                    String[] data = temp.split(", ");
+                    // playerName = data[0]; moveInt = data[1]; details = data[2]
+
+                    // insert move
+                    if (!data[0].equals(userName)) {
+                        RemoteMove = convertIntToVector2D(Integer.parseInt(data[1]), game.getBoard());
+                        game.step();
+                    }
+
+                    continue;
+                }
+
+                if (response.contains("SVR GAME WIN")) { // won a game
+                    cleanUp();
+                    continue;
+                }
+
+                if (response.contains("SVR GAME LOSS")) { // lost a game
+                    cleanUp();
+                    continue;
+                }
+
+                if (response.contains("SVR GAME DRAW")) { // draw a game
+                    cleanUp();
+                    continue;
+                }
+
+                if (response.contains("SVR GAME YOURTURN")) { // its our turn make a move
+                    game.step();
+                    continue;
+                }
+
+                if (response.contains("SVR GAME CHALLENGE")) { // we have a challenge request
+
+                    continue;
+                }
+
             }
         });
         serverThread.start();
     }
 
-    public void Requestlogin(String username) {
+    public void login(String username) {
         sendMessage("login " + username);
         this.userName = username;
     }
 
     public String[] getPlayerlist() {
-        playerList = null;
         sendMessage("get playerlist");
-        while (playerList == null) {
-            try {
-                Thread.sleep(200);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
         return playerList;
     }
 
     public String[] getGamelist() {
-        gameList = null;
-        sendMessage("get gamelist");
-
-        while (gameList == null) {
-            try {
-                Thread.sleep(200);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
         return gameList;
     }
 
-    public Board getBoard() {
-        return board;
+    public void updatePlayerList() {
+        sendMessage("get playerlist");
     }
 
-    public String getLastGameResult() {
-        return lastGameResult;
+    public void updateGameList() {
+        sendMessage("get gamelist");
     }
 
-    public void requestSubscribeTictactoe() {
+    public void subscribeTictactoe() {
         sendMessage("subscribe tic-tac-toe");
     }
 
-    public void requestSubscribeReversi() {
+    public void subscribeReversi() {
         sendMessage("subscribe reversi");
     }
 
-    public void requestAcceptChallenge(int challengeNr) {
+    public void acceptChallenge(int challengeNr) {
         sendMessage("challenge accept " + challengeNr);
     }
 
-    public void requestChallenge(String username, String gameType) {
+    public void sendChallenge(String username, String gameType) {
         sendMessage("challenge " + username + " " + gameType);
     }
 
-    public void requestMove(int move) {
-        sendMessage("move " + move);
+    public int convertVector2DToInt(Vector2D move, Board board) {
+        return move.y * board.getWidth() + move.x;
     }
 
-    public int convertVector2DToInt(Vector2D move, int lenght) {
-        return move.y * lenght + move.x;
-    }
-
-    public Vector2D convertIntToVector2D(int incommingMove, int length) {
-        int y = (incommingMove) / length;
-        int x = (incommingMove) % length;
+    public Vector2D convertIntToVector2D(int incommingMove, Board board) {
+        int y = (incommingMove) / board.getWidth();
+        int x = (incommingMove) % board.getHeight();
         Vector2D move = new Vector2D(x, y);
         return move;
     }
 
-    private void setupTictactoe(String opponentName, String playerToMove) {
-        gameType = "Tic-tac-toe";
-        localPlayer = new AIPlayer(userName);
-        remotePlayer = new AIPlayer(opponentName);
-        playerWithTurn = playerToMove.equals(userName) ? localPlayer : remotePlayer;
-        isPlaying = true;
-        board = new Board(3, 3);
+    private void setupGame(String gametype, String opponentName, String playerToMove) {
+        switch (gametype) {
+            case "Tic-tac-toe":
+                IRuleSet ruleset = new TicTacToeRuleSet();
+                IPlayer[] players = new IPlayer[2];
+                players[0] = new RemotePlayer(opponentName, this);
+                players[1] = new AIPlayer(userName, players[0]);
+                ruleset = new TicTacToeRuleSet();
+                game = new RemoteGame(players, ruleset, this);
+                IPlayer currentPlayer = playerToMove.equals(opponentName) ? players[0] : players[1];
+                game.setCurrentPlayer(currentPlayer);
+                game.start();
+
+                break;
+            case "Reversi":
+
+                break;
+
+            default:
+                break;
+        }
     }
 
     private void cleanUp() {
-        isPlaying = false;
-        gameType = null;
-        localPlayer = null;
-        remotePlayer = null;
-        board = null;
-        playerWithTurn = null;
+        game.stop();
+        game = null;
     }
 
-    private void makeMoveTictacToe() {
-        Vector2D move = localPlayer.getMove(board, remotePlayer);
-        int moveInt = convertVector2DToInt(move, 3);
-        requestMove(moveInt);
+    public void sendMove(Vector2D move) {
+        sendMessage("move " + convertVector2DToInt(move, game.getBoard()));
     }
 
-    private void insertMove(int moveInt) {
-        Vector2D move = convertIntToVector2D(moveInt, board.getWidth());
-        board.setElement(playerWithTurn, move.x, move.y);
-        playerWithTurn = playerWithTurn == localPlayer ? remotePlayer : localPlayer;
+    @Override
+    public Vector2D getPlayerMove() {
+        return RemoteMove;
     }
+
 }

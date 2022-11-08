@@ -63,7 +63,8 @@ public class TicTacToeController extends Controller implements IGameHandler, IPl
     }
 
     /**
-     * Checks if gametype is valid and sets it. Depending on the gametype, a different gamemanager will be used.
+     * Checks if gametype is valid and sets it. Depending on the gametype, a
+     * different gamemanager will be used.
      *
      * @param gametype player vs local ai: 'local_pvai'
      *                 player vs local player: 'local_pvp'
@@ -103,7 +104,6 @@ public class TicTacToeController extends Controller implements IGameHandler, IPl
             return;
         }
 
-
         int idx = Integer.parseInt(btn.getId());
         btn.setText(currentPlayer); // set btn text
 
@@ -125,7 +125,7 @@ public class TicTacToeController extends Controller implements IGameHandler, IPl
 
         if (Objects.equals(gametype, "local_pvai")) {
             players[0] = new LocalPlayer(p1, this);
-            players[1] = new AIPlayer(p2);
+            players[1] = new AIPlayer(p2, players[0]);
             ruleset = new TicTacToeRuleSet();
             game = new LocalGame(players, ruleset);
             game.setGameHandler(this);
@@ -175,7 +175,7 @@ public class TicTacToeController extends Controller implements IGameHandler, IPl
     @Override
     public Vector2D getPlayerMove() {
         // -1 means no move has been made yet
-//        this.gameinfo.setText("DOE EEN ZET"); // array index -1 undefined?
+        // this.gameinfo.setText("DOE EEN ZET"); // array index -1 undefined?
 
         while (this.playermove == -1) {
             try {
