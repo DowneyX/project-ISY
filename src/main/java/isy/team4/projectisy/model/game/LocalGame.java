@@ -88,18 +88,9 @@ public class LocalGame implements IGame {
         this.currentPlayer = this.players[this.currentTurn % this.players.length];
     }
 
-    private IPlayer getOpponent() { // TODO fix this
-        for (IPlayer player : players) {
-            if (player != currentPlayer) {
-                return player;
-            }
-        }
-        return null;
-    }
-
     private void loop() throws ArrayIndexOutOfBoundsException {
         // Get current player move and check if within bounds of board
-        Vector2D move = this.currentPlayer.getMove(this.board, getOpponent());
+        Vector2D move = this.currentPlayer.getMove(this.board);
         if (move.x >= board.getWidth() || move.y >= board.getHeight()) {
             throw new ArrayIndexOutOfBoundsException(
                     String.format("Player %s went out of bounds", this.currentPlayer.getName()));

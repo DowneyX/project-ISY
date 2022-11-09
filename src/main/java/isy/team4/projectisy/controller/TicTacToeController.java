@@ -63,7 +63,8 @@ public class TicTacToeController extends Controller implements IGameHandler, IPl
     }
 
     /**
-     * Checks if gametype is valid and sets it. Depending on the gametype, a different gamemanager will be used.
+     * Checks if gametype is valid and sets it. Depending on the gametype, a
+     * different gamemanager will be used.
      *
      * @param gametype player vs local ai: 'local_pvai'
      *                 player vs local player: 'local_pvp'
@@ -103,7 +104,6 @@ public class TicTacToeController extends Controller implements IGameHandler, IPl
             return;
         }
 
-
         int idx = Integer.parseInt(btn.getId());
         btn.setText(currentPlayer); // set btn text
 
@@ -117,7 +117,7 @@ public class TicTacToeController extends Controller implements IGameHandler, IPl
      * @param actionEvent
      */
     public void startGame(ActionEvent actionEvent) {
-        if(this.game != null) {
+        if (this.game != null) {
             setGameInfo("Game is al begonnen!");
             return;
         }
@@ -127,19 +127,19 @@ public class TicTacToeController extends Controller implements IGameHandler, IPl
 
         if (Objects.equals(gametype, "local_pvai")) {
             players[0] = new LocalPlayer(p1, this);
-            players[1] = new AIPlayer(p2);
+            players[1] = new AIPlayer(p2, players[0]);
             ruleset = new TicTacToeRuleSet();
             game = new LocalGame(players, ruleset);
             game.setGameHandler(this);
             game.start();
         } else if (Objects.equals(gametype, "local_pvp")) {
-                players[0] = new LocalPlayer(p1, this);
-                players[1] = new LocalPlayer(p2, this);
-                ruleset = new TicTacToeRuleSet();
-                game = new LocalGame(players, ruleset);
-                game.setGameHandler(this);
-                game.start();
-        }else {
+            players[0] = new LocalPlayer(p1, this);
+            players[1] = new LocalPlayer(p2, this);
+            ruleset = new TicTacToeRuleSet();
+            game = new LocalGame(players, ruleset);
+            game.setGameHandler(this);
+            game.start();
+        } else {
             return;
         }
 
@@ -183,7 +183,8 @@ public class TicTacToeController extends Controller implements IGameHandler, IPl
     public Vector2D getPlayerMove() {
         updateCurrentPlayer();
 
-        // wait until move has been made. TODO: promise resolve / eventbus instead of this?
+        // wait until move has been made. TODO: promise resolve / eventbus instead of
+        // this?
         while (this.playermove == -1) {
             try {
                 Thread.sleep(50);

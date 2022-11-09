@@ -3,9 +3,7 @@ package isy.team4.projectisy.model.rule;
 import isy.team4.projectisy.model.player.IPlayer;
 import isy.team4.projectisy.util.Board;
 
-import java.util.Arrays;
 import java.util.Objects;
-import java.util.stream.Stream;
 
 public final class TicTacToeRuleSet implements IRuleSet {
     private Board oldBoard;
@@ -25,7 +23,7 @@ public final class TicTacToeRuleSet implements IRuleSet {
 
     @Override
     public char[] getAllowedInitials() {
-        return new char[]{'X', 'O'};
+        return new char[] { 'X', 'O' };
     }
 
     @Override
@@ -54,16 +52,23 @@ public final class TicTacToeRuleSet implements IRuleSet {
         boolean won = false;
         IPlayer[][] grid = this.newBoard.getData();
 
-        //            this.winningPlayer = (grid[0][0] != null) ? grid[0][0] : (grid[1][1] != null) ? grid[1][1] : grid[2][2];
-        // This did not work. It returns either the 0,0 1,1 or 2,2 player if it is not null.
+        // this.winningPlayer = (grid[0][0] != null) ? grid[0][0] : (grid[1][1] != null)
+        // ? grid[1][1] : grid[2][2];
+        // This did not work. It returns either the 0,0 1,1 or 2,2 player if it is not
+        // null.
 
         // the following is not very clean, but does the job for now. TODO: refactoring
 
-        if (grid[0][0] == grid[0][1] && grid[0][1] == grid[0][2] && grid[0][0] != null || grid[0][0] == grid[1][1] && grid[1][1] == grid[2][2] && grid[0][0] != null || grid[0][0] == grid[1][0] && grid[1][0] == grid[2][0] && grid[0][0] != null) {
+        if (grid[0][0] == grid[0][1] && grid[0][1] == grid[0][2] && grid[0][0] != null
+                || grid[0][0] == grid[1][1] && grid[1][1] == grid[2][2] && grid[0][0] != null
+                || grid[0][0] == grid[1][0] && grid[1][0] == grid[2][0] && grid[0][0] != null) {
             this.winningPlayer = grid[0][0];
-        } else if (grid[1][0] == grid[1][1] && grid[1][1] == grid[1][2] && grid[1][0] != null || grid[0][1] == grid[1][1] && grid[1][1] == grid[2][1] && grid[0][1] != null || grid[0][2] == grid[1][1] && grid[1][1] == grid[2][0] && grid[0][2] != null) {
+        } else if (grid[1][0] == grid[1][1] && grid[1][1] == grid[1][2] && grid[1][0] != null
+                || grid[0][1] == grid[1][1] && grid[1][1] == grid[2][1] && grid[0][1] != null
+                || grid[0][2] == grid[1][1] && grid[1][1] == grid[2][0] && grid[0][2] != null) {
             this.winningPlayer = grid[1][1];
-        } else if (grid[2][0] == grid[2][1] && grid[2][1] == grid[2][2] && grid[2][0] != null || grid[0][2] == grid[1][2] && grid[1][2] == grid[2][2] && grid[0][2] != null) {
+        } else if (grid[2][0] == grid[2][1] && grid[2][1] == grid[2][2] && grid[2][0] != null
+                || grid[0][2] == grid[1][2] && grid[1][2] == grid[2][2] && grid[0][2] != null) {
             this.winningPlayer = grid[2][2];
         }
 

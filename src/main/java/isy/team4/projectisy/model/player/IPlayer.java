@@ -8,7 +8,7 @@ public interface IPlayer {
 
     char getInitial();
 
-    Vector2D getMove(Board board, IPlayer opponent);
+    Vector2D getMove(Board board);
 
     void setInitial(char initial);
 }
