@@ -14,11 +14,11 @@ public class CLIApplication {
         Server server;
         try {
             server = new Server("145.33.225.170", 7789);
-        } catch(Exception e) {
+        } catch (Exception e) {
             System.out.println("Kon niet met de server verbinden: " + e);
             return;
         }
 
-        server.Requestlogin("ITV2ATEAM4"); // no subscribe needed
+        server.login("ITV2ATEAM4"); // no subscribe needed
     }
 }
