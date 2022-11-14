@@ -1,3 +1,4 @@
 package isy.team4.projectisy.controller;
-public abstract class Controller {
+
+public class OthelloController {
 }

@@ -17,36 +17,27 @@ import java.util.Objects;
 
 public class HomeController extends Controller {
     public MenuButton dropdown;
-    @FXML
-    private Button tictactoe;
-    @FXML
-    private Label welcomeText;
 
     private String p1 = "Player 1";
     private String p2 = "Player 2";
 
-    @FXML
-    protected void onHelloButtonClick() {
-        welcomeText.setText("Welcome to JavaFX Application!");
-    }
-
     public void ticTacToePvAI(ActionEvent actionEvent) {
-        navigateToTicTacToe(actionEvent, "local_pvai");
         p2 = "Local AI";
+        navigateToTicTacToe("tictactoe-view.fxml", "local_pvai");
     }
 
     public void ticTacToePvP(ActionEvent actionEvent) {
-        navigateToTicTacToe(actionEvent, "local_pvp");
+        navigateToTicTacToe("tictactoe-view.fxml", "local_pvp");
     }
 
     @FXML
-    public void navigateToTicTacToe(ActionEvent actionEvent, String gametype) {
+    public void navigateToTicTacToe(String view, String gametype) {
         try {
             Stage stage = (Stage) dropdown.getScene().getWindow(); // for dropdown using menubutton
-            FXMLLoader fxmlLoader = new FXMLLoader(MainApplication.class.getResource("tictactoe-view.fxml"));
+            FXMLLoader fxmlLoader = new FXMLLoader(MainApplication.class.getResource(view));
             Parent root = fxmlLoader.load();
 
-            TicTacToeController controller = fxmlLoader.getController();
+            GameController controller = fxmlLoader.getController();
             controller.setP1name(p1);
             controller.setP2name(p2);
             controller.setGameType(gametype);
