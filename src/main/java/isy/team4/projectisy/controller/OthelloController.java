@@ -14,9 +14,12 @@ public class OthelloController extends GameController {
         int wh = 8;
 
         for(int i = 0; i < wh*wh; i++) {
-            Node button = new Button();
+            Button button = new Button();
             button.setId(Integer.toString(i));
             button.getStyleClass().add("board-button");
+            button.setOnAction(e -> {
+                System.out.println("TEST");
+            });
             grid.add(button, i % wh, i / wh);
         }
 
