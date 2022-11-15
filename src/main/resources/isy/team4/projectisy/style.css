@@ -1,0 +1,11 @@
+/*
+    Stylesheet for custom javafx elements.
+    The application is relatively simple, so this stylesheet is used in every view at least for now.
+*/
+
+.board-button {
+    -fx-padding: 10;
+    -fx-background-color: #66B3E9;
+    -fx-min-width: 45.0;
+    -fx-min-height: 45.0;
+}
