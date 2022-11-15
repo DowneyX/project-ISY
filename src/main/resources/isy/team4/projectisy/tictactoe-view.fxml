@@ -81,5 +81,4 @@
     </GridPane>
     <Button cancelButton="true" onAction="#navigateToHome" text="Homepagina" />
    <Text fx:id="gameinfo" strokeType="OUTSIDE" strokeWidth="0.0" />
-    <Label fx:id="test" />
 </VBox>

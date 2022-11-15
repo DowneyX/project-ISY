@@ -23,6 +23,7 @@
      <items>
        <MenuItem mnemonicParsing="false" text="Tic Tac Toe Local PvP" onAction="#ticTacToePvP"/>
          <MenuItem mnemonicParsing="false" text="Tic Tac Toe Local PvAI" onAction="#ticTacToePvAI"/>
+         <MenuItem mnemonicParsing="false" text="Othello PvP" onAction="#othelloPvP"/>
      </items>
    </MenuButton>
 </VBox>
