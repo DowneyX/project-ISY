@@ -80,7 +80,7 @@ public class GameController implements IGameHandler, IPlayerTurnHandler {
         Button btn = (Button) actionEvent.getSource(); // get the clicked element and cast it to a button
 
         // Don't do anything if not empty or disabled
-        if (!Objects.equals(btn.getText(), "") || boardDisabled) {
+        if (boardDisabled) {
             return;
         }
         int idx = Integer.parseInt(btn.getId());
