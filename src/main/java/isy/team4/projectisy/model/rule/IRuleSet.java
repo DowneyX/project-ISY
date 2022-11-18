@@ -16,4 +16,6 @@ public interface IRuleSet {
     boolean isWon();
     IPlayer getWinningPlayer() throws NullPointerException;
     boolean isDraw();
+
+    int[] getValidMoves();
 }

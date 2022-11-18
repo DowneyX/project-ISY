@@ -84,7 +84,8 @@ public class GameController implements IGameHandler, IPlayerTurnHandler {
             return;
         }
         int idx = Integer.parseInt(btn.getId());
-        btn.setText(currentPlayer); // set btn text
+        // not needed? onupdate handles it already
+//        btn.setText(currentPlayer); // set btn text
         playermove = idx;
     }
 
@@ -102,22 +103,7 @@ public class GameController implements IGameHandler, IPlayerTurnHandler {
     @Override
     public void onUpdate() {
         updateCurrentPlayer();
-        board = game.getBoard(); // set new board
-
-        // draw new board. runlater because called from another thread
-        Platform.runLater(() -> {
-            for (int i = 0; i < board.getWidth() * board.getHeight(); i++) {
-                int x = i % 3;
-                int y = i / 3;
-                IPlayer currentplayer = board.getData()[y][x];
-
-                if (currentplayer != null) {
-                    Button btn = (Button) grid.getChildren().get(i);
-                    btn.setText(Character.toString(currentplayer.getInitial()));
-                }
-            }
-        });
-
+        redrawBoard();
     }
 
     @Override
@@ -134,8 +120,9 @@ public class GameController implements IGameHandler, IPlayerTurnHandler {
             }
         }
 
-        int x = this.playermove % 3;
-        int y = this.playermove / 3;
+        // board is null at this point. // TODO: is the grid reliable enough?
+        int x = this.playermove % grid.getColumnCount();
+        int y = this.playermove / grid.getRowCount();
 
         this.playermove = -1;
 
@@ -164,5 +151,26 @@ public class GameController implements IGameHandler, IPlayerTurnHandler {
     public void updateCurrentPlayer() {
         currentPlayer = this.game.getCurrentPlayer().getName();
         setGameInfo(currentPlayer + " is aan de beurt.");
+    }
+
+    /**
+     * Gets the updates board from the game and redraws it.
+     */
+    public void redrawBoard() {
+        board = game.getBoard(); // set new board
+
+        // draw new board. runlater because called from another thread
+        Platform.runLater(() -> {
+            for (int i = 0; i < board.getWidth() * board.getHeight(); i++) {
+                int x = i % board.getWidth();
+                int y = i / board.getHeight();
+                IPlayer currentplayer = board.getData()[y][x];
+
+                if (currentplayer != null) {
+                    Button btn = (Button) grid.getChildren().get(i);
+                    btn.setText(Character.toString(currentplayer.getInitial()));
+                }
+            }
+        });
     }
 }

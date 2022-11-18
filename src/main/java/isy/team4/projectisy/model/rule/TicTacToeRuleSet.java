@@ -88,4 +88,8 @@ public final class TicTacToeRuleSet implements IRuleSet {
     public boolean isDraw() {
         return !this.isWon() && this.newBoard.getFlatData().noneMatch(Objects::isNull);
     }
+
+    public int[] getValidMoves() {
+        return new int[]{};
+    }
 }

@@ -12,6 +12,7 @@ public interface IGame {
     IPlayer getCurrentPlayer();
     IPlayer[] getPlayers();
     Result getResult();  // Nullable
-
     void setGameHandler(IGameHandler gameHandler); // set because else a generic IGame can not be used
+
+    int[] getValidMoves();
 }

@@ -4,8 +4,9 @@
 */
 
 .board-button {
-    -fx-padding: 10;
+    -fx-padding: 0;
     -fx-background-color: #66B3E9;
     -fx-min-width: 45.0;
     -fx-min-height: 45.0;
+    -fx-font-size: 24px;
 }

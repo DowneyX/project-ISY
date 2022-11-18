@@ -22,6 +22,7 @@ public class LocalGame implements IGame {
         this.ruleSet = ruleSet;
         this.board = ruleSet.getStartingBoard();
         this.running = false;
+        this.ruleSet.setTurn(this.board, null); // set so board is available on init
     }
 
     @Override
@@ -136,5 +137,9 @@ public class LocalGame implements IGame {
         // If game not ended, we continue on
         this.currentTurn++;
         this.rotateCurrentPlayer();
+    }
+
+    public int[] getValidMoves() {
+        return ruleSet.getValidMoves();
     }
 }
