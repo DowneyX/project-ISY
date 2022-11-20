@@ -101,12 +101,12 @@ public class GameController implements IGameHandler, IPlayerTurnHandler {
     @Override
     public void onUpdate() {
         updateCurrentPlayer();
-        redrawBoard();
     }
 
     @Override
     public Vector2D getPlayerMove() {
         updateCurrentPlayer();
+        redrawBoard();
 
         // wait until move has been made. TODO: promise resolve / eventbus instead of
         // this?
