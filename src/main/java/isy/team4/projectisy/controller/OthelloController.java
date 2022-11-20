@@ -72,7 +72,9 @@ public class OthelloController extends GameController {
      */
     @Override
     public void redrawBoard() {
+        System.out.println("REDRAW");
         board = game.getBoard(); // set new board
+        this.emptyBoard(); // important, because redraw does not clear previous possiblemoves by default
 
         int[] validmoves = this.game.getValidMoves();
 

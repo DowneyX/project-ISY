@@ -22,7 +22,7 @@ public class LocalGame implements IGame {
         this.ruleSet = ruleSet;
         this.board = ruleSet.getStartingBoard();
         this.running = false;
-        this.ruleSet.setTurn(this.board, null); // set so board is available on init
+        this.ruleSet.setTurn(null, this.board); // set so board is available on init
     }
 
     @Override

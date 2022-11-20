@@ -121,12 +121,12 @@ public class OthelloRuleSet implements IRuleSet {
     public int[] getValidMoves(IPlayer currentplayer) {
         ArrayList<Integer> valid = new ArrayList<>();
 
-        for (int i = 0; i < oldBoard.getWidth() * oldBoard.getHeight(); i++) {
-            int x = i % oldBoard.getWidth();
-            int y = i / oldBoard.getHeight();
+        for (int i = 0; i < newBoard.getWidth() * newBoard.getHeight(); i++) {
+            int x = i % newBoard.getWidth();
+            int y = i / newBoard.getHeight();
 
-            // ignore if the cursor is not an iplayer.
-            if (oldBoard.getElement(x, y) == null) {
+            // should be empty in order to be valid
+            if (newBoard.getElement(x, y) != null) {
                 continue;
             }
 
@@ -135,7 +135,7 @@ public class OthelloRuleSet implements IRuleSet {
             // north
 
             if (checkValidMove(180, new Vector2D(x, y), currentplayer)) {
-                valid.add(i + oldBoard.getWidth());
+                valid.add(i);
             }
 
             // northeast
@@ -157,78 +157,69 @@ public class OthelloRuleSet implements IRuleSet {
     }
 
     /**
-     * Checks if the made move is valid TODO: refactor into makemove that returns a newboard where any change means move is valid
+     * Checks if the made move is valid by going from the origin into a direction where origin and end are currentplayer and everything in between is oppositeplayer
+     * TODO: refactor into makemove that returns a newboard where any change means move is valid
      *
      * @param direction - the direction we will look at in degrees
-     * @param origin    - the opposite player that has to be in between
+     * @param origin    - the move that is made
      */
     public boolean checkValidMove(int direction, Vector2D origin, IPlayer currentplayer) {
         int c = 1; // count of steps between cells
         int x = origin.x;
         int y = origin.y;
-        IPlayer origincell = oldBoard.getElement(x, y);
+        IPlayer origincell = newBoard.getElement(x, y);
 
-        // check if origin is equal to the current player
-        if (origincell != currentplayer) {
+        // Origin should be empty
+        if (origincell != null) {
             return false;
         }
 
-        for (int i = 0; i < oldBoard.getWidth(); i++) {
+        for (int i = 0; i < newBoard.getWidth(); i++) {
             IPlayer between;
-            int a = y-c;
-            System.out.println("Looped over x: " + x + ", y: " + a);
             try {
                 switch (direction) {
-                    case 0: // north
-                        between = oldBoard.getElement(x, y + c);
-                        break;
-                    case 45: // northeast
-                        between = oldBoard.getElement(x + c, y + c);
-                        break;
-                    case 90: // east
-                        between = oldBoard.getElement(x + c, y);
-                        break;
-                    case 135: // southeast
-                        between = oldBoard.getElement(x + c, y - c);
-                        break;
+//                    case 0: // north
+//                        between = newBoard.getElement(x, y + c);
+//                        break;
+//                    case 45: // northeast
+//                        between = newBoard.getElement(x + c, y + c);
+//                        break;
+//                    case 90: // east
+//                        between = newBoard.getElement(x + c, y);
+//                        break;
+//                    case 135: // southeast
+//                        between = newBoard.getElement(x + c, y - c);
+//                        break;
                     case 180: // south
-                        between = oldBoard.getElement(x, y - c);
+                        between = newBoard.getElement(x, y - c);
                         break;
-                    case 225: // southwest
-                        between = oldBoard.getElement(x - c, y - c);
-                        break;
-                    case 270: // west
-                        between = oldBoard.getElement(x - c, y);
-                        break;
-                    case 315: // northwest
-                        between = oldBoard.getElement(x - c, y + c);
-                        break;
+//                    case 225: // southwest
+//                        between = newBoard.getElement(x - c, y - c);
+//                        break;
+//                    case 270: // west
+//                        between = newBoard.getElement(x - c, y);
+//                        break;
+//                    case 315: // northwest
+//                        between = newBoard.getElement(x - c, y + c);
+//                        break;
                     default:
                         return false;
                 }
             } catch(Exception e) {
+                // out of bounds is false
                 return false; // TODO: check
             }
 
-            // between can't be your own piece
-            if (between == origincell) {
+            if(between == null) {
                 return false;
-            }
-//
-            // can't place next to one of your own pieces
-            if (c == 1 && between == null) {
-                return false;
-            }
-
-            // if steps between > 1 (one or move pieces between) and the element is empty
-            if (c > 1 && between == null) {
-                return true;
+            } if(between.getInitial() == currentplayer.getInitial()) { // between is currentplayer
+                return c > 1;
             } else {
-                c++; // else, add count.
+                c++;
             }
         }
 
-        System.out.println("No space!");
+//        System.out.println("No space!");
         return false;
     }
 }
