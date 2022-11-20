@@ -87,6 +87,6 @@ public class RemoteGame implements IGame {
     }
 
     public int[] getValidMoves() {
-        return ruleSet.getValidMoves();
+        return ruleSet.getValidMoves(getCurrentPlayer());
     }
 }

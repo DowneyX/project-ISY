@@ -84,8 +84,6 @@ public class GameController implements IGameHandler, IPlayerTurnHandler {
             return;
         }
         int idx = Integer.parseInt(btn.getId());
-        // not needed? onupdate handles it already
-//        btn.setText(currentPlayer); // set btn text
         playermove = idx;
     }
 
@@ -109,6 +107,7 @@ public class GameController implements IGameHandler, IPlayerTurnHandler {
     @Override
     public Vector2D getPlayerMove() {
         updateCurrentPlayer();
+        redrawBoard();
 
         // wait until move has been made. TODO: promise resolve / eventbus instead of
         // this?

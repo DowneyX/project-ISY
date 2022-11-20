@@ -89,7 +89,7 @@ public final class TicTacToeRuleSet implements IRuleSet {
         return !this.isWon() && this.newBoard.getFlatData().noneMatch(Objects::isNull);
     }
 
-    public int[] getValidMoves() {
+    public int[] getValidMoves(IPlayer currentplayer) {
         return new int[]{};
     }
 }

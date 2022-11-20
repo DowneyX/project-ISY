@@ -140,6 +140,6 @@ public class LocalGame implements IGame {
     }
 
     public int[] getValidMoves() {
-        return ruleSet.getValidMoves();
+        return ruleSet.getValidMoves(getCurrentPlayer());
     }
 }
