@@ -78,7 +78,7 @@ public class OthelloController extends GameController {
         board = game.getBoard(); // set new board
         this.emptyBoard(); // important, because redraw does not clear previous possiblemoves by default
 
-        int[] validmoves = this.game.getValidMoves();
+        int[] validmoves = this.game.getValidMoves(board);
 
         // draw new board. runlater because called from another thread
         Platform.runLater(() -> {

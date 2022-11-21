@@ -106,7 +106,7 @@ public class LocalGame implements IGame {
         this.ruleSet.setTurn(this.board, newBoard);
 
         // Check if set was legal by rules
-        if (!this.ruleSet.isLegal()) {
+        if (!this.ruleSet.isLegal(getCurrentPlayer())) {
             this.gameHandler.onIllegal();
             return; // Starts loop again
         }
@@ -139,7 +139,7 @@ public class LocalGame implements IGame {
         this.rotateCurrentPlayer();
     }
 
-    public int[] getValidMoves() {
-        return ruleSet.getValidMoves(getCurrentPlayer());
+    public int[] getValidMoves(Board board) {
+        return ruleSet.getValidMoves(getCurrentPlayer(), board);
     }
 }

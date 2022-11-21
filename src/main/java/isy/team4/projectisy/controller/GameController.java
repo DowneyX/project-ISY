@@ -89,13 +89,18 @@ public class GameController implements IGameHandler, IPlayerTurnHandler {
 
     @Override
     public void onFinished() {
-        gameinfo.setText(game.getResult().toString());
+        setGameInfo(game.getResult().toString());
         stopGame();
     }
 
     @Override
     public void onIllegal() {
-        gameinfo.setText("Illegale zet!");
+        setGameInfo("Illegale zet!");
+        try {
+            Thread.sleep(1000);
+        } catch (Exception e) {
+            System.out.println("error: " + e);
+        }
     }
 
     @Override

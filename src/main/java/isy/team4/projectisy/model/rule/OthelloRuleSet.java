@@ -5,7 +5,6 @@ import isy.team4.projectisy.util.Board;
 import isy.team4.projectisy.util.Vector2D;
 
 import java.util.ArrayList;
-import java.util.InputMismatchException;
 import java.util.Objects;
 
 public class OthelloRuleSet implements IRuleSet {
@@ -55,8 +54,31 @@ public class OthelloRuleSet implements IRuleSet {
     }
 
     @Override
-    public boolean isLegal() {
-        return true; // TODO: add
+    public boolean isLegal(IPlayer currentplayer) {
+        // check if a move is made
+        if(this.oldBoard.getTotalMovesMade() > this.newBoard.getTotalMovesMade()) {
+            return false;
+        }
+
+        int[] validmoves = getValidMoves(currentplayer, oldBoard); // check validmoves old
+
+        for (int i = 0; i < oldBoard.getWidth() * oldBoard.getHeight(); i++) {
+            int x = i % oldBoard.getWidth();
+            int y = i / oldBoard.getHeight();
+
+            IPlayer oldcell = oldBoard.getElement(x, y);
+            IPlayer newcell = newBoard.getElement(x, y);
+
+            if(oldcell != newcell && oldcell == null) { // check if updated and was a move by checking is previously empty
+                for(int j = 0; j < validmoves.length; j++) { // TODO: check for multiple moves at once? GUI prohibits this.
+                    if(i == validmoves[j]) { // if found move in validmove, move is valid
+                        return true;
+                    }
+                }
+            }
+        }
+
+        return false;
     }
 
     @Override
@@ -115,24 +137,22 @@ public class OthelloRuleSet implements IRuleSet {
 
     /**
      * Returns the currently valid moves so they can be displayed. Also useful for isLegal
-     *
-     * @return
      */
-    public int[] getValidMoves(IPlayer currentplayer) {
+    public int[] getValidMoves(IPlayer currentplayer, Board board) {
         ArrayList<Integer> valid = new ArrayList<>();
 
-        for (int i = 0; i < newBoard.getWidth() * newBoard.getHeight(); i++) {
-            int x = i % newBoard.getWidth();
-            int y = i / newBoard.getHeight();
+        for (int i = 0; i < board.getWidth() * board.getHeight(); i++) {
+            int x = i % board.getWidth();
+            int y = i / board.getHeight();
 
             // should be empty in order to be valid
-            if (newBoard.getElement(x, y) != null) {
+            if (board.getElement(x, y) != null) {
                 continue;
             }
 
             // Loop over every 45 degrees
             for(int j = 0; j < 360; j += 45) {
-                if (checkValidMove(j, new Vector2D(x, y), currentplayer)) {
+                if (checkValidMove(j, new Vector2D(x, y), currentplayer, board)) {
                     valid.add(i);
                 }
             }
@@ -148,44 +168,44 @@ public class OthelloRuleSet implements IRuleSet {
      * @param direction - the direction we will look at in degrees
      * @param origin    - the move that is made
      */
-    public boolean checkValidMove(int direction, Vector2D origin, IPlayer currentplayer) {
+    public boolean checkValidMove(int direction, Vector2D origin, IPlayer currentplayer, Board board) {
         int c = 1; // count of steps between cells
         int x = origin.x;
         int y = origin.y;
-        IPlayer origincell = newBoard.getElement(x, y);
+        IPlayer origincell = board.getElement(x, y);
 
         // Origin should be empty. You can not play an unavailable position.
         if (origincell != null) {
             return false;
         }
 
-        for (int i = 0; i < newBoard.getWidth(); i++) {
+        for (int i = 0; i < board.getWidth(); i++) {
             IPlayer between;
             try {
                 switch (direction) {
                     case 0: // north
-                        between = newBoard.getElement(x, y + c);
+                        between = board.getElement(x, y + c);
                         break;
                     case 45: // northeast
-                        between = newBoard.getElement(x + c, y + c);
+                        between = board.getElement(x + c, y + c);
                         break;
                     case 90: // east
-                        between = newBoard.getElement(x + c, y);
+                        between = board.getElement(x + c, y);
                         break;
                     case 135: // southeast
-                        between = newBoard.getElement(x + c, y - c);
+                        between = board.getElement(x + c, y - c);
                         break;
                     case 180: // south
-                        between = newBoard.getElement(x, y - c);
+                        between = board.getElement(x, y - c);
                         break;
                     case 225: // southwest
-                        between = newBoard.getElement(x - c, y - c);
+                        between = board.getElement(x - c, y - c);
                         break;
                     case 270: // west
-                        between = newBoard.getElement(x - c, y);
+                        between = board.getElement(x - c, y);
                         break;
                     case 315: // northwest
-                        between = newBoard.getElement(x - c, y + c);
+                        between = board.getElement(x - c, y + c);
                         break;
                     default:
                         return false;
