@@ -92,7 +92,7 @@ public class OthelloController extends GameController {
                     for(int move : validmoves) {
                         if(move == i) {
                             // add possible moves
-                            btn.setText("? " + this.game.getCurrentPlayer().getInitial()); // ◌
+                            btn.setText("﹖"); // ◌
                         }
                     }
                 }

@@ -129,28 +129,13 @@ public class OthelloRuleSet implements IRuleSet {
             if (newBoard.getElement(x, y) != null) {
                 continue;
             }
-
-            // important: the origin is the opposite of the direction we want to check
-
-            // north
-
-            if (checkValidMove(180, new Vector2D(x, y), currentplayer)) {
-                valid.add(i);
+            
+            // Loop over every 45 degrees
+            for(int j = 0; j < 360; j += 45) {
+                if (checkValidMove(j, new Vector2D(x, y), currentplayer)) {
+                    valid.add(i);
+                }
             }
-
-            // northeast
-
-            // east
-
-            // southeast
-
-            // south
-
-            // southwest
-
-            // west
-
-            // northwest
         }
 
         return valid.stream().mapToInt(i -> i).toArray();
@@ -178,30 +163,30 @@ public class OthelloRuleSet implements IRuleSet {
             IPlayer between;
             try {
                 switch (direction) {
-//                    case 0: // north
-//                        between = newBoard.getElement(x, y + c);
-//                        break;
-//                    case 45: // northeast
-//                        between = newBoard.getElement(x + c, y + c);
-//                        break;
-//                    case 90: // east
-//                        between = newBoard.getElement(x + c, y);
-//                        break;
-//                    case 135: // southeast
-//                        between = newBoard.getElement(x + c, y - c);
-//                        break;
+                    case 0: // north
+                        between = newBoard.getElement(x, y + c);
+                        break;
+                    case 45: // northeast
+                        between = newBoard.getElement(x + c, y + c);
+                        break;
+                    case 90: // east
+                        between = newBoard.getElement(x + c, y);
+                        break;
+                    case 135: // southeast
+                        between = newBoard.getElement(x + c, y - c);
+                        break;
                     case 180: // south
                         between = newBoard.getElement(x, y - c);
                         break;
-//                    case 225: // southwest
-//                        between = newBoard.getElement(x - c, y - c);
-//                        break;
-//                    case 270: // west
-//                        between = newBoard.getElement(x - c, y);
-//                        break;
-//                    case 315: // northwest
-//                        between = newBoard.getElement(x - c, y + c);
-//                        break;
+                    case 225: // southwest
+                        between = newBoard.getElement(x - c, y - c);
+                        break;
+                    case 270: // west
+                        between = newBoard.getElement(x - c, y);
+                        break;
+                    case 315: // northwest
+                        between = newBoard.getElement(x - c, y + c);
+                        break;
                     default:
                         return false;
                 }
