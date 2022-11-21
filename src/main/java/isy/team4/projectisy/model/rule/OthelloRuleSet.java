@@ -35,8 +35,8 @@ public class OthelloRuleSet implements IRuleSet {
 
     @Override
     public char[] getAllowedInitials() {
-        return new char[]{'⚪', '⚫'}; // ◌ for possible next moves
-    }
+        return new char[]{'⭕', '⬤'};
+    } // ○
 
     @Override
     public Board getStartingBoard() {
@@ -129,7 +129,7 @@ public class OthelloRuleSet implements IRuleSet {
             if (newBoard.getElement(x, y) != null) {
                 continue;
             }
-            
+
             // Loop over every 45 degrees
             for(int j = 0; j < 360; j += 45) {
                 if (checkValidMove(j, new Vector2D(x, y), currentplayer)) {

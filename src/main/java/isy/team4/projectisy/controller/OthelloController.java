@@ -12,19 +12,22 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.layout.GridPane;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
 
 import java.util.Objects;
 
 public class OthelloController extends GameController {
     @FXML
     private GridPane grid;
+
     @FXML
     public void initialize() {
         /**
          * Create board buttons
          */
         int wh = 8;
-        for(int i = 0; i < Math.pow(wh, 2); i++) {
+        for (int i = 0; i < Math.pow(wh, 2); i++) {
             Button button = new Button();
             button.setId(Integer.toString(i));
             button.getStyleClass().add("board-button");
@@ -72,7 +75,6 @@ public class OthelloController extends GameController {
      */
     @Override
     public void redrawBoard() {
-        System.out.println("REDRAW");
         board = game.getBoard(); // set new board
         this.emptyBoard(); // important, because redraw does not clear previous possiblemoves by default
 
@@ -89,10 +91,10 @@ public class OthelloController extends GameController {
                 if (currentplayer != null) {
                     btn.setText(Character.toString(currentplayer.getInitial()));
                 } else {
-                    for(int move : validmoves) {
-                        if(move == i) {
+                    for (int move : validmoves) {
+                        if (move == i) {
                             // add possible moves
-                            btn.setText("﹖"); // ◌
+                            btn.setText("﹖"); // ◌, ⚬, ﹖
                         }
                     }
                 }
