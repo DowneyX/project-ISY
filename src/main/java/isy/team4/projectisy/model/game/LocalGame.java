@@ -22,7 +22,7 @@ public class LocalGame implements IGame {
         this.ruleSet = ruleSet;
         this.board = ruleSet.getStartingBoard();
         this.running = false;
-        this.ruleSet.setTurn(this.board, null); // set so board is available on init
+        this.ruleSet.setTurn(null, this.board); // set so board is available on init
     }
 
     @Override
@@ -106,14 +106,14 @@ public class LocalGame implements IGame {
         this.ruleSet.setTurn(this.board, newBoard);
 
         // Check if set was legal by rules
-        if (!this.ruleSet.isLegal()) {
+        if (!this.ruleSet.isLegal(getCurrentPlayer())) {
             this.gameHandler.onIllegal();
             return; // Starts loop again
         }
 
         // Set the new board with potential changes that came from the move of the
         // player
-        Board handledBoard = this.ruleSet.handleBoard(newBoard);
+        Board handledBoard = this.ruleSet.handleBoard(newBoard, getCurrentPlayer());
         this.board = (handledBoard != null) ? handledBoard : newBoard;
         this.gameHandler.onUpdate();
 
@@ -139,7 +139,7 @@ public class LocalGame implements IGame {
         this.rotateCurrentPlayer();
     }
 
-    public int[] getValidMoves() {
-        return ruleSet.getValidMoves();
+    public int[] getValidMoves(Board board) {
+        return ruleSet.getValidMoves(getCurrentPlayer(), board);
     }
 }

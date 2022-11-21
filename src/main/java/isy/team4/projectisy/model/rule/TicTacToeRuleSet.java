@@ -38,12 +38,12 @@ public final class TicTacToeRuleSet implements IRuleSet {
     }
 
     @Override
-    public boolean isLegal() {
+    public boolean isLegal(IPlayer currentplayer) {
         return this.newBoard.getTotalMovesMade() > this.oldBoard.getTotalMovesMade();
     }
 
     @Override
-    public Board handleBoard(Board board) {
+    public Board handleBoard(Board board, IPlayer currentplayer) {
         return null;
     }
 
@@ -51,13 +51,6 @@ public final class TicTacToeRuleSet implements IRuleSet {
     public boolean isWon() {
         boolean won = false;
         IPlayer[][] grid = this.newBoard.getData();
-
-        // this.winningPlayer = (grid[0][0] != null) ? grid[0][0] : (grid[1][1] != null)
-        // ? grid[1][1] : grid[2][2];
-        // This did not work. It returns either the 0,0 1,1 or 2,2 player if it is not
-        // null.
-
-        // the following is not very clean, but does the job for now. TODO: refactoring
 
         if (grid[0][0] == grid[0][1] && grid[0][1] == grid[0][2] && grid[0][0] != null
                 || grid[0][0] == grid[1][1] && grid[1][1] == grid[2][2] && grid[0][0] != null
@@ -89,7 +82,7 @@ public final class TicTacToeRuleSet implements IRuleSet {
         return !this.isWon() && this.newBoard.getFlatData().noneMatch(Objects::isNull);
     }
 
-    public int[] getValidMoves() {
+    public int[] getValidMoves(IPlayer currentplayer, Board board) {
         return new int[]{};
     }
 }
