@@ -154,7 +154,7 @@ public class OthelloRuleSet implements IRuleSet {
         int y = origin.y;
         IPlayer origincell = newBoard.getElement(x, y);
 
-        // Origin should be empty
+        // Origin should be empty. You can not play an unavailable position.
         if (origincell != null) {
             return false;
         }
@@ -191,20 +191,19 @@ public class OthelloRuleSet implements IRuleSet {
                         return false;
                 }
             } catch(Exception e) {
-                // out of bounds is false
-                return false; // TODO: check
+                // out of bounds is always false
+                return false;
             }
 
-            if(between == null) {
+            if(between == null) { // there can be no empty spaces in between
                 return false;
-            } if(between.getInitial() == currentplayer.getInitial()) { // between is currentplayer
-                return c > 1;
-            } else {
+            } if(between.getInitial() == currentplayer.getInitial()) { // between is the current player, which will end the check
+                return c > 1; // check if there is more than one step, which means that there is at least one item in between two of ours
+            } else { // between is an opposite player, and we need to check the next iter
                 c++;
             }
         }
 
-//        System.out.println("No space!");
         return false;
     }
 }
