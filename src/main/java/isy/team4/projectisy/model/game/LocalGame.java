@@ -113,7 +113,7 @@ public class LocalGame implements IGame {
 
         // Set the new board with potential changes that came from the move of the
         // player
-        Board handledBoard = this.ruleSet.handleBoard(newBoard);
+        Board handledBoard = this.ruleSet.handleBoard(newBoard, getCurrentPlayer());
         this.board = (handledBoard != null) ? handledBoard : newBoard;
         this.gameHandler.onUpdate();
 

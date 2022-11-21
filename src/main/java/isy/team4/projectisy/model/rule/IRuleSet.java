@@ -17,7 +17,7 @@ public interface IRuleSet {
 
     boolean isLegal(IPlayer currentplayer); // othello requires currentplayer, because legal moves differ per player
 
-    Board handleBoard(Board board);
+    Board handleBoard(Board board, IPlayer currentplayer);
 
     boolean isWon();
 

@@ -98,9 +98,12 @@ public class GameController implements IGameHandler, IPlayerTurnHandler {
         setGameInfo("Illegale zet!");
         try {
             Thread.sleep(1000);
+            boardDisabled = true;
         } catch (Exception e) {
             System.out.println("error: " + e);
         }
+
+        boardDisabled = false;
     }
 
     @Override

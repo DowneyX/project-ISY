@@ -7,7 +7,7 @@ public class AIPlayer implements IPlayer {
     private final String name;
     private char initial;
     private IPlayer opponent;
-    private int[][] possibleMoves = {
+    private int[][] possibleMoves = { // TODO: this works only for tictactoe. should get legal moves from ruleset
             { 0, 0 }, { 0, 1 }, { 0, 2 },
             { 1, 0 }, { 1, 1 }, { 1, 2 },
             { 2, 0 }, { 2, 1 }, { 2, 2 }, };

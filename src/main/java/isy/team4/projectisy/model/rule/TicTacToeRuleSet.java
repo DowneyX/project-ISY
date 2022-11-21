@@ -43,7 +43,7 @@ public final class TicTacToeRuleSet implements IRuleSet {
     }
 
     @Override
-    public Board handleBoard(Board board) {
+    public Board handleBoard(Board board, IPlayer currentplayer) {
         return null;
     }
 
