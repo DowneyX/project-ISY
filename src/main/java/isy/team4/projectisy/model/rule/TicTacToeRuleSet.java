@@ -45,9 +45,7 @@ public final class TicTacToeRuleSet implements IRuleSet {
 
     @Override
     public void handleMove(Vector2D move, IPlayer currentplayer) {
-        if (board.getElement(move.x, move.y) == null) {
-            this.board.setElement(currentplayer, move.x, move.y);
-        }
+        this.board.setElement(currentplayer, move.x, move.y);
     }
 
     @Override
