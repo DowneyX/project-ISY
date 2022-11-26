@@ -8,4 +8,16 @@ public class Vector2D {
         this.x = x;
         this.y = y;
     }
+
+    public Vector2D(int i, Board board) {
+        int y = (i) / board.getWidth();
+        int x = (i) % board.getHeight();
+
+        this.y = y;
+        this.x = x;
+    }
+
+    public int toInt(Board board) {
+        return y * board.getWidth() + x;
+    }
 }

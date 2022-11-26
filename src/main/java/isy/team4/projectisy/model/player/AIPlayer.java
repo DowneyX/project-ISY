@@ -1,5 +1,6 @@
 package isy.team4.projectisy.model.player;
 
+import isy.team4.projectisy.model.rule.IRuleSet;
 import isy.team4.projectisy.util.Board;
 import isy.team4.projectisy.util.Vector2D;
 
@@ -7,14 +8,12 @@ public class AIPlayer implements IPlayer {
     private final String name;
     private char initial;
     private IPlayer opponent;
-    private int[][] possibleMoves = { // TODO: this works only for tictactoe. should get legal moves from ruleset
-            { 0, 0 }, { 0, 1 }, { 0, 2 },
-            { 1, 0 }, { 1, 1 }, { 1, 2 },
-            { 2, 0 }, { 2, 1 }, { 2, 2 }, };
+    private IRuleSet ruleset;
 
-    public AIPlayer(String name, IPlayer opponent) {
+    public AIPlayer(String name, IPlayer opponent, IRuleSet ruleset) {
         this.opponent = opponent;
         this.name = name;
+        this.ruleset = ruleset.clone();
     }
 
     @Override
@@ -39,17 +38,19 @@ public class AIPlayer implements IPlayer {
         int bestVal = Integer.MIN_VALUE;
         Board newBoard = new Board(board);
         Vector2D BestMove = new Vector2D(-1, -1);
+        ruleset.setBoard(newBoard);
+        ; // initialise the ruleset with board
+        Vector2D[] validmoves = ruleset.getValidMoves(this);
 
-        for (int[] move : possibleMoves) {
-            if (newBoard.getElement(move[0], move[1]) == null) {
-                newBoard.setElement(this, move[0], move[1]);
-                int moveVal = miniMax(newBoard, 0, false);
-                newBoard.setElement(null, move[0], move[1]);
+        for (Vector2D move : validmoves) {
+            newBoard.setElement(this, move.x, move.y);
+            // ruleset.handleMove(newBoard, opponent);
+            int moveVal = miniMax(newBoard, 0, false);
+            newBoard.setElement(null, move.x, move.y);
 
-                if (moveVal > bestVal) {
-                    bestVal = moveVal;
-                    BestMove = new Vector2D(move[0], move[1]);
-                }
+            if (moveVal > bestVal) {
+                bestVal = moveVal;
+                BestMove = new Vector2D(move.x, move.y);
             }
         }
 
@@ -63,13 +64,14 @@ public class AIPlayer implements IPlayer {
     }
 
     private int miniMax(Board board, int depth, boolean isMax) {
+        Vector2D[] validmoves = ruleset.getValidMoves(this);
 
-        if (hasWon(board, this) || hasWon(board, opponent) || board.isFull()) { // terminal state of the board
+        if (ruleset.isDraw() || ruleset.isWon() || board.isFull()) { // terminal state of the board
             int score = 0;
-            if (hasWon(board, opponent)) {
+            if (ruleset.isWon() && ruleset.getWinningPlayer() == opponent) {
                 score = Integer.MIN_VALUE + depth;
             }
-            if (hasWon(board, this)) {
+            if (ruleset.isWon() && ruleset.getWinningPlayer() == this) {
                 score = Integer.MAX_VALUE - depth;
             }
             return score;
@@ -77,37 +79,23 @@ public class AIPlayer implements IPlayer {
 
         if (isMax) { // if we are max player
             int bestVal = Integer.MIN_VALUE;
-            for (int[] move : possibleMoves) {
-                if (board.getElement(move[0], move[1]) == null) {
-                    board.setElement(this, move[0], move[1]);
-                    bestVal = Math.max(bestVal, miniMax(board, depth + 1, false));
-                    board.setElement(null, move[0], move[1]);
-                }
+            for (Vector2D move : ruleset.getValidMoves(this)) {
+                board.setElement(this, move.x, move.y);
+                bestVal = Math.max(bestVal, miniMax(board, depth + 1, false));
+                board.setElement(null, move.x, move.y);
+
             }
             return bestVal;
 
         } else { // if we are min player
             int bestVal = Integer.MAX_VALUE;
-            for (int[] move : possibleMoves) {
-                if (board.getElement(move[0], move[1]) == null) {
-                    board.setElement(opponent, move[0], move[1]);
-                    bestVal = Math.min(bestVal, miniMax(board, depth + 1, true));
-                    board.setElement(null, move[0], move[1]);
-                }
+            for (Vector2D move : ruleset.getValidMoves(this)) {
+                board.setElement(opponent, move.x, move.y);
+                bestVal = Math.min(bestVal, miniMax(board, depth + 1, true));
+                board.setElement(null, move.x, move.y);
+
             }
             return bestVal;
         }
-    }
-
-    private boolean hasWon(Board board, IPlayer player) {
-        IPlayer[][] grid = board.getData();
-        return grid[0][0] == grid[0][1] && grid[0][1] == grid[0][2] && grid[0][0] == player ||
-                grid[1][0] == grid[1][1] && grid[1][1] == grid[1][2] && grid[1][0] == player ||
-                grid[2][0] == grid[2][1] && grid[2][1] == grid[2][2] && grid[2][0] == player ||
-                grid[0][0] == grid[1][0] && grid[1][0] == grid[2][0] && grid[0][0] == player ||
-                grid[0][1] == grid[1][1] && grid[1][1] == grid[2][1] && grid[0][1] == player ||
-                grid[0][2] == grid[1][2] && grid[1][2] == grid[2][2] && grid[0][2] == player ||
-                grid[0][0] == grid[1][1] && grid[1][1] == grid[2][2] && grid[0][0] == player ||
-                grid[0][2] == grid[1][1] && grid[1][1] == grid[2][0] && grid[0][2] == player;
     }
 }

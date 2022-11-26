@@ -95,7 +95,7 @@ public class Server extends ServerIO implements IPlayerTurnHandler {
 
                     // insert move
                     if (!data[0].equals(userName)) {
-                        RemoteMove = convertIntToVector2D(Integer.parseInt(data[1]), game.getBoard());
+                        RemoteMove = new Vector2D(Integer.parseInt(data[1]), game.getBoard());
                         game.step();
                     }
 
@@ -170,24 +170,13 @@ public class Server extends ServerIO implements IPlayerTurnHandler {
         sendMessage("challenge " + username + " " + gameType);
     }
 
-    public int convertVector2DToInt(Vector2D move, Board board) {
-        return move.y * board.getWidth() + move.x;
-    }
-
-    public Vector2D convertIntToVector2D(int incommingMove, Board board) {
-        int y = (incommingMove) / board.getWidth();
-        int x = (incommingMove) % board.getHeight();
-        Vector2D move = new Vector2D(x, y);
-        return move;
-    }
-
     private void setupGame(String gametype, String opponentName, String playerToMove) {
         switch (gametype) {
             case "Tic-tac-toe":
                 IRuleSet ruleset = new TicTacToeRuleSet();
                 IPlayer[] players = new IPlayer[2];
                 players[0] = new RemotePlayer(opponentName, this);
-                players[1] = new AIPlayer(userName, players[0]);
+                players[1] = new AIPlayer(userName, players[0], ruleset);
                 ruleset = new TicTacToeRuleSet();
                 game = new RemoteGame(players, ruleset, this);
                 IPlayer currentPlayer = playerToMove.equals(opponentName) ? players[0] : players[1];
@@ -210,7 +199,7 @@ public class Server extends ServerIO implements IPlayerTurnHandler {
     }
 
     public void sendMove(Vector2D move) {
-        sendMessage("move " + convertVector2DToInt(move, game.getBoard()));
+        sendMessage("move " + move.toInt(game.getBoard()));
     }
 
     @Override

@@ -7,6 +7,7 @@ import isy.team4.projectisy.model.player.LocalPlayer;
 import isy.team4.projectisy.model.rule.IRuleSet;
 import isy.team4.projectisy.model.rule.OthelloRuleSet;
 import isy.team4.projectisy.model.rule.TicTacToeRuleSet;
+import isy.team4.projectisy.util.Vector2D;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -47,7 +48,7 @@ public class OthelloController extends GameController {
 
         if (Objects.equals(gametype, "local_pvai")) {
             players[0] = new LocalPlayer(p1, this);
-//            players[1] = new AIPlayer(p2, players[0]);
+            // players[1] = new AIPlayer(p2, players[0]);
             ruleset = new OthelloRuleSet(players);
             game = new LocalGame(players, ruleset);
             game.setGameHandler(this);
@@ -78,7 +79,7 @@ public class OthelloController extends GameController {
         board = game.getBoard(); // set new board
         this.emptyBoard(); // important, because redraw does not clear previous possiblemoves by default
 
-        int[] validmoves = this.game.getValidMoves(board);
+        Vector2D[] validmoves = this.game.getValidMoves(board);
 
         // draw new board. runlater because called from another thread
         Platform.runLater(() -> {
@@ -91,8 +92,8 @@ public class OthelloController extends GameController {
                 if (currentplayer != null) {
                     btn.setText(Character.toString(currentplayer.getInitial()));
                 } else {
-                    for (int move : validmoves) {
-                        if (move == i) {
+                    for (Vector2D move : validmoves) {
+                        if (move.toInt(board) == i) {
                             // add possible moves
                             btn.setText("﹖"); // ◌, ⚬, ﹖
                         }

@@ -86,7 +86,7 @@ public class RemoteGame implements IGame {
         this.currentPlayer = players[(Arrays.asList(players).indexOf(currentPlayer) + 1) % this.players.length];
     }
 
-    public int[] getValidMoves(Board board) {
-        return ruleSet.getValidMoves(getCurrentPlayer(), board);
+    public Vector2D[] getValidMoves(Board board) {
+        return ruleSet.getValidMoves(getCurrentPlayer());
     }
 }
