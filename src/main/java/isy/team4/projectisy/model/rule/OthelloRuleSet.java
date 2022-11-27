@@ -272,4 +272,11 @@ public class OthelloRuleSet implements IRuleSet {
         IRuleSet newRuleset = new OthelloRuleSet(players);
         return newRuleset;
     }
+
+    public int getScore() {
+        if (isWon()) {
+            return 1000;
+        }
+        return 0;
+    }
 }

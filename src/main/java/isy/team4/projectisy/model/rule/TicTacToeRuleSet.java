@@ -107,4 +107,12 @@ public final class TicTacToeRuleSet implements IRuleSet {
     public void setBoard(Board board) {
         this.board = board;
     }
+
+    @Override
+    public int getScore() {
+        if (isWon()) {
+            return 1000;
+        }
+        return 0;
+    }
 }
