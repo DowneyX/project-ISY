@@ -63,6 +63,8 @@ public final class TicTacToeRuleSet implements IRuleSet {
         } else if (grid[2][0] == grid[2][1] && grid[2][1] == grid[2][2] && grid[2][0] != null
                 || grid[0][2] == grid[1][2] && grid[1][2] == grid[2][2] && grid[0][2] != null) {
             this.winningPlayer = grid[2][2];
+        } else {
+            this.winningPlayer = null; // reset winning player this is nessary for the ai
         }
 
         return this.winningPlayer != null;

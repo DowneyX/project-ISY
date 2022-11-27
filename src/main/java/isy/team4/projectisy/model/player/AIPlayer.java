@@ -35,15 +35,15 @@ public class AIPlayer implements IPlayer {
         if (this.name != null) {
             return this.name;
         }
-        return "AIplayer";
+        return "x";
     }
 
     @Override
     public Vector2D getMove(Board board) {
+        ruleset.setBoard(board);
+
         int bestVal = Integer.MIN_VALUE;
         Vector2D BestMove = new Vector2D(-1, -1);
-
-        ruleset.setBoard(board);
 
         for (Vector2D move : ruleset.getValidMoves(this)) {
             Board newBoard = new Board(board);
@@ -59,14 +59,13 @@ public class AIPlayer implements IPlayer {
         }
 
         return BestMove;
-
     }
 
     private int miniMax(Board board, int depth, boolean isMax) {
-
         ruleset.setBoard(board);
 
         if (ruleset.isDraw() || ruleset.isWon() || board.isFull()) { // terminal state of the board
+
             int score = 0;
             if (ruleset.isWon() && ruleset.getWinningPlayer() == opponent) {
                 score = -1000 + depth;
