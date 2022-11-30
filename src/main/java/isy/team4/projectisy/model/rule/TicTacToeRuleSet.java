@@ -2,12 +2,14 @@ package isy.team4.projectisy.model.rule;
 
 import isy.team4.projectisy.model.player.IPlayer;
 import isy.team4.projectisy.util.Board;
+import isy.team4.projectisy.util.Vector2D;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 public final class TicTacToeRuleSet implements IRuleSet {
-    private Board oldBoard;
-    private Board newBoard;
+    private Board board;
     private IPlayer[] players;
     private IPlayer winningPlayer;
 
@@ -32,25 +34,23 @@ public final class TicTacToeRuleSet implements IRuleSet {
     }
 
     @Override
-    public void setTurn(Board board, Board newBoard) {
-        this.oldBoard = board;
-        this.newBoard = newBoard;
+    public boolean isLegal(IPlayer currentplayer, Vector2D move) {
+        // TODO have a diffent way of checking if current situation is legal'
+
+        if (board.getElement(move.x, move.y) == null) {
+            return true;
+        }
+        return false;
     }
 
     @Override
-    public boolean isLegal(IPlayer currentplayer) {
-        return this.newBoard.getTotalMovesMade() > this.oldBoard.getTotalMovesMade();
-    }
-
-    @Override
-    public Board handleBoard(Board board, IPlayer currentplayer) {
-        return null;
+    public void handleMove(Vector2D move, IPlayer currentplayer) {
+        this.board.setElement(currentplayer, move.x, move.y);
     }
 
     @Override
     public boolean isWon() {
-        boolean won = false;
-        IPlayer[][] grid = this.newBoard.getData();
+        IPlayer[][] grid = board.getData();
 
         if (grid[0][0] == grid[0][1] && grid[0][1] == grid[0][2] && grid[0][0] != null
                 || grid[0][0] == grid[1][1] && grid[1][1] == grid[2][2] && grid[0][0] != null
@@ -63,6 +63,8 @@ public final class TicTacToeRuleSet implements IRuleSet {
         } else if (grid[2][0] == grid[2][1] && grid[2][1] == grid[2][2] && grid[2][0] != null
                 || grid[0][2] == grid[1][2] && grid[1][2] == grid[2][2] && grid[0][2] != null) {
             this.winningPlayer = grid[2][2];
+        } else {
+            this.winningPlayer = null; // reset winning player this is nessary for the ai
         }
 
         return this.winningPlayer != null;
@@ -79,10 +81,38 @@ public final class TicTacToeRuleSet implements IRuleSet {
 
     @Override
     public boolean isDraw() {
-        return !this.isWon() && this.newBoard.getFlatData().noneMatch(Objects::isNull);
+        return !this.isWon() && this.board.getFlatData().noneMatch(Objects::isNull);
     }
 
-    public int[] getValidMoves(IPlayer currentplayer, Board board) {
-        return new int[]{};
+    public Vector2D[] getValidMoves(IPlayer currentplayer) {
+        List<Vector2D> moves = new ArrayList<Vector2D>();
+        for (int i = 0; i < board.getWidth() * board.getHeight(); i++) {
+            int x = i % board.getWidth();
+            int y = i / board.getHeight();
+
+            if (board.getElement(x, y) == null) {
+                moves.add(new Vector2D(x, y));
+            }
+        }
+        return moves.toArray(new Vector2D[0]);
+    }
+
+    @Override
+    public IRuleSet clone() {
+        IRuleSet newRuleset = new TicTacToeRuleSet();
+        return newRuleset;
+    }
+
+    @Override
+    public void setBoard(Board board) {
+        this.board = board;
+    }
+
+    @Override
+    public int getScore() {
+        if (isWon()) {
+            return 1000;
+        }
+        return 0;
     }
 }

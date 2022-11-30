@@ -49,9 +49,10 @@ public class TicTacToeController extends GameController {
         IPlayer[] players = new IPlayer[2];
 
         if (Objects.equals(gametype, "local_pvai")) {
-            players[0] = new LocalPlayer(p1, this);
-            players[1] = new AIPlayer(p2, players[0]);
+
             ruleset = new TicTacToeRuleSet();
+            players[0] = new LocalPlayer(p1, this);
+            players[1] = new AIPlayer(p2, players[0], ruleset);
             game = new LocalGame(players, ruleset);
             game.setGameHandler(this);
             game.start();
