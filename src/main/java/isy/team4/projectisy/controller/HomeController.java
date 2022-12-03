@@ -1,4 +1,5 @@
 package isy.team4.projectisy.controller;
+
 import isy.team4.projectisy.MainApplication;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -29,11 +30,17 @@ public class HomeController extends Controller {
         navigate("othello-view.fxml", "local_pvp");
     }
 
+    public void othelloPvAI(ActionEvent actionEvent) {
+        navigate("othello-view.fxml", "local_pvai");
+    }
+
     @FXML
     public void navigate(String view, String gametype) {
         try {
             Stage stage = (Stage) dropdown.getScene().getWindow();
-            FXMLLoader fxmlLoader = new FXMLLoader(MainApplication.class.getResource(view)); // TODO: relative instead of absolute gathering of resources
+            FXMLLoader fxmlLoader = new FXMLLoader(MainApplication.class.getResource(view)); // TODO: relative instead
+                                                                                             // of absolute gathering of
+                                                                                             // resources
             Parent root = fxmlLoader.load();
 
             GameController controller = fxmlLoader.getController();
@@ -42,10 +49,12 @@ public class HomeController extends Controller {
             controller.setGameType(gametype);
 
             Scene scene = new Scene(root);
-            scene.getStylesheets().add(Objects.requireNonNull(MainApplication.class.getResource("style.css")).toExternalForm()); // main stylesheet
+            scene.getStylesheets()
+                    .add(Objects.requireNonNull(MainApplication.class.getResource("style.css")).toExternalForm()); // main
+                                                                                                                   // stylesheet
             stage.setScene(scene);
             stage.show();
-        } catch(IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }

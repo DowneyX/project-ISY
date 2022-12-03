@@ -1,5 +1,7 @@
 package isy.team4.projectisy.model.game;
 
+import java.util.Arrays;
+
 import isy.team4.projectisy.model.player.IPlayer;
 import isy.team4.projectisy.model.rule.IRuleSet;
 import isy.team4.projectisy.util.Board;
@@ -12,7 +14,6 @@ public class LocalGame implements IGame {
     private final IRuleSet ruleSet;
     private IGameHandler gameHandler;
     private IPlayer currentPlayer;
-    private int currentTurn;
     private Board board;
     private boolean running;
     private Result result;
@@ -44,9 +45,8 @@ public class LocalGame implements IGame {
             initials[0] = initials[(i + 1) % initials.length];
         }
 
-        // Initializing turn
-        this.currentTurn = 0;
-        this.rotateCurrentPlayer(); // Initially sets player
+        // set current player
+        currentPlayer = players[0];
 
         // Start thread and run the loop
         this.running = true;
@@ -86,19 +86,23 @@ public class LocalGame implements IGame {
     }
 
     private void rotateCurrentPlayer() {
-        this.currentPlayer = this.players[this.currentTurn % this.players.length];
+        this.currentPlayer = players[(Arrays.asList(players).indexOf(currentPlayer) + 1) % this.players.length];
     }
 
     private void loop() throws ArrayIndexOutOfBoundsException {
+
+        // check if current player can make a move if not pass turn
+        if (ruleSet.isPass(currentPlayer)) {
+            this.rotateCurrentPlayer();
+            return;
+        }
+
         // Get current player move and check if within bounds of board
         Vector2D move = this.currentPlayer.getMove(this.board);
         if (move.x >= board.getWidth() || move.y >= board.getHeight()) {
             throw new ArrayIndexOutOfBoundsException(
                     String.format("Player %s went out of bounds", this.currentPlayer.getName()));
         }
-
-        // Make copy of board to temp set the move (this is to check it with the
-        // ruleset)
 
         // Check if set was legal by rules
         if (!this.ruleSet.isLegal(getCurrentPlayer(), move)) {
@@ -130,7 +134,6 @@ public class LocalGame implements IGame {
         }
 
         // If game not ended, we continue on
-        this.currentTurn++;
         this.rotateCurrentPlayer();
     }
 

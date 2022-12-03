@@ -47,16 +47,16 @@ public class OthelloController extends GameController {
         IPlayer[] players = new IPlayer[2];
 
         if (Objects.equals(gametype, "local_pvai")) {
-            players[0] = new LocalPlayer(p1, this);
-            // players[1] = new AIPlayer(p2, players[0]);
             ruleset = new OthelloRuleSet(players);
+            players[0] = new LocalPlayer(p1, this);
+            players[1] = new AIPlayer(p2, players[0], ruleset);
             game = new LocalGame(players, ruleset);
             game.setGameHandler(this);
             game.start();
         } else if (Objects.equals(gametype, "local_pvp")) {
+            ruleset = new OthelloRuleSet(players);
             players[0] = new LocalPlayer(p1, this);
             players[1] = new LocalPlayer(p2, this);
-            ruleset = new OthelloRuleSet(players);
             game = new LocalGame(players, ruleset);
             game.setGameHandler(this);
             game.start();
