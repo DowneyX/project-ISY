@@ -31,6 +31,8 @@ public interface IRuleSet {
 
     void setBoard(Board board);
 
+    boolean isPass(IPlayer player);
+
     Vector2D[] getValidMoves(IPlayer currentplayer); // board next to currentplayer because the controller
                                                      // requires the validmoves for newboard, and isLegal
                                                      // requires oldboard

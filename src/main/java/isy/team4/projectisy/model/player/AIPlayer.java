@@ -9,6 +9,7 @@ public class AIPlayer implements IPlayer {
     private char initial;
     private IPlayer opponent;
     private IRuleSet ruleset;
+    private int maxDepth = 3; // max depth for minimax
 
     public AIPlayer(String name, IPlayer opponent, IRuleSet ruleset) {
         this.opponent = opponent;
@@ -64,7 +65,7 @@ public class AIPlayer implements IPlayer {
     private int miniMax(Board board, int depth, boolean isMax) {
         ruleset.setBoard(board);
 
-        if (ruleset.isDraw() || ruleset.isWon() || board.isFull()) { // terminal state of the board
+        if (ruleset.isDraw() || ruleset.isWon() || board.isFull() || depth >= maxDepth) { // terminal state of the board
 
             int score = 0;
             if (ruleset.isWon() && ruleset.getWinningPlayer() == opponent) {
@@ -82,7 +83,8 @@ public class AIPlayer implements IPlayer {
                 Board newBoard = new Board(board);
                 ruleset.setBoard(newBoard);
                 ruleset.handleMove(move, this);
-                bestVal = Math.max(bestVal, miniMax(newBoard, depth + 1, false));
+                boolean nextIsMax = ruleset.isPass(opponent) ? true : false;
+                bestVal = Math.max(bestVal, miniMax(newBoard, depth + 1, nextIsMax));
                 ruleset.setBoard(board);
             }
             return bestVal;
@@ -93,7 +95,8 @@ public class AIPlayer implements IPlayer {
                 Board newBoard = new Board(board);
                 ruleset.setBoard(newBoard);
                 ruleset.handleMove(move, opponent);
-                bestVal = Math.min(bestVal, miniMax(newBoard, depth + 1, true));
+                boolean nextIsMax = ruleset.isPass(this) ? false : true;
+                bestVal = Math.min(bestVal, miniMax(newBoard, depth + 1, nextIsMax));
                 ruleset.setBoard(board);
             }
             return bestVal;

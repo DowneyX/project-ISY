@@ -109,9 +109,14 @@ public final class TicTacToeRuleSet implements IRuleSet {
     }
 
     @Override
+    public boolean isPass(IPlayer player) {
+        return false;
+    }
+
+    @Override
     public int getScore() {
         if (isWon()) {
-            return 1000;
+            return 100000;
         }
         return 0;
     }

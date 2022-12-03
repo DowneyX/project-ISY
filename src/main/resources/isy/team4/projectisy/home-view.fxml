@@ -21,9 +21,10 @@
 <!--    <Button fx:id="tictactoe" defaultButton="true" onAction="#ticTacToePvAI" prefHeight="30.0" prefWidth="128.0" text="Boter kaas en eieren" />-->
    <MenuButton mnemonicParsing="false" text="Selecteer een spel" fx:id="dropdown">
      <items>
-       <MenuItem mnemonicParsing="false" text="Tic Tac Toe Local PvP" onAction="#ticTacToePvP"/>
+         <MenuItem mnemonicParsing="false" text="Tic Tac Toe Local PvP" onAction="#ticTacToePvP"/>
          <MenuItem mnemonicParsing="false" text="Tic Tac Toe Local PvAI" onAction="#ticTacToePvAI"/>
          <MenuItem mnemonicParsing="false" text="Othello PvP" onAction="#othelloPvP"/>
+         <MenuItem mnemonicParsing="false" text="Othello PvAI" onAction="#othelloPvAI"/> 
      </items>
    </MenuButton>
 </VBox>
