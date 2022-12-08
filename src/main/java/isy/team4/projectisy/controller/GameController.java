@@ -109,6 +109,7 @@ public class GameController implements IGameHandler, IPlayerTurnHandler {
     @Override
     public void onUpdate() {
         updateCurrentPlayer();
+        redrawBoard();
     }
 
     @Override

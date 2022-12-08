@@ -50,7 +50,7 @@ public class AIPlayer implements IPlayer {
             Board newBoard = new Board(board);
             ruleset.setBoard(newBoard);
             ruleset.handleMove(move, this);
-            int moveVal = miniMax(newBoard, 0, false);
+            int moveVal = miniMax(newBoard, 0, false, Integer.MIN_VALUE, Integer.MAX_VALUE);
             ruleset.setBoard(board);
 
             if (moveVal > bestVal) {
@@ -62,7 +62,7 @@ public class AIPlayer implements IPlayer {
         return BestMove;
     }
 
-    private int miniMax(Board board, int depth, boolean isMax) {
+    private int miniMax(Board board, int depth, boolean isMax, int a, int b) {
         ruleset.setBoard(board);
 
         if (ruleset.isDraw() || ruleset.isWon() || board.isFull() || depth >= maxDepth) { // terminal state of the board
@@ -84,7 +84,14 @@ public class AIPlayer implements IPlayer {
                 ruleset.setBoard(newBoard);
                 ruleset.handleMove(move, this);
                 boolean nextIsMax = ruleset.isPass(opponent) ? true : false;
-                bestVal = Math.max(bestVal, miniMax(newBoard, depth + 1, nextIsMax));
+                bestVal = Math.max(bestVal, miniMax(newBoard, depth + 1, nextIsMax, a, b));
+
+                if(bestVal >= b) {
+                    break;
+                }
+
+                a = Math.max(a, bestVal);
+
                 ruleset.setBoard(board);
             }
             return bestVal;
@@ -96,7 +103,14 @@ public class AIPlayer implements IPlayer {
                 ruleset.setBoard(newBoard);
                 ruleset.handleMove(move, opponent);
                 boolean nextIsMax = ruleset.isPass(this) ? false : true;
-                bestVal = Math.min(bestVal, miniMax(newBoard, depth + 1, nextIsMax));
+                bestVal = Math.min(bestVal, miniMax(newBoard, depth + 1, nextIsMax, a, b));
+
+                if(bestVal <= a) {
+                    break;
+                }
+
+                b = Math.min(b, bestVal);
+
                 ruleset.setBoard(board);
             }
             return bestVal;
