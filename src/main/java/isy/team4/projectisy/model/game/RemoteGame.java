@@ -1,19 +1,22 @@
 package isy.team4.projectisy.model.game;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import isy.team4.projectisy.model.player.IPlayer;
 import isy.team4.projectisy.model.player.RemotePlayer;
 import isy.team4.projectisy.model.rule.IRuleSet;
+import isy.team4.projectisy.observer.IObserver;
 import isy.team4.projectisy.server.Server;
 import isy.team4.projectisy.util.Board;
 import isy.team4.projectisy.util.Result;
 import isy.team4.projectisy.util.Vector2D;
 
 public class RemoteGame implements IGame {
+    private List<IObserver> observers = new ArrayList<>();
     private final IPlayer[] players;
     private final IRuleSet ruleSet;
-    private IGameHandler gameHandler;
     private IPlayer currentPlayer;
     private Board board;
     private boolean running;
@@ -64,10 +67,6 @@ public class RemoteGame implements IGame {
         return result;
     }
 
-    public void setGameHandler(IGameHandler gameHandler) {
-        this.gameHandler = gameHandler;
-    }
-
     public void setCurrentPlayer(IPlayer currentPlayer) {
         this.currentPlayer = currentPlayer;
     }
@@ -88,5 +87,22 @@ public class RemoteGame implements IGame {
 
     public Vector2D[] getValidMoves(Board board) {
         return ruleSet.getValidMoves(getCurrentPlayer());
+    }
+
+    @Override
+    public void registerObserver(IObserver o) {
+        observers.add(o);
+    }
+
+    @Override
+    public void removeObserver(IObserver o) {
+        observers.remove(o);
+    }
+
+    @Override
+    public void notifyObservers(String msg) {
+        for (IObserver observer : observers) {
+            observer.update(msg);
+        }
     }
 }

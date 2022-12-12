@@ -12,19 +12,13 @@
     <padding>
         <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
     </padding>
-   <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Welkom">
+    <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Welkom">
       <font>
          <Font size="30.0" />
-      </font></Text>
+      </font>
+    </Text>
    <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Gameclient Project ISY Team 4" />
-
-<!--    <Button fx:id="tictactoe" defaultButton="true" onAction="#ticTacToePvAI" prefHeight="30.0" prefWidth="128.0" text="Boter kaas en eieren" />-->
-   <MenuButton mnemonicParsing="false" text="Selecteer een spel" fx:id="dropdown">
-     <items>
-         <MenuItem mnemonicParsing="false" text="Tic Tac Toe Local PvP" onAction="#ticTacToePvP"/>
-         <MenuItem mnemonicParsing="false" text="Tic Tac Toe Local PvAI" onAction="#ticTacToePvAI"/>
-         <MenuItem mnemonicParsing="false" text="Othello PvP" onAction="#othelloPvP"/>
-         <MenuItem mnemonicParsing="false" text="Othello PvAI" onAction="#othelloPvAI"/> 
-     </items>
-   </MenuButton>
+   <Button defaultButton="true" onAction="#navigateOnline" prefHeight="30.0" prefWidth="128.0" text="online" />
+   <Button defaultButton="true" onAction="#navigateOffline" prefHeight="30.0" prefWidth="128.0" text="offline" />
+   <Button defaultButton="true" onAction="#navigateOptions" prefHeight="30.0" prefWidth="128.0" text="opties" />
 </VBox>

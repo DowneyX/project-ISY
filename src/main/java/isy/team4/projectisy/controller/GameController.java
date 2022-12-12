@@ -1,9 +1,10 @@
 package isy.team4.projectisy.controller;
+
 import isy.team4.projectisy.MainApplication;
 import isy.team4.projectisy.model.game.IGame;
-import isy.team4.projectisy.model.game.IGameHandler;
 import isy.team4.projectisy.model.player.IPlayer;
 import isy.team4.projectisy.model.player.IPlayerTurnHandler;
+import isy.team4.projectisy.observer.IObserver;
 import isy.team4.projectisy.util.Board;
 import isy.team4.projectisy.util.Vector2D;
 import javafx.application.Platform;
@@ -19,9 +20,9 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 import java.io.IOException;
-import java.util.Objects;
 
-public class GameController implements IGameHandler, IPlayerTurnHandler {
+public class GameController implements IPlayerTurnHandler, IObserver {
+
     @FXML
     public Text player1Text;
     @FXML
@@ -70,7 +71,7 @@ public class GameController implements IGameHandler, IPlayerTurnHandler {
     @FXML
     public void navigateToHome(ActionEvent actionEvent) throws IOException {
         Stage stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
-        Parent root = FXMLLoader.load(MainApplication.class.getResource("home-view.fxml"));
+        Parent root = FXMLLoader.load(MainApplication.class.getResource("main-menu-view.fxml"));
         Scene scene = new Scene(root);
         stage.setScene(scene);
         stage.show();
@@ -88,33 +89,7 @@ public class GameController implements IGameHandler, IPlayerTurnHandler {
     }
 
     @Override
-    public void onFinished() {
-        setGameInfo(game.getResult().toString());
-        stopGame();
-    }
-
-    @Override
-    public void onIllegal() {
-        setGameInfo("Illegale zet!");
-        try {
-            Thread.sleep(1000);
-            boardDisabled = true;
-        } catch (Exception e) {
-            System.out.println("error: " + e);
-        }
-
-        boardDisabled = false;
-    }
-
-    @Override
-    public void onUpdate() {
-        updateCurrentPlayer();
-    }
-
-    @Override
     public Vector2D getPlayerMove() {
-        updateCurrentPlayer();
-        redrawBoard();
 
         // wait until move has been made. TODO: promise resolve / eventbus instead of
         // this?
@@ -154,11 +129,6 @@ public class GameController implements IGameHandler, IPlayerTurnHandler {
         this.gameinfo.setText(text);
     }
 
-    public void updateCurrentPlayer() {
-        currentPlayer = this.game.getCurrentPlayer().getName();
-        setGameInfo(currentPlayer + " is aan de beurt.");
-    }
-
     /**
      * Gets the updates board from the game and redraws it.
      */
@@ -178,5 +148,11 @@ public class GameController implements IGameHandler, IPlayerTurnHandler {
                 }
             }
         });
+    }
+
+    @Override
+    public void update(String msg) {
+        redrawBoard();
+        setGameInfo(msg);
     }
 }

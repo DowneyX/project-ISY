@@ -1,7 +1,6 @@
 package isy.team4.projectisy.server;
 
 import java.io.IOException;
-import isy.team4.projectisy.util.Board;
 import isy.team4.projectisy.util.Vector2D;
 import isy.team4.projectisy.model.game.RemoteGame;
 import isy.team4.projectisy.model.player.*;

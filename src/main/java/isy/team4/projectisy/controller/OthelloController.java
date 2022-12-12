@@ -6,19 +6,17 @@ import isy.team4.projectisy.model.player.IPlayer;
 import isy.team4.projectisy.model.player.LocalPlayer;
 import isy.team4.projectisy.model.rule.IRuleSet;
 import isy.team4.projectisy.model.rule.OthelloRuleSet;
-import isy.team4.projectisy.model.rule.TicTacToeRuleSet;
 import isy.team4.projectisy.util.Vector2D;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.layout.GridPane;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
 
 import java.util.Objects;
 
 public class OthelloController extends GameController {
+
     @FXML
     private GridPane grid;
 
@@ -43,29 +41,26 @@ public class OthelloController extends GameController {
             return;
         }
 
-        IRuleSet ruleset;
         IPlayer[] players = new IPlayer[2];
+        IRuleSet ruleset = new OthelloRuleSet(players);
 
         if (Objects.equals(gametype, "local_pvai")) {
-            ruleset = new OthelloRuleSet(players);
             players[0] = new LocalPlayer(p1, this);
             players[1] = new AIPlayer(p2, players[0], ruleset);
-            game = new LocalGame(players, ruleset);
-            game.setGameHandler(this);
-            game.start();
+            LocalGame localgame = new LocalGame(players, ruleset);
+            localgame.registerObserver(this);
+            game = localgame;
         } else if (Objects.equals(gametype, "local_pvp")) {
-            ruleset = new OthelloRuleSet(players);
             players[0] = new LocalPlayer(p1, this);
             players[1] = new LocalPlayer(p2, this);
-            game = new LocalGame(players, ruleset);
-            game.setGameHandler(this);
-            game.start();
+            LocalGame localgame = new LocalGame(players, ruleset);
+            localgame.registerObserver(this);
+            game = localgame;
         } else {
             return;
         }
 
-        // othello starts with a board that is not empty.
-        redrawBoard();
+        game.start();
 
         // enable board
         boardDisabled = false;
@@ -102,4 +97,5 @@ public class OthelloController extends GameController {
             }
         });
     }
+
 }
