@@ -1,7 +1,6 @@
 package isy.team4.projectisy.model.rule;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 import isy.team4.projectisy.model.player.IPlayer;
 import isy.team4.projectisy.util.Board;
@@ -313,10 +312,17 @@ public class OthelloRuleSet implements IRuleSet {
         return newRuleset;
     }
 
-    public int getScore() {
-        if (isWon()) {
-            return 100000;
+    @Override
+    public int getScore(IPlayer player) {
+        int score = 0;
+        IPlayer[] data = board.getFlatData().toArray(IPlayer[]::new);
+
+        for (int i = 0; i < data.length; i++) {
+            if (data[i] != null && data[i].getInitial() == player.getInitial()) {
+                score += cellScores[i];
+            }
         }
-        return 0;
+
+        return score;
     }
 }

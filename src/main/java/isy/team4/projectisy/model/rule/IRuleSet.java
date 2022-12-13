@@ -6,7 +6,7 @@ import isy.team4.projectisy.util.Vector2D;
 
 public interface IRuleSet {
 
-    int getScore();
+    int getScore(IPlayer player);
 
     Integer getMinPlayerSize(); // Nullable
 
