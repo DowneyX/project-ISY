@@ -6,12 +6,25 @@ import isy.team4.projectisy.model.player.IPlayer;
 import isy.team4.projectisy.model.player.LocalPlayer;
 import isy.team4.projectisy.model.rule.IRuleSet;
 import isy.team4.projectisy.model.rule.OthelloRuleSet;
+import isy.team4.projectisy.observer.IObserver;
 import isy.team4.projectisy.util.Board;
 
 import java.util.Arrays;
+import java.util.SortedMap;
 
-public class MinimaxTest {
+public class MinimaxTest implements IObserver {
     public static void main(String[] args) {
+        MinimaxTest minimaxTest = new MinimaxTest();
+        minimaxTest.setup();
+        minimaxTest.start();
+    }
+
+    LocalGame localgame;
+    Integer movecount = 1;
+
+    double start;
+
+    public void setup() {
         AIPlayer[] players = new AIPlayer[2];
         IRuleSet ruleset = new OthelloRuleSet(players);
 
@@ -22,14 +35,23 @@ public class MinimaxTest {
 
         Board board = ruleset.getStartingBoard();
         ruleset.setBoard(board);
-        System.out.println(board.toString());
 
-        System.out.println(Arrays.toString(ruleset.getValidMoves(players[0])));
+        localgame = new LocalGame(players, ruleset);
+        localgame.registerObserver(this);
+    }
 
-        LocalGame localgame = new LocalGame(players, ruleset);
-
+    public void start() {
         localgame.start();
-        System.out.println(Arrays.toString(localgame.getValidMoves(board)));
-        System.out.println(ruleset.getValidMoves(players[0]));
+        start = System.currentTimeMillis();
+    }
+
+    @Override
+    public void update(String msg) {
+        double current =  System.currentTimeMillis();
+        double timeTook = current - start;
+        start = current;
+
+        System.out.println("Move " + movecount + " by " + localgame.getCurrentPlayer() + " took " + timeTook + " millis");
+        movecount++;
     }
 }
