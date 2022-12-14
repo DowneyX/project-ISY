@@ -102,4 +102,12 @@ public class AIPlayer implements IPlayer {
             return bestVal;
         }
     }
+
+    public void setOpponent(IPlayer opponent) {
+        this.opponent = opponent;
+    }
+
+    public IPlayer getOpponent() {
+        return opponent;
+    }
 }
