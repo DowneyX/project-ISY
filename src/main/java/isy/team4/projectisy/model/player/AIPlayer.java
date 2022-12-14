@@ -11,8 +11,7 @@ public class AIPlayer implements IPlayer {
     private IRuleSet ruleset;
     private int maxDepth = 3; // max depth for minimax
 
-    public AIPlayer(String name, IPlayer opponent, IRuleSet ruleset) {
-        this.opponent = opponent;
+    public AIPlayer(String name, IRuleSet ruleset) {
         this.name = name;
         this.ruleset = ruleset.clone();
     }
@@ -30,6 +29,10 @@ public class AIPlayer implements IPlayer {
     @Override
     public char getInitial() {
         return this.initial;
+    }
+
+    public void setOpponent(IPlayer opponent) {  // TODO: Could later be opponents
+        this.opponent = opponent;
     }
 
     public String toString() {
@@ -83,7 +86,7 @@ public class AIPlayer implements IPlayer {
                 Board newBoard = new Board(board);
                 ruleset.setBoard(newBoard);
                 ruleset.handleMove(move, this);
-                boolean nextIsMax = ruleset.isPass(opponent) ? true : false;
+                boolean nextIsMax = ruleset.isPass(opponent);
                 bestVal = Math.max(bestVal, miniMax(newBoard, depth + 1, nextIsMax));
                 ruleset.setBoard(board);
             }
@@ -95,7 +98,7 @@ public class AIPlayer implements IPlayer {
                 Board newBoard = new Board(board);
                 ruleset.setBoard(newBoard);
                 ruleset.handleMove(move, opponent);
-                boolean nextIsMax = ruleset.isPass(this) ? false : true;
+                boolean nextIsMax = !ruleset.isPass(this);
                 bestVal = Math.min(bestVal, miniMax(newBoard, depth + 1, nextIsMax));
                 ruleset.setBoard(board);
             }

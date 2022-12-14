@@ -2,18 +2,17 @@ package isy.team4.projectisy.model.game;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 import isy.team4.projectisy.model.player.IPlayer;
 import isy.team4.projectisy.model.rule.IRuleSet;
-import isy.team4.projectisy.observer.IObserver;
+import isy.team4.projectisy.observer.IObservable;
 import isy.team4.projectisy.util.Board;
 import isy.team4.projectisy.util.EResult;
 import isy.team4.projectisy.util.Result;
 import isy.team4.projectisy.util.Vector2D;
 
 public class LocalGame implements IGame {
-    private List<IObserver> observers = new ArrayList<>();
+    private final ArrayList<IGameObserver> observers = new ArrayList<>();
     private final IPlayer[] players;
     private final IRuleSet ruleSet;
     private IPlayer currentPlayer;
@@ -66,6 +65,11 @@ public class LocalGame implements IGame {
         this.running = false;
     }
 
+    @Override
+    public boolean isRunning() {
+        return this.running;
+    }
+
     public Board getBoard() {
         return this.board;
     }
@@ -93,7 +97,6 @@ public class LocalGame implements IGame {
         // check if current player can make a move if not pass turn
         if (ruleSet.isPass(currentPlayer)) {
             this.rotateCurrentPlayer();
-            notifyObservers("het is " + currentPlayer.getName() + " z'n beurd");
             return;
         }
 
@@ -106,52 +109,46 @@ public class LocalGame implements IGame {
 
         // Check if set was legal by rules
         if (!this.ruleSet.isLegal(getCurrentPlayer(), move)) {
-            notifyObservers("illegale zet");
+            this.observers.forEach(IGameObserver::onIllegal);
             return; // Starts loop again
         }
 
         ruleSet.handleMove(move, currentPlayer);
+
+        // Set the new board with potential changes that came from the move of the
+        // player
+        this.observers.forEach(IGameObserver::onUpdate);
 
         // If win or draw: set result, fire event and stop game
         if (this.ruleSet.isWon()) {
             this.result = new Result(EResult.WIN);
             this.result.setWinningPlayer(this.ruleSet.getWinningPlayer());
 
-            notifyObservers(this.ruleSet.getWinningPlayer() + " heeft gewonnen");
+            this.observers.forEach(IGameObserver::onFinished);
             this.stop();
             return;
         }
         if (this.ruleSet.isDraw()) {
             this.result = new Result(EResult.DRAW);
 
-            notifyObservers("gelijk gespeeld");
+            this.observers.forEach(IGameObserver::onFinished);
             this.stop();
             return;
         }
 
         // If game not ended, we continue on
         this.rotateCurrentPlayer();
-        notifyObservers("het is " + currentPlayer.getName() + " z'n beurd");
     }
 
     public Vector2D[] getValidMoves(Board board) {
         return ruleSet.getValidMoves(getCurrentPlayer());
     }
 
-    @Override
-    public void registerObserver(IObserver o) {
+    public void addObserver(IGameObserver o) {
         observers.add(o);
     }
 
-    @Override
-    public void removeObserver(IObserver o) {
+    public void removeObserver(IGameObserver o) {
         observers.remove(o);
-    }
-
-    @Override
-    public void notifyObservers(String msg) {
-        for (IObserver observer : observers) {
-            observer.update(msg);
-        }
     }
 }

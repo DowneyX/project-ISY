@@ -19,6 +19,6 @@
    <Text strokeType="OUTSIDE" strokeWidth="0.0" text="kies uit de onderstaande opties" />
 
    <Button defaultButton="true" onAction="#navigateHome" prefHeight="30.0" prefWidth="150.0" text="terug" />
-   <Button defaultButton="true" onAction="#setTictactoe" prefHeight="30.0" prefWidth="150.0" text="speel tic-tac-toe" />
+   <Button defaultButton="true" onAction="#setTicTacToe" prefHeight="30.0" prefWidth="150.0" text="speel tic-tac-toe" />
    <Button defaultButton="true" onAction="#setOthello" prefHeight="30.0" prefWidth="150.0" text="speel othello" />
 </VBox>
