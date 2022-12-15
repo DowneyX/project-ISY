@@ -24,67 +24,49 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.stream.IntStream;
 
 public abstract class GameController implements IPlayerTurnHandler, IGameObserver {
-
     @FXML
     public Text player1Text;  // TODO: Could better be a list of names related to players known by the so list
     @FXML
     public Text player2Text;  // TODO: Same for this one
     public Text gameinfo;
     public GridPane grid;
-    protected Board board;
     protected IRuleSet ruleSet;
     protected boolean boardDisabled = true;
     protected IGame game;
-    protected volatile int playerMove = -1;
-
-    public void setP1name(String p1) {
-        player1Text.setText(p1);
-    }
-
-    public void setP2name(String p2) {
-        player2Text.setText(p2);
-    }
+    protected Integer playerMove = null;
 
     /**
-     * Checks if gametype is valid and sets it. Depending on the gametype, a
-     * different gamemanager will be used.
-     *
-     * @param gameType player vs local ai: 'local_pvai'
-     *                 player vs local player: 'local_pvp'
-     *                 ai vs remote ai: 'remote_aivai
+     * Initializes game with players
      */
     public void initGame(EGame gameType, EPlayer[] playersAsType) {
         player1Text.setText("Player 1");  // TODO: actual values
         player2Text.setText("Player 2");
 
-        ArrayList<IPlayer> players = new ArrayList<>();
-        for (int i = 0; i < playersAsType.length; i++) {
-            switch (playersAsType[i]) {
-                case LOCAL -> players.add(new LocalPlayer("Player " + i, this));
-                case AI -> players.add(new AIPlayer("Player " + i, this.ruleSet));
-                case REMOTE -> players.add(new RemotePlayer("Player " + i));
-            }
-        }
+        // Map through playersAsType and convert to IPlayer objects
+        IPlayer[] players = IntStream.range(0, playersAsType.length).mapToObj((i) -> switch (playersAsType[i]) {
+            case LOCAL -> new LocalPlayer("Player " + i, this);
+            case AI -> new AIPlayer("Player " + i);
+            case REMOTE -> new RemotePlayer("Player " + i);
+        }).toArray(IPlayer[]::new);
 
-        // Convert because of normal array usage
-        IPlayer[] playersArr = new IPlayer[players.size()];
-        playersArr = players.toArray(playersArr);
+        // Set players for RuleSet
+        this.ruleSet.setPlayers(players);
 
-        // Assign opponent to AI, TODO: later more opponents, for multiple players
-        for (int i = 0; i < playersArr.length; i++) {
-            if (playersArr[i] instanceof AIPlayer) {
-                ((AIPlayer) playersArr[i]).setOpponent(playersArr[(i + 1) % playersArr.length]);
+        // Assign opponent and RuleSet to AI, TODO: later more opponents, for multiple players
+        for (int i = 0; i < players.length; i++) {
+            if (players[i] instanceof AIPlayer ai) {
+                ai.setOpponent(players[(i + 1) % players.length]);
+                ai.setRuleSet(this.ruleSet);
             }
         }
 
         // Initializing game
         this.game = (gameType == EGame.LOCAL)
-                ? new LocalGame(playersArr, this.ruleSet)
-                : new RemoteGame(playersArr[0], this.ruleSet);
+                ? new LocalGame(players, this.ruleSet)
+                : new RemoteGame(players[0], this.ruleSet);
 
         this.game.addObserver(this);
     }
@@ -149,10 +131,9 @@ public abstract class GameController implements IPlayerTurnHandler, IGameObserve
 
     @Override
     public Vector2D getPlayerMove() {
-
         // wait until move has been made. TODO: promise resolve / eventbus instead of
         // this?
-        while (this.playerMove == -1) {
+        while (this.playerMove == null) {
             try {
                 Thread.sleep(50);
             } catch (Exception e) {
@@ -164,14 +145,14 @@ public abstract class GameController implements IPlayerTurnHandler, IGameObserve
         int x = this.playerMove % grid.getColumnCount();
         int y = this.playerMove / grid.getRowCount();
 
-        this.playerMove = -1;
+        this.playerMove = null;
 
         return new Vector2D(x, y);
     }
 
     public void emptyBoard() {
         Platform.runLater(() -> {
-            for (int i = 0; i < board.getWidth() * board.getHeight(); i++) {
+            for (int i = 0; i < this.game.getBoard().getWidth() * this.game.getBoard().getHeight(); i++) {
                 Button btn = (Button) grid.getChildren().get(i);
                 btn.setText("");
             }
@@ -192,19 +173,27 @@ public abstract class GameController implements IPlayerTurnHandler, IGameObserve
      * Gets the updates board from the game and redraws it.
      */
     public void redrawBoard() {
-        board = game.getBoard(); // set new board
+        Board board = game.getBoard(); // set new board
+        Vector2D[] validMoves = this.game.getValidMoves(board);
 
         // draw new board. runlater because called from another thread
         Platform.runLater(() -> {
             for (int i = 0; i < board.getWidth() * board.getHeight(); i++) {
                 int x = i % board.getWidth();
                 int y = i / board.getHeight();
-                IPlayer currentPlayer = board.getData()[y][x];
+                IPlayer playerCell = board.getData()[y][x];
 
-                if (currentPlayer != null) {
+                // Draw players
+                if (playerCell != null) {
                     Button btn = (Button) grid.getChildren().get(i);
-                    btn.setText(Character.toString(currentPlayer.getInitial()));
+                    btn.setText(Character.toString(playerCell.getInitial()));
                 }
+            }
+
+            // Draw validMoves
+            for (Vector2D move : validMoves) {
+                Button btn = (Button) grid.getChildren().get(move.toInt(board));
+                btn.setText("﹖");  // ◌, ⚬, ﹖
             }
         });
     }

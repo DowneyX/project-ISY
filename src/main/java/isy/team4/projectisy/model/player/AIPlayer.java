@@ -6,14 +6,13 @@ import isy.team4.projectisy.util.Vector2D;
 
 public class AIPlayer implements IPlayer {
     private final String name;
+    private final int maxDepth = 3; // max depth for minimax
     private char initial;
     private IPlayer opponent;
-    private IRuleSet ruleset;
-    private int maxDepth = 3; // max depth for minimax
+    private IRuleSet ruleSet;
 
-    public AIPlayer(String name, IRuleSet ruleset) {
+    public AIPlayer(String name) {
         this.name = name;
-        this.ruleset = ruleset.clone();
     }
 
     @Override
@@ -35,6 +34,10 @@ public class AIPlayer implements IPlayer {
         this.opponent = opponent;
     }
 
+    public void setRuleSet(IRuleSet ruleSet) {
+        this.ruleSet = ruleSet;
+    }
+
     public String toString() {
         if (this.name != null) {
             return this.name;
@@ -44,17 +47,17 @@ public class AIPlayer implements IPlayer {
 
     @Override
     public Vector2D getMove(Board board) {
-        ruleset.setBoard(board);
+        ruleSet.setBoard(board);
 
         int bestVal = Integer.MIN_VALUE;
         Vector2D BestMove = new Vector2D(-1, -1);
 
-        for (Vector2D move : ruleset.getValidMoves(this)) {
+        for (Vector2D move : ruleSet.getValidMoves(this)) {
             Board newBoard = new Board(board);
-            ruleset.setBoard(newBoard);
-            ruleset.handleMove(move, this);
+            ruleSet.setBoard(newBoard);
+            ruleSet.handleMove(move, this);
             int moveVal = miniMax(newBoard, 0, false);
-            ruleset.setBoard(board);
+            ruleSet.setBoard(board);
 
             if (moveVal > bestVal) {
                 bestVal = moveVal;
@@ -66,15 +69,15 @@ public class AIPlayer implements IPlayer {
     }
 
     private int miniMax(Board board, int depth, boolean isMax) {
-        ruleset.setBoard(board);
+        ruleSet.setBoard(board);
 
-        if (ruleset.isDraw() || ruleset.isWon() || board.isFull() || depth >= maxDepth) { // terminal state of the board
+        if (ruleSet.isDraw() || ruleSet.isWon() || board.isFull() || depth >= maxDepth) { // terminal state of the board
 
             int score = 0;
-            if (ruleset.isWon() && ruleset.getWinningPlayer() == opponent) {
+            if (ruleSet.isWon() && ruleSet.getWinningPlayer() == opponent) {
                 score = -1000 + depth;
             }
-            if (ruleset.isWon() && ruleset.getWinningPlayer() == this) {
+            if (ruleSet.isWon() && ruleSet.getWinningPlayer() == this) {
                 score = 1000 - depth;
             }
             return score;
@@ -82,25 +85,25 @@ public class AIPlayer implements IPlayer {
 
         if (isMax) { // if we are max player
             int bestVal = Integer.MIN_VALUE;
-            for (Vector2D move : ruleset.getValidMoves(this)) {
+            for (Vector2D move : ruleSet.getValidMoves(this)) {
                 Board newBoard = new Board(board);
-                ruleset.setBoard(newBoard);
-                ruleset.handleMove(move, this);
-                boolean nextIsMax = ruleset.isPass(opponent);
+                ruleSet.setBoard(newBoard);
+                ruleSet.handleMove(move, this);
+                boolean nextIsMax = ruleSet.isPass(opponent);
                 bestVal = Math.max(bestVal, miniMax(newBoard, depth + 1, nextIsMax));
-                ruleset.setBoard(board);
+                ruleSet.setBoard(board);
             }
             return bestVal;
 
         } else { // if we are min player
             int bestVal = Integer.MAX_VALUE;
-            for (Vector2D move : ruleset.getValidMoves(opponent)) {
+            for (Vector2D move : ruleSet.getValidMoves(opponent)) {
                 Board newBoard = new Board(board);
-                ruleset.setBoard(newBoard);
-                ruleset.handleMove(move, opponent);
-                boolean nextIsMax = !ruleset.isPass(this);
+                ruleSet.setBoard(newBoard);
+                ruleSet.handleMove(move, opponent);
+                boolean nextIsMax = !ruleSet.isPass(this);
                 bestVal = Math.min(bestVal, miniMax(newBoard, depth + 1, nextIsMax));
-                ruleset.setBoard(board);
+                ruleSet.setBoard(board);
             }
             return bestVal;
         }

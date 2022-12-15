@@ -5,7 +5,6 @@ import java.util.Arrays;
 
 import isy.team4.projectisy.model.player.IPlayer;
 import isy.team4.projectisy.model.rule.IRuleSet;
-import isy.team4.projectisy.observer.IObservable;
 import isy.team4.projectisy.util.Board;
 import isy.team4.projectisy.util.EResult;
 import isy.team4.projectisy.util.Result;
@@ -93,7 +92,6 @@ public class LocalGame implements IGame {
     }
 
     private void loop() throws ArrayIndexOutOfBoundsException {
-
         // check if current player can make a move if not pass turn
         if (ruleSet.isPass(currentPlayer)) {
             this.rotateCurrentPlayer();
@@ -108,12 +106,12 @@ public class LocalGame implements IGame {
         }
 
         // Check if set was legal by rules
-        if (!this.ruleSet.isLegal(getCurrentPlayer(), move)) {
+        if (!this.ruleSet.isLegal(this.getCurrentPlayer(), move)) {
             this.observers.forEach(IGameObserver::onIllegal);
             return; // Starts loop again
         }
 
-        ruleSet.handleMove(move, currentPlayer);
+        this.board = ruleSet.handleMove(move, currentPlayer);
 
         // Set the new board with potential changes that came from the move of the
         // player
