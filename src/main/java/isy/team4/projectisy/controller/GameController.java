@@ -7,6 +7,7 @@ import isy.team4.projectisy.model.game.LocalGame;
 import isy.team4.projectisy.model.game.RemoteGame;
 import isy.team4.projectisy.model.player.*;
 import isy.team4.projectisy.model.rule.IRuleSet;
+import isy.team4.projectisy.server.ServerProperties;
 import isy.team4.projectisy.util.Board;
 import isy.team4.projectisy.util.EGame;
 import isy.team4.projectisy.util.EPlayer;
@@ -24,6 +25,7 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.util.Random;
 import java.util.stream.IntStream;
 
 public abstract class GameController implements IPlayerTurnHandler, IGameObserver {
@@ -33,7 +35,7 @@ public abstract class GameController implements IPlayerTurnHandler, IGameObserve
     public Text player2Text;  // TODO: Same for this one
     public Text gameinfo;
     public GridPane grid;
-    protected IRuleSet ruleSet;
+    protected IRuleSet ruleSet;  // Only use for init!
     protected boolean boardDisabled = true;
     protected IGame game;
     protected Integer playerMove = null;
@@ -42,31 +44,26 @@ public abstract class GameController implements IPlayerTurnHandler, IGameObserve
      * Initializes game with players
      */
     public void initGame(EGame gameType, EPlayer[] playersAsType) {
-        player1Text.setText("Player 1");  // TODO: actual values
-        player2Text.setText("Player 2");
+        player1Text.setText("?");
+        player2Text.setText("?");
 
         // Map through playersAsType and convert to IPlayer objects
         IPlayer[] players = IntStream.range(0, playersAsType.length).mapToObj((i) -> switch (playersAsType[i]) {
-            case LOCAL -> new LocalPlayer("Player " + i, this);
-            case AI -> new AIPlayer("Player " + i);
-            case REMOTE -> new RemotePlayer("Player " + i);
+            case LOCAL -> new LocalPlayer("Player " + (i + 1), this);
+            case AI -> new AIPlayer("Player " + (i + 1));
+            case REMOTE -> new RemotePlayer("Player " + (i + 1));
         }).toArray(IPlayer[]::new);
 
-        // Set players for RuleSet
-        this.ruleSet.setPlayers(players);
-
-        // Assign opponent and RuleSet to AI, TODO: later more opponents, for multiple players
-        for (int i = 0; i < players.length; i++) {
-            if (players[i] instanceof AIPlayer ai) {
-                ai.setOpponent(players[(i + 1) % players.length]);
-                ai.setRuleSet(this.ruleSet);
-            }
+        if (gameType == EGame.REMOTE) {
+            players[0].setName(String.format("ITV2A%dGROEP4", (int)(Math.random() * 100)));  // TODO: Remove, just for testing
         }
 
         // Initializing game
         this.game = (gameType == EGame.LOCAL)
                 ? new LocalGame(players, this.ruleSet)
-                : new RemoteGame(players[0], this.ruleSet);
+                : new RemoteGame(players[0], this.ruleSet,
+                        new ServerProperties("localhost", 7789, players[0].getName())  // TODO: 145.33.225.170
+                );
 
         this.game.addObserver(this);
     }
@@ -83,6 +80,7 @@ public abstract class GameController implements IPlayerTurnHandler, IGameObserve
         }
 
         game.start();
+        this.setGameInfo("Aan het wachten..");
     }
 
     @FXML
@@ -98,16 +96,24 @@ public abstract class GameController implements IPlayerTurnHandler, IGameObserve
         Button btn = (Button) actionEvent.getSource(); // get the clicked element and cast it to a button
 
         // Don't do anything if not empty or disabled
-        if (boardDisabled) {
+        if (this.boardDisabled) {
             return;
         }
         playerMove = Integer.parseInt(btn.getId());
     }
 
     @Override
-    public void onFinished() {
-        this.setGameInfo(game.getResult().toString());
-        this.stopGame();
+    public void onStarted() {
+        this.player1Text.setText(this.game.getPlayers()[0].getName());
+        this.player2Text.setText(this.game.getPlayers()[1].getName());
+
+        this.onUpdate();
+    }
+
+    @Override
+    public void onUpdate() {
+        this.setGameInfo(this.game.getCurrentPlayer().getName() + " is aan de beurt.");
+        this.redrawBoard();
     }
 
     @Override
@@ -124,13 +130,14 @@ public abstract class GameController implements IPlayerTurnHandler, IGameObserve
     }
 
     @Override
-    public void onUpdate() {
-        setGameInfo(this.game.getCurrentPlayer().getName() + " is aan de beurt.");
-        this.redrawBoard();
+    public void onFinished() {
+        this.setGameInfo(this.game.getResult().toString());
+        this.stopGame();
     }
 
     @Override
     public Vector2D getPlayerMove() {
+        this.boardDisabled = false;
         // wait until move has been made. TODO: promise resolve / eventbus instead of
         // this?
         while (this.playerMove == null) {
@@ -140,6 +147,7 @@ public abstract class GameController implements IPlayerTurnHandler, IGameObserve
                 System.out.println("error: " + e);
             }
         }
+        this.boardDisabled = true;
 
         // board is null at this point. // TODO: is the grid reliable enough?
         int x = this.playerMove % grid.getColumnCount();
@@ -160,9 +168,8 @@ public abstract class GameController implements IPlayerTurnHandler, IGameObserve
     }
 
     public void stopGame() {
-        this.emptyBoard();
-        boardDisabled = true;
-        game = null;
+        this.boardDisabled = true;
+//        this.game = null;  TODO: set same as initGame, not null as it breaks
     }
 
     public void setGameInfo(String text) {
@@ -174,7 +181,7 @@ public abstract class GameController implements IPlayerTurnHandler, IGameObserve
      */
     public void redrawBoard() {
         Board board = game.getBoard(); // set new board
-        Vector2D[] validMoves = this.game.getValidMoves(board);
+        Vector2D[] validMoves = this.game.getValidMoves();
 
         // draw new board. runlater because called from another thread
         Platform.runLater(() -> {
@@ -182,11 +189,13 @@ public abstract class GameController implements IPlayerTurnHandler, IGameObserve
                 int x = i % board.getWidth();
                 int y = i / board.getHeight();
                 IPlayer playerCell = board.getData()[y][x];
+                Button btn = (Button) grid.getChildren().get(i);
 
                 // Draw players
                 if (playerCell != null) {
-                    Button btn = (Button) grid.getChildren().get(i);
                     btn.setText(Character.toString(playerCell.getInitial()));
+                } else {
+                    btn.setText("");
                 }
             }
 

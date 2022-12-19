@@ -48,10 +48,10 @@ public class OthelloRuleSet implements IRuleSet {
     @Override
     public Board getStartingBoard() {
         Board result = new Board(8, 8);
-        result.setElement(players[0], 3, 3);
-        result.setElement(players[0], 4, 4);
-        result.setElement(players[1], 3, 4);
-        result.setElement(players[1], 4, 3);
+        result.setElement(players[0], 3, 4);
+        result.setElement(players[0], 4, 3);
+        result.setElement(players[1], 3, 3);
+        result.setElement(players[1], 4, 4);
         return result;
     }
 
@@ -298,12 +298,12 @@ public class OthelloRuleSet implements IRuleSet {
     private int[] getScores() {
         int p1 = 0;
         int p2 = 0;
-        IPlayer[] players = board.getFlatData().toArray(IPlayer[]::new);
+        IPlayer[] cells = board.getFlatData().toArray(IPlayer[]::new);
 
-        for (IPlayer player : players) {
-            if (player == this.players[p1]) {
+        for (IPlayer cell : cells) {
+            if (cell == this.players[0]) {
                 p1++;
-            } else {
+            } else if (cell == this.players[1]) {
                 p2++;
             }
         }

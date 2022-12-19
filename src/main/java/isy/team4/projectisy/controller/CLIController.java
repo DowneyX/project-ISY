@@ -9,6 +9,11 @@ public class CLIController implements IGameObserver {
     }
 
     @Override
+    public void onStarted() {
+
+    }
+
+    @Override
     public void onUpdate() {
 
     }

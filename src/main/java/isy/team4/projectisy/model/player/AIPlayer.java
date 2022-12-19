@@ -5,7 +5,7 @@ import isy.team4.projectisy.util.Board;
 import isy.team4.projectisy.util.Vector2D;
 
 public class AIPlayer implements IPlayer {
-    private final String name;
+    private String name;
     private final int maxDepth = 3; // max depth for minimax
     private char initial;
     private IPlayer opponent;
@@ -39,10 +39,7 @@ public class AIPlayer implements IPlayer {
     }
 
     public String toString() {
-        if (this.name != null) {
-            return this.name;
-        }
-        return "x";
+        return this.getName();
     }
 
     @Override
@@ -66,6 +63,11 @@ public class AIPlayer implements IPlayer {
         }
 
         return BestMove;
+    }
+
+    @Override
+    public void setName(String name) {
+        this.name = name;
     }
 
     private int miniMax(Board board, int depth, boolean isMax) {

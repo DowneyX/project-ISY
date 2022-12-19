@@ -20,5 +20,5 @@ public interface IGame extends IObservable<IGameObserver> {
 
     Result getResult(); // Nullable
 
-    Vector2D[] getValidMoves(Board board);
+    Vector2D[] getValidMoves();
 }

@@ -4,7 +4,7 @@ import isy.team4.projectisy.util.Board;
 import isy.team4.projectisy.util.Vector2D;
 
 public class RemotePlayer implements IPlayer {
-    private final String name;
+    private String name;
     private char initial;
 
     public RemotePlayer(String name) {
@@ -27,12 +27,17 @@ public class RemotePlayer implements IPlayer {
     }
 
     @Override
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    @Override
     public void setInitial(char initial) {
         this.initial = initial;
     }
 
     @Override
     public String toString() {
-        return "Remoteplayer";
+        return this.getName();
     }
 }

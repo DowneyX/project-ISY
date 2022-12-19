@@ -12,7 +12,7 @@
     <padding>
         <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
     </padding>
-   <Text strokeType="OUTSIDE" strokeWidth="0.0" text="kies je tegenstander">
+   <Text strokeType="OUTSIDE" strokeWidth="0.0" text="kies je tegenstander (offline) / speler (online)">
       <font>
          <Font size="30.0" />
       </font></Text>

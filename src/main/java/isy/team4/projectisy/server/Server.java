@@ -1,22 +1,24 @@
 package isy.team4.projectisy.server;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.regex.Pattern;
 
 import isy.team4.projectisy.observer.IObservable;
 import isy.team4.projectisy.observer.IServerObserver;
 import isy.team4.projectisy.util.EResult;
-import isy.team4.projectisy.util.Result;
 
 public class Server extends ServerIO implements IObservable<IServerObserver> {
+    private final ServerProperties serverProperties;
+
     private final ArrayList<IServerObserver> observers = new ArrayList<>();
     private final HashMap<String, Runnable> responseMapper = new HashMap<>();
     private String response;
     private boolean running = false;
 
-    public Server(String ip, int port) throws IOException {
-        super(ip, port);
+    public Server(ServerProperties serverProperties) {
+        super(serverProperties.ip, serverProperties.port);
+        this.serverProperties = serverProperties;
         this.populateResponseMapper();
         this.openSocket();
     }
@@ -35,8 +37,9 @@ public class Server extends ServerIO implements IObservable<IServerObserver> {
         this.running = false;
     }
 
-    public void login(String username) {
-        sendMessage("login " + username);
+    public void login() {
+        System.out.println(this.serverProperties.userName);
+        sendMessage("login " + this.serverProperties.userName);
     }
 
     public void updatePlayerList() {
@@ -74,11 +77,13 @@ public class Server extends ServerIO implements IObservable<IServerObserver> {
     }
 
     private void loop() {
-        response = onMessage();
+        this.response = this.onMessage();
 
         if (response == null) {
             return;
         }
+
+        System.out.println(this.response);
 
         for (String key : responseMapper.keySet()) {
             if (response.startsWith(key)) {
@@ -97,24 +102,50 @@ public class Server extends ServerIO implements IObservable<IServerObserver> {
             this.stop();
         });
         this.responseMapper.put("SVR GAMELIST", () -> {
-            this.observers.forEach((observer) -> observer.setGameList(this.parseGameList()));
+            this.observers.forEach((observer) -> observer.onGameList(this.parseResponse()));
         });
         this.responseMapper.put("SVR PLAYERLIST", () -> {
-            this.observers.forEach((observer) -> observer.setPlayerList(this.parsePlayerList()));
+            this.observers.forEach((observer) -> observer.onPlayerList(this.parseResponse()));
         });
         this.responseMapper.put("SVR GAME MATCH", () -> {
-            this.observers.forEach((observer) -> observer.onGameMatch(this.parseGameMatch()));
+            // playerToMove = data[0]; gameType = data[1]; opponentName = data[2]
+            String[] data = this.parseResponse();
+            this.observers.forEach((observer) -> observer.onGameMatch(new GameMatch(data[0], data[1], data[2])));
         });
         this.responseMapper.put("SVR GAME MOVE", () -> {
-            this.observers.forEach((observer) -> observer.onGameMove(this.parseGameMove()));
+            // playerName = data[0]; moveInt = data[1]; details = data[2]
+            String[] data = this.parseResponse();
+            this.observers.forEach((observer) ->
+                    observer.onGameMove(new GameMove(data[0], Integer.parseInt(data[1]), data[2]))
+            );
         });
         this.responseMapper.put("SVR GAME WIN", () -> {
-            this.observers.forEach((observer) -> observer.onFinished(new Result(EResult.WIN)));
-        });this.responseMapper.put("SVR GAME LOSS", () -> {
-            this.observers.forEach((observer) -> observer.onFinished(new Result(EResult.LOSS)));
+            // score player1 = data[0]; score player2 = data[1]; comment = data[2]
+            String[] data = this.parseResponse();
+            this.observers.forEach((observer) -> observer.onFinished(new ServerResult(
+                    EResult.WIN,
+                    Integer.parseInt(data[0]),
+                    Integer.parseInt(data[1]),
+                    data[2]
+            )));
+        });
+        this.responseMapper.put("SVR GAME LOSS", () -> {
+            String[] data = this.parseResponse();
+            this.observers.forEach((observer) -> observer.onFinished(new ServerResult(
+                    EResult.LOSS,
+                    Integer.parseInt(data[0]),
+                    Integer.parseInt(data[1]),
+                    data[2]
+            )));
         });
         this.responseMapper.put("SVR GAME DRAW", () -> {
-            this.observers.forEach((observer) -> observer.onFinished(new Result(EResult.DRAW)));
+            String[] data = this.parseResponse();
+            this.observers.forEach((observer) -> observer.onFinished(new ServerResult(
+                    EResult.DRAW,
+                    Integer.parseInt(data[0]),
+                    Integer.parseInt(data[1]),
+                    data[2]
+            )));
         });
         this.responseMapper.put("SVR GAME YOURTURN", () -> {
             this.observers.forEach(IServerObserver::onMove);
@@ -122,45 +153,13 @@ public class Server extends ServerIO implements IObservable<IServerObserver> {
         this.responseMapper.put("SVR GAME CHALLENGE", () -> {});  // TODO
     }
 
-    private String[] parseGameList() {
-        String temp = response.replace("SVR GAMELIST [", "");
-        temp = temp.replace("]", "");
-        temp = temp.replace("\"", "");
-
-        return temp.split(", ");
-    }
-
-    private String[] parsePlayerList() {
-        String temp = response.replace("SVR PLAYERLIST [", "");
-        temp = temp.replace("]", "");
-        temp = temp.replace("\"", "");
-
-        return temp.split(", ");
-    }
-
-    private GameMatch parseGameMatch() {
-        String[] stringsToRemove = { "SVR GAME MATCH {", "}", "\"", "PLAYERTOMOVE: ", "GAMETYPE: ",
-                "OPPONENT: " };
-        String temp = response;
-        for (String txt : stringsToRemove) {
-            temp = temp.replace(txt, "");
-        }
-        String[] data = temp.split(", ");
-        // playerToMove = data[0]; gameType = data[1]; opponentName = data[2]
-
-        return new GameMatch(data[0], data[1], data[2]);
-    }
-
-    private GameMove parseGameMove() {
-        String[] stringsToRemove = { "SVR GAME MOVE {", "}", "\"", "PLAYER: ", "DETAILS: ",
-                "MOVE: " };
-        String temp = response;
-        for (String txt : stringsToRemove) {
-            temp = temp.replace(txt, "");
-        }
-        String[] data = temp.split(", ");
-        // playerName = data[0]; moveInt = data[1]; details = data[2]
-
-        return new GameMove(data[0], Integer.parseInt(data[1]), data[2]);
+    private String[] parseResponse() {
+        return Pattern.compile("\"(.*?)\"")
+                .matcher(this.response)
+                .results()
+                .map((matchResult) -> {
+                    String result = matchResult.group();
+                    return result.substring(1, result.length() - 1);
+                }).toArray(String[]::new);
     }
 }

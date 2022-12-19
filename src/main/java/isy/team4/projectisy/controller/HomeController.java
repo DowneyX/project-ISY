@@ -17,17 +17,19 @@ import javafx.scene.Node;
 public class HomeController extends Controller {
     private static String selectedGame;
     private static boolean is_cpu;
-    private boolean isLocal = true;
-    private EPlayer player1;
-    private EPlayer player2;
+    private static boolean isLocal = true;
+    private static EPlayer player1;
+    private static EPlayer player2;
 
     public void navigateOnline(ActionEvent actionEvent) throws IOException {
-        this.isLocal = false;
+        isLocal = false;
+//        this.playerMenuText.setText("Kies je speler");  // TODO: temp, see initGame
         navigate(actionEvent, "online-menu-view.fxml");
     }
 
     public void navigateOffline(ActionEvent actionEvent) throws IOException {
-        this.isLocal = true;
+        isLocal = true;
+//        this.playerMenuText.setText("Kies je tegenstander");  // TODO: temp, see initGame
         navigate(actionEvent, "offline-menu-view.fxml");
     }
 
@@ -41,13 +43,13 @@ public class HomeController extends Controller {
 
     public void setTicTacToe(ActionEvent actionEvent) throws IOException {
         selectedGame = "tic-tac-toe";
-        navigate(actionEvent, "opponent-menu-view.fxml");
+        navigate(actionEvent, "player-menu-view.fxml");
         System.out.println(this);
     }
 
     public void setOthello(ActionEvent actionEvent) throws IOException {
         selectedGame = "othello";
-        navigate(actionEvent, "opponent-menu-view.fxml");
+        navigate(actionEvent, "player-menu-view.fxml");
         System.out.println(this);
     }
 
@@ -75,25 +77,35 @@ public class HomeController extends Controller {
         //  als remote: selectie voor 1 player (keuze uit: LOCAL, AI).
         //  Wanneer dit gedaan is krijg je iets zoals dit:
         //
-        //  EPlayer[] players = new EPlayer[]{this.player1};
-        //  if (this.isLocal) {
+        //  EPlayer[] players = new EPlayer[]{player1};
+        //  if (isLocal) {
         //      players = Arrays.copyOf(players, players.length + 1);  // Could refactor to ArrayList?
-        //      players[1] = this.player2;
+        //      players[1] = player2;
         //  }
         //  navigateOut(
         //          stage,
         //          gameViewMapper.get(selectedGame),
-        //          this.isLocal ? EGame.LOCAL : EGame.REMOTE,
+        //          isLocal ? EGame.LOCAL : EGame.REMOTE,
         //          players
         //  );
         //  Hierbij is het makkelijk om een extra speler te implementeren in de "eventuele" toekomst
 
-        navigateOut(
-                stage,
-                gameViewMapper.get(selectedGame),
-                this.isLocal ? EGame.LOCAL : EGame.REMOTE,
-                new EPlayer[]{EPlayer.LOCAL, is_cpu ? EPlayer.AI : EPlayer.LOCAL}
-        );
+        if (isLocal) {
+            this.navigateOut(stage, gameViewMapper.get(selectedGame), EGame.LOCAL,
+                    new EPlayer[]{EPlayer.LOCAL, is_cpu ? EPlayer.AI : EPlayer.LOCAL}
+            );
+        } else {
+            this.navigateOut(stage, gameViewMapper.get(selectedGame), EGame.REMOTE,
+                    new EPlayer[]{is_cpu ? EPlayer.AI : EPlayer.LOCAL}
+            );
+        }
+
+//        navigateOut(
+//                stage,
+//                gameViewMapper.get(selectedGame),
+//                this.isLocal ? EGame.LOCAL : EGame.REMOTE,
+//                new EPlayer[]{EPlayer.LOCAL, is_cpu ? EPlayer.AI : EPlayer.LOCAL}
+//        );
     }
 
     @FXML
