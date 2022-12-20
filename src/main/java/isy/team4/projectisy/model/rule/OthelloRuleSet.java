@@ -288,11 +288,18 @@ public class OthelloRuleSet implements IRuleSet {
         return null;
     }
 
-    public int getScore() {
-        if (isWon()) {
-            return 100000;
+    @Override
+    public int getScore(IPlayer player) {
+        int score = 0;
+        IPlayer[] data = board.getFlatData().toArray(IPlayer[]::new);
+
+        for (int i = 0; i < data.length; i++) {
+            if (data[i] != null && data[i].getInitial() == player.getInitial()) {
+                score += cellScores[i];
+            }
         }
-        return 0;
+
+        return score;
     }
 
     private int[] getScores() {
