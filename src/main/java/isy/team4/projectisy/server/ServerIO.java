@@ -14,7 +14,7 @@ public class ServerIO {
     PrintWriter out;
     BufferedReader in;
 
-    public ServerIO(String ip, int port) throws IOException {
+    public ServerIO(String ip, int port)  {
         this.ip = ip;
         this.port = port;
     }

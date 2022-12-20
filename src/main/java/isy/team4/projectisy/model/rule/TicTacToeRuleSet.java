@@ -13,6 +13,15 @@ public final class TicTacToeRuleSet implements IRuleSet {
     private IPlayer[] players;
     private IPlayer winningPlayer;
 
+    public TicTacToeRuleSet() {
+    }
+
+    public TicTacToeRuleSet(TicTacToeRuleSet ticTacToeRuleSet) {
+        this.board = ticTacToeRuleSet.board;
+        this.players = ticTacToeRuleSet.players;
+        this.winningPlayer = ticTacToeRuleSet.winningPlayer;
+    }
+
     @Override
     public Integer getMinPlayerSize() {
         return 2;
@@ -34,18 +43,16 @@ public final class TicTacToeRuleSet implements IRuleSet {
     }
 
     @Override
-    public boolean isLegal(IPlayer currentplayer, Vector2D move) {
+    public boolean isLegal(IPlayer player, Vector2D move) {
         // TODO have a diffent way of checking if current situation is legal'
 
-        if (board.getElement(move.x, move.y) == null) {
-            return true;
-        }
-        return false;
+        return board.getElement(move.x, move.y) == null;
     }
 
     @Override
-    public void handleMove(Vector2D move, IPlayer currentplayer) {
-        this.board.setElement(currentplayer, move.x, move.y);
+    public Board handleMove(Vector2D move, IPlayer player) {
+        this.board.setElement(player, move.x, move.y);
+        return this.board;
     }
 
     @Override
@@ -84,7 +91,7 @@ public final class TicTacToeRuleSet implements IRuleSet {
         return !this.isWon() && this.board.getFlatData().noneMatch(Objects::isNull);
     }
 
-    public Vector2D[] getValidMoves(IPlayer currentplayer) {
+    public Vector2D[] getValidMoves(IPlayer player) {
         List<Vector2D> moves = new ArrayList<Vector2D>();
         for (int i = 0; i < board.getWidth() * board.getHeight(); i++) {
             int x = i % board.getWidth();
@@ -99,13 +106,17 @@ public final class TicTacToeRuleSet implements IRuleSet {
 
     @Override
     public IRuleSet clone() {
-        IRuleSet newRuleset = new TicTacToeRuleSet();
-        return newRuleset;
+        return new TicTacToeRuleSet(this);
     }
 
     @Override
     public void setBoard(Board board) {
         this.board = board;
+    }
+
+    @Override
+    public void setPlayers(IPlayer[] players) {
+        this.players = players;
     }
 
     @Override

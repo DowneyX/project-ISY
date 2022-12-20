@@ -1,148 +1,45 @@
 package isy.team4.projectisy.server;
 
-import java.io.IOException;
-import isy.team4.projectisy.util.Vector2D;
-import isy.team4.projectisy.model.game.RemoteGame;
-import isy.team4.projectisy.model.player.*;
-import isy.team4.projectisy.model.rule.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.regex.Pattern;
 
-public class Server extends ServerIO implements IPlayerTurnHandler {
-    private String userName;
-    public RemoteGame game;
-    private static Thread serverThread;
+import isy.team4.projectisy.observer.IObservable;
+import isy.team4.projectisy.observer.IServerObserver;
+import isy.team4.projectisy.util.EResult;
+
+public class Server extends ServerIO implements IObservable<IServerObserver> {
+    private final ServerProperties serverProperties;
+
+    private final ArrayList<IServerObserver> observers = new ArrayList<>();
+    private final HashMap<String, Runnable> responseMapper = new HashMap<>();
     private String response;
-    private String[] playerList;
-    private String[] gameList;
-    private Vector2D RemoteMove;
+    private boolean running = false;
 
-    public Server(String ip, int port) throws IOException {
-        super(ip, port);
-        openSocket();
-
-        // Thread for the server
-        serverThread = new Thread(() -> {
-            while (true) {
-                response = onMessage(); // wait for a message
-                System.out.println(response); // we have recieved a message
-
-                if (response.contains("OK")) { // OK all is good
-                    continue;
-                }
-
-                if (response.contains("ERR")) { // ERR something bad happened
-                    try {
-                        throw new Exception(response);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
-
-                if (response.contains("SVR GAMELIST")) { // update game list
-                    // extract usefull data
-                    String temp = response.replace("SVR GAMELIST [", "");
-                    temp = temp.replace("]", "");
-                    temp = temp.replace("\"", "");
-
-                    // usefull data
-                    String[] gameList = temp.split(", ");
-
-                    // send gamelist somewhere
-                    this.gameList = gameList;
-                    continue;
-                }
-
-                if (response.contains("SVR PLAYERLIST")) { // update playerlist
-                    // extract usefull data
-                    String temp = response.replace("SVR PLAYERLIST [", "");
-                    temp = temp.replace("]", "");
-                    temp = temp.replace("\"", "");
-
-                    // usefull data
-                    String[] playerList = temp.split(", ");
-
-                    // send playerlist somewhere
-                    this.playerList = playerList;
-                    continue;
-                }
-
-                if (response.contains("SVR GAME MATCH")) { // a match has started
-                    // extract usefull data
-                    String[] stringsToRemove = { "SVR GAME MATCH {", "}", "\"", "PLAYERTOMOVE: ", "GAMETYPE: ",
-                            "OPPONENT: " };
-                    String temp = response;
-                    for (String txt : stringsToRemove) {
-                        temp = temp.replace(txt, "");
-                    }
-                    String[] data = temp.split(", ");
-                    // playerToMove = data[0]; gameType = data[1]; opponentName = data[2]
-
-                    // setup game
-                    setupGame(data[1], data[2], data[0]);
-                    continue;
-                }
-
-                if (response.contains("SVR GAME MOVE")) { // a move has been made (us or them)
-                    // extract usefull data
-                    String[] stringsToRemove = { "SVR GAME MOVE {", "}", "\"", "PLAYER: ", "DETAILS: ",
-                            "MOVE: " };
-                    String temp = response;
-                    for (String txt : stringsToRemove) {
-                        temp = temp.replace(txt, "");
-                    }
-                    String[] data = temp.split(", ");
-                    // playerName = data[0]; moveInt = data[1]; details = data[2]
-
-                    // insert move
-                    if (!data[0].equals(userName)) {
-                        RemoteMove = new Vector2D(Integer.parseInt(data[1]), game.getBoard());
-                        game.step();
-                    }
-
-                    continue;
-                }
-
-                if (response.contains("SVR GAME WIN")) { // won a game
-                    cleanUp();
-                    continue;
-                }
-
-                if (response.contains("SVR GAME LOSS")) { // lost a game
-                    cleanUp();
-                    continue;
-                }
-
-                if (response.contains("SVR GAME DRAW")) { // draw a game
-                    cleanUp();
-                    continue;
-                }
-
-                if (response.contains("SVR GAME YOURTURN")) { // its our turn make a move
-                    game.step();
-                    continue;
-                }
-
-                if (response.contains("SVR GAME CHALLENGE")) { // we have a challenge request
-
-                    continue;
-                }
-
-            }
-        });
-        serverThread.start();
+    public Server(ServerProperties serverProperties) {
+        super(serverProperties.ip, serverProperties.port);
+        this.serverProperties = serverProperties;
+        this.populateResponseMapper();
+        this.openSocket();
     }
 
-    public void login(String username) {
-        sendMessage("login " + username);
-        this.userName = username;
+    public void start() {
+        // Start thread and run the loop
+        this.running = true;
+        new Thread(() -> {
+            while (this.running) {
+                this.loop();
+            };
+        }).start();
     }
 
-    public String[] getPlayerlist() {
-        sendMessage("get playerlist");
-        return playerList;
+    public void stop() {
+        this.running = false;
     }
 
-    public String[] getGamelist() {
-        return gameList;
+    public void login() {
+        System.out.println(this.serverProperties.userName);
+        sendMessage("login " + this.serverProperties.userName);
     }
 
     public void updatePlayerList() {
@@ -153,12 +50,8 @@ public class Server extends ServerIO implements IPlayerTurnHandler {
         sendMessage("get gamelist");
     }
 
-    public void subscribeTictactoe() {
-        sendMessage("subscribe tic-tac-toe");
-    }
-
-    public void subscribeReversi() {
-        sendMessage("subscribe reversi");
+    public void subscribe(String gameType) {
+        sendMessage("subscribe " + gameType);
     }
 
     public void acceptChallenge(int challengeNr) {
@@ -169,41 +62,104 @@ public class Server extends ServerIO implements IPlayerTurnHandler {
         sendMessage("challenge " + username + " " + gameType);
     }
 
-    private void setupGame(String gametype, String opponentName, String playerToMove) {
-        switch (gametype) {
-            case "Tic-tac-toe":
-                IRuleSet ruleset = new TicTacToeRuleSet();
-                IPlayer[] players = new IPlayer[2];
-                players[0] = new RemotePlayer(opponentName, this);
-                players[1] = new AIPlayer(userName, players[0], ruleset);
-                ruleset = new TicTacToeRuleSet();
-                game = new RemoteGame(players, ruleset, this);
-                IPlayer currentPlayer = playerToMove.equals(opponentName) ? players[0] : players[1];
-                game.setCurrentPlayer(currentPlayer);
-                game.start();
-
-                break;
-            case "Reversi":
-
-                break;
-
-            default:
-                break;
-        }
-    }
-
-    private void cleanUp() {
-        game.stop();
-        game = null;
-    }
-
-    public void sendMove(Vector2D move) {
-        sendMessage("move " + move.toInt(game.getBoard()));
+    public void sendMove(Integer move) {
+        sendMessage("move " + move);
     }
 
     @Override
-    public Vector2D getPlayerMove() {
-        return RemoteMove;
+    public void addObserver(IServerObserver o) {
+        observers.add(o);
     }
 
+    @Override
+    public void removeObserver(IServerObserver o) {
+        observers.remove(o);
+    }
+
+    private void loop() {
+        this.response = this.onMessage();
+
+        if (response == null) {
+            return;
+        }
+
+        System.out.println(this.response);
+
+        for (String key : responseMapper.keySet()) {
+            if (response.startsWith(key)) {
+                responseMapper.get(key).run();
+                return;
+            }
+        }
+        // TODO: Throw or not?
+//        throw new IllegalArgumentException("No matching case found");
+    }
+
+    private void populateResponseMapper() {
+        this.responseMapper.put("OK", () -> {});
+        this.responseMapper.put("ERR", () -> {  // TODO: Be sure userinput cannot kill us here. Maybe use this as tactic
+            System.out.println(this.response);
+            this.stop();
+        });
+        this.responseMapper.put("SVR GAMELIST", () -> {
+            this.observers.forEach((observer) -> observer.onGameList(this.parseResponse()));
+        });
+        this.responseMapper.put("SVR PLAYERLIST", () -> {
+            this.observers.forEach((observer) -> observer.onPlayerList(this.parseResponse()));
+        });
+        this.responseMapper.put("SVR GAME MATCH", () -> {
+            // playerToMove = data[0]; gameType = data[1]; opponentName = data[2]
+            String[] data = this.parseResponse();
+            this.observers.forEach((observer) -> observer.onGameMatch(new GameMatch(data[0], data[1], data[2])));
+        });
+        this.responseMapper.put("SVR GAME MOVE", () -> {
+            // playerName = data[0]; moveInt = data[1]; details = data[2]
+            String[] data = this.parseResponse();
+            this.observers.forEach((observer) ->
+                    observer.onGameMove(new GameMove(data[0], Integer.parseInt(data[1]), data[2]))
+            );
+        });
+        this.responseMapper.put("SVR GAME WIN", () -> {
+            // score player1 = data[0]; score player2 = data[1]; comment = data[2]
+            String[] data = this.parseResponse();
+            this.observers.forEach((observer) -> observer.onFinished(new ServerResult(
+                    EResult.WIN,
+                    Integer.parseInt(data[0]),
+                    Integer.parseInt(data[1]),
+                    data[2]
+            )));
+        });
+        this.responseMapper.put("SVR GAME LOSS", () -> {
+            String[] data = this.parseResponse();
+            this.observers.forEach((observer) -> observer.onFinished(new ServerResult(
+                    EResult.LOSS,
+                    Integer.parseInt(data[0]),
+                    Integer.parseInt(data[1]),
+                    data[2]
+            )));
+        });
+        this.responseMapper.put("SVR GAME DRAW", () -> {
+            String[] data = this.parseResponse();
+            this.observers.forEach((observer) -> observer.onFinished(new ServerResult(
+                    EResult.DRAW,
+                    Integer.parseInt(data[0]),
+                    Integer.parseInt(data[1]),
+                    data[2]
+            )));
+        });
+        this.responseMapper.put("SVR GAME YOURTURN", () -> {
+            this.observers.forEach(IServerObserver::onMove);
+        });
+        this.responseMapper.put("SVR GAME CHALLENGE", () -> {});  // TODO
+    }
+
+    private String[] parseResponse() {
+        return Pattern.compile("\"(.*?)\"")
+                .matcher(this.response)
+                .results()
+                .map((matchResult) -> {
+                    String result = matchResult.group();
+                    return result.substring(1, result.length() - 1);
+                }).toArray(String[]::new);
+    }
 }

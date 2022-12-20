@@ -16,10 +16,10 @@ public interface IRuleSet {
 
     Board getStartingBoard();
 
-    boolean isLegal(IPlayer currentplayer, Vector2D move); // othello requires currentplayer, because legal moves differ
+    boolean isLegal(IPlayer player, Vector2D move); // othello requires currentplayer, because legal moves differ
                                                            // per player
 
-    void handleMove(Vector2D move, IPlayer currentplayer);
+    Board handleMove(Vector2D move, IPlayer player);
 
     boolean isWon();
 
@@ -30,10 +30,11 @@ public interface IRuleSet {
     IRuleSet clone();
 
     void setBoard(Board board);
+    void setPlayers(IPlayer[] players);
 
     boolean isPass(IPlayer player);
 
-    Vector2D[] getValidMoves(IPlayer currentplayer); // board next to currentplayer because the controller
+    Vector2D[] getValidMoves(IPlayer player); // board next to currentplayer because the controller
                                                      // requires the validmoves for newboard, and isLegal
                                                      // requires oldboard
 }

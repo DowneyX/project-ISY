@@ -4,7 +4,7 @@ import isy.team4.projectisy.util.Board;
 import isy.team4.projectisy.util.Vector2D;
 
 public class LocalPlayer implements IPlayer {
-    private final String name;
+    private String name;
     private char initial;
     private final IPlayerTurnHandler playerTurnHandler;
 
@@ -29,14 +29,16 @@ public class LocalPlayer implements IPlayer {
     }
 
     @Override
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    @Override
     public void setInitial(char initial) {
         this.initial = initial;
     }
 
     public String toString() {
-        if (this.name != null) {
-            return this.name;
-        }
-        return "Localplayer";
+        return this.getName();
     }
 }

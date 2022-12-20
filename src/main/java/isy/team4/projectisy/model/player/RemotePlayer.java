@@ -4,13 +4,11 @@ import isy.team4.projectisy.util.Board;
 import isy.team4.projectisy.util.Vector2D;
 
 public class RemotePlayer implements IPlayer {
-    private final String name;
+    private String name;
     private char initial;
-    private final IPlayerTurnHandler playerTurnHandler;
 
-    public RemotePlayer(String name, IPlayerTurnHandler localPlayerHandler) {
+    public RemotePlayer(String name) {
         this.name = name;
-        this.playerTurnHandler = localPlayerHandler;
     }
 
     @Override
@@ -25,7 +23,12 @@ public class RemotePlayer implements IPlayer {
 
     @Override
     public Vector2D getMove(Board board) {
-        return this.playerTurnHandler.getPlayerMove();
+        return null;  // TODO: Remove from player, as it removes complexity because of all the dependencies
+    }
+
+    @Override
+    public void setName(String name) {
+        this.name = name;
     }
 
     @Override
@@ -35,6 +38,6 @@ public class RemotePlayer implements IPlayer {
 
     @Override
     public String toString() {
-        return "Remoteplayer";
+        return this.getName();
     }
 }

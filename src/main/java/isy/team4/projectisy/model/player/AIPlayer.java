@@ -5,16 +5,14 @@ import isy.team4.projectisy.util.Board;
 import isy.team4.projectisy.util.Vector2D;
 
 public class AIPlayer implements IPlayer {
-    private final String name;
+    private String name;
     private char initial;
     private IPlayer opponent;
-    private IRuleSet ruleset;
+    private IRuleSet ruleSet;
     private int maxDepth = 2; // max depth for minimax
 
-    public AIPlayer(String name, IPlayer opponent, IRuleSet ruleset) {
-        this.opponent = opponent;
+    public AIPlayer(String name) {
         this.name = name;
-        this.ruleset = ruleset.clone();
     }
 
     @Override
@@ -32,16 +30,21 @@ public class AIPlayer implements IPlayer {
         return this.initial;
     }
 
+    public void setOpponent(IPlayer opponent) {  // TODO: Could later be opponents
+        this.opponent = opponent;
+    }
+
+    public void setRuleSet(IRuleSet ruleSet) {
+        this.ruleSet = ruleSet.clone();
+    }
+
     public String toString() {
-        if (this.name != null) {
-            return this.name;
-        }
-        return "x";
+        return this.getName();
     }
 
     @Override
     public Vector2D getMove(Board board) {
-        ruleset.setBoard(board);
+        ruleSet.setBoard(board);
 
         int bestVal = Integer.MIN_VALUE;
         Vector2D BestMove = new Vector2D(-1, -1);
@@ -49,13 +52,14 @@ public class AIPlayer implements IPlayer {
         long startTime = System.nanoTime();
         System.out.print("Starting to find move");
 
-        for (Vector2D move : ruleset.getValidMoves(this)) {
+        for (Vector2D move : ruleSet.getValidMoves(this)) {
             Board newBoard = new Board(board);
-            ruleset.setBoard(newBoard);
-            ruleset.handleMove(move, this);
+            ruleSet.setBoard(newBoard);
+            ruleSet.handleMove(move, this);
 
-            int moveVal = alphabeta(newBoard, 0, Integer.MIN_VALUE, Integer.MAX_VALUE, false);
-            ruleset.setBoard(board);
+            int moveVal = this.alphaBeta(newBoard, 0, Integer.MIN_VALUE, Integer.MAX_VALUE, false);
+            ruleSet.setBoard(board);
+
             if (moveVal > bestVal) {
                 bestVal = moveVal;
                 BestMove = new Vector2D(move.x, move.y);
@@ -70,33 +74,37 @@ public class AIPlayer implements IPlayer {
         return BestMove;
     }
 
+    @Override
+    public void setName(String name) {
+        this.name = name;
+    }
 
-    private int alphabeta(Board node, int depth, double alpha, double beta, boolean isMaxPlayer) {
-        ruleset.setBoard(node);
+    private int alphaBeta(Board node, int depth, double alpha, double beta, boolean isMaxPlayer) {
+        ruleSet.setBoard(node);
 
-        if (ruleset.isWon()) {
-            if (ruleset.getWinningPlayer() == opponent) {
+        if (ruleSet.isWon()) {
+            if (ruleSet.getWinningPlayer() == opponent) {
                 return Integer.MIN_VALUE + depth;
             }
 
             return Integer.MAX_VALUE - depth;
-        } else if (ruleset.isDraw()) {
+        } else if (ruleSet.isDraw()) {
             return 0;
         } else if (depth >= maxDepth) {
-            return ruleset.getScore(this);
+            return ruleSet.getScore(this);
         }
 
         if (isMaxPlayer) {
             int value = Integer.MIN_VALUE;
 
-            for (Vector2D move: ruleset.getValidMoves(this)) {
+            for (Vector2D move : ruleSet.getValidMoves(this)) {
                 Board child = new Board(node);
-                ruleset.setBoard(child);
-                ruleset.handleMove(move, this);
-                boolean nextIsMax = ruleset.isPass(opponent);
-                value = Math.max(value, alphabeta(child, depth + 1, alpha, beta, nextIsMax));
+                ruleSet.setBoard(child);
+                ruleSet.handleMove(move, this);
+                boolean nextIsMax = ruleSet.isPass(opponent);
+                value = Math.max(value, alphaBeta(child, depth + 1, alpha, beta, nextIsMax));
                 alpha = Math.max(alpha, value);
-                ruleset.setBoard(node);
+                ruleSet.setBoard(node);
                 if (value >= beta) {
                     break;
                 }
@@ -105,14 +113,14 @@ public class AIPlayer implements IPlayer {
         } else {
             int value = Integer.MAX_VALUE;
 
-            for (Vector2D move: ruleset.getValidMoves(opponent)) {
+            for (Vector2D move : ruleSet.getValidMoves(opponent)) {
                 Board child = new Board(node);
-                ruleset.setBoard(child);
-                ruleset.handleMove(move, opponent);
-                boolean nextIsMax = ! ruleset.isPass(this);
-                value = Math.min(value, alphabeta(child, depth + 1, alpha, beta, nextIsMax));
+                ruleSet.setBoard(child);
+                ruleSet.handleMove(move, opponent);
+                boolean nextIsMax = !ruleSet.isPass(this);
+                value = Math.min(value, alphaBeta(child, depth + 1, alpha, beta, nextIsMax));
                 beta = Math.min(beta, value);
-                ruleset.setBoard(node);
+                ruleSet.setBoard(node);
                 if (value <= alpha) {
                     break;
                 }
@@ -120,13 +128,5 @@ public class AIPlayer implements IPlayer {
 
             return value;
         }
-    }
-
-    public void setOpponent(IPlayer opponent) {
-        this.opponent = opponent;
-    }
-
-    public IPlayer getOpponent() {
-        return opponent;
     }
 }

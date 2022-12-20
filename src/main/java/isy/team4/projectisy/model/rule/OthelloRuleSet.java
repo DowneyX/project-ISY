@@ -7,10 +7,7 @@ import isy.team4.projectisy.util.Board;
 import isy.team4.projectisy.util.Vector2D;
 
 public class OthelloRuleSet implements IRuleSet {
-    private Board board;
-    private IPlayer[] players;
-    private IPlayer winningPlayer;
-    private int[] cellScores = {
+    private final int[] cellScores = {
             100, -20, 10, 5, 5, 10, -20, 100,
             -20, -50, -2, -2, -2, -2, -50, -20,
             10, -2, -1, -1, -1, -1, -2, 10,
@@ -20,14 +17,17 @@ public class OthelloRuleSet implements IRuleSet {
             -20, -50, -2, -2, -2, -2, -50, -20,
             100, -20, 10, 5, 5, 10, -20, 100
     };
+    private Board board;
+    private IPlayer[] players;
+    private IPlayer winningPlayer;
 
-    /**
-     * players is needed to count cells.
-     *
-     * @param players
-     */
-    public OthelloRuleSet(IPlayer[] players) {
-        this.players = players;
+    public OthelloRuleSet() {
+    }
+
+    public OthelloRuleSet(OthelloRuleSet othelloRuleSet) {
+        this.players = othelloRuleSet.players;
+        this.board = othelloRuleSet.board;
+        this.winningPlayer = othelloRuleSet.winningPlayer;
     }
 
     @Override
@@ -48,18 +48,18 @@ public class OthelloRuleSet implements IRuleSet {
     @Override
     public Board getStartingBoard() {
         Board result = new Board(8, 8);
-        result.setElement(players[0], 3, 3);
-        result.setElement(players[0], 4, 4);
-        result.setElement(players[1], 3, 4);
-        result.setElement(players[1], 4, 3);
+        result.setElement(players[0], 3, 4);
+        result.setElement(players[0], 4, 3);
+        result.setElement(players[1], 3, 3);
+        result.setElement(players[1], 4, 4);
         return result;
     }
 
     @Override
-    public boolean isLegal(IPlayer currentplayer, Vector2D move) {
+    public boolean isLegal(IPlayer player, Vector2D move) {
         // TODO have a diffent way of checking if current situation is legal
-        for (Vector2D validmove : getValidMoves(currentplayer)) {
-            if (validmove.x == move.x && validmove.y == move.y) {
+        for (Vector2D validMove : getValidMoves(player)) {
+            if (validMove.x == move.x && validMove.y == move.y) {
                 return true;
             }
         }
@@ -67,7 +67,7 @@ public class OthelloRuleSet implements IRuleSet {
     }
 
     @Override
-    public void handleMove(Vector2D move, IPlayer player) {
+    public Board handleMove(Vector2D move, IPlayer player) {
         // get changed idx, first difference found
         int x = move.x;
         int y = move.y;
@@ -93,57 +93,43 @@ public class OthelloRuleSet implements IRuleSet {
             }
         }
 
-        board.setElement(player, x, y);
+        this.board.setElement(player, x, y);
 
         // loop again and update every change
-        for (int i = 0; i < board.getWidth() * board.getHeight(); i++) { // newboard is already changed
+        for (int i = 0; i < this.board.getWidth() * this.board.getHeight(); i++) { // newboard is already changed
             for (int change : toChange) {
                 if (i == change) {
-                    int x2 = i % board.getWidth();
-                    int y2 = i / board.getHeight();
+                    int x2 = i % this.board.getWidth();
+                    int y2 = i / this.board.getHeight();
 
-                    board.setElement(player, x2, y2);
+                    this.board.setElement(player, x2, y2);
                 }
             }
         }
+
+        return this.board;
     }
 
     @Override
     public boolean isWon() {
-
         // if there are still moves available then game is not over yet tus not won
         for (IPlayer player : players) {
             if (getValidMoves(player).length > 0) {
                 this.winningPlayer = null;
-                return this.winningPlayer != null;
+                return false;
             }
         }
 
-        // count all tiles for both players
-        int scorePlayer1 = 0;
-        int scorePlayer2 = 0;
-        for (int i = 0; i < board.getWidth() * board.getHeight(); i++) {
-            int x = i % board.getWidth();
-            int y = i / board.getHeight();
-
-            IPlayer cell = board.getElement(x, y);
-
-            if (cell == players[0]) {
-                scorePlayer1++;
-            } else if (cell == players[1]) {
-                scorePlayer2++;
-            }
-        }
+        int[] scores = this.getScores();
 
         // return result
-        if (scorePlayer1 == scorePlayer2) {
+        if (scores[0] == scores[1]) {
             this.winningPlayer = null;
-            return this.winningPlayer != null;
-        } else {
-            this.winningPlayer = scorePlayer1 > scorePlayer2 ? players[0] : players[1];
-            return this.winningPlayer != null;
+            return false;
         }
 
+        this.winningPlayer = scores[0] > scores[1] ? players[0] : players[1];
+        return true;
     }
 
     @Override
@@ -164,23 +150,9 @@ public class OthelloRuleSet implements IRuleSet {
             }
         }
 
-        // count all tiles for both players
-        int scorePlayer1 = 0;
-        int scorePlayer2 = 0;
-        for (int i = 0; i < board.getWidth() * board.getHeight(); i++) {
-            int x = i % board.getWidth();
-            int y = i / board.getHeight();
+        int[] scores = this.getScores();
 
-            IPlayer cell = board.getElement(x, y);
-
-            if (cell == players[0]) {
-                scorePlayer1++;
-            } else if (cell == players[1]) {
-                scorePlayer2++;
-            }
-        }
-        // return result
-        return scorePlayer1 == scorePlayer2;
+        return scores[0] == scores[1];
     }
 
     /**
@@ -210,6 +182,26 @@ public class OthelloRuleSet implements IRuleSet {
         return moves.toArray(new Vector2D[0]);
     }
 
+    @Override
+    public void setBoard(Board board) {
+        this.board = board;
+    }
+
+    @Override
+    public void setPlayers(IPlayer[] players) {
+        this.players = players;
+    }
+
+    @Override
+    public boolean isPass(IPlayer player) {
+        return getValidMoves(player).length < 1;
+    }
+
+    @Override
+    public IRuleSet clone() {
+        return new OthelloRuleSet(this);
+    }
+
     /**
      * Checks if the made move is valid by going from the origin into a direction
      * where origin and end are currentplayer and everything in between is
@@ -224,10 +216,10 @@ public class OthelloRuleSet implements IRuleSet {
         int c = 1; // count of steps between cells
         int x = origin.x;
         int y = origin.y;
-        IPlayer origincell = board.getElement(x, y);
+        IPlayer originCell = board.getElement(x, y);
 
         // Origin should be empty. You can not play an unavailable position.
-        if (origincell != null) {
+        if (originCell != null) {
             return null;
         }
 
@@ -297,22 +289,6 @@ public class OthelloRuleSet implements IRuleSet {
     }
 
     @Override
-    public void setBoard(Board board) {
-        this.board = board;
-    }
-
-    @Override
-    public boolean isPass(IPlayer player) {
-        return getValidMoves(player).length < 1;
-    }
-
-    @Override
-    public IRuleSet clone() {
-        IRuleSet newRuleset = new OthelloRuleSet(players);
-        return newRuleset;
-    }
-
-    @Override
     public int getScore(IPlayer player) {
         int score = 0;
         IPlayer[] data = board.getFlatData().toArray(IPlayer[]::new);
@@ -324,5 +300,21 @@ public class OthelloRuleSet implements IRuleSet {
         }
 
         return score;
+    }
+
+    private int[] getScores() {
+        int p1 = 0;
+        int p2 = 0;
+        IPlayer[] cells = board.getFlatData().toArray(IPlayer[]::new);
+
+        for (IPlayer cell : cells) {
+            if (cell == this.players[0]) {
+                p1++;
+            } else if (cell == this.players[1]) {
+                p2++;
+            }
+        }
+
+        return new int[]{p1, p2};
     }
 }
