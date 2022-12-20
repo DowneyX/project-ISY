@@ -9,7 +9,7 @@ public class AIPlayer implements IPlayer {
     private char initial;
     private IPlayer opponent;
     private IRuleSet ruleset;
-    private int maxDepth = 3; // max depth for minimax
+    private int maxDepth = 2; // max depth for minimax
 
     public AIPlayer(String name, IPlayer opponent, IRuleSet ruleset) {
         this.opponent = opponent;
@@ -46,60 +46,79 @@ public class AIPlayer implements IPlayer {
         int bestVal = Integer.MIN_VALUE;
         Vector2D BestMove = new Vector2D(-1, -1);
 
+        long startTime = System.nanoTime();
+        System.out.print("Starting to find move");
+
         for (Vector2D move : ruleset.getValidMoves(this)) {
             Board newBoard = new Board(board);
             ruleset.setBoard(newBoard);
             ruleset.handleMove(move, this);
-            int moveVal = miniMax(newBoard, 0, false);
-            ruleset.setBoard(board);
 
+            int moveVal = alphabeta(newBoard, 0, Integer.MIN_VALUE, Integer.MAX_VALUE, false);
+            ruleset.setBoard(board);
             if (moveVal > bestVal) {
                 bestVal = moveVal;
                 BestMove = new Vector2D(move.x, move.y);
             }
         }
 
+        long elapsedTime = System.nanoTime() - startTime;
+
+        System.out.print(" DONE " + elapsedTime / 1000000 + "ms");
+        System.out.println();
+
         return BestMove;
     }
 
-    private int miniMax(Board board, int depth, boolean isMax) {
-        ruleset.setBoard(board);
 
-        if (ruleset.isDraw() || ruleset.isWon() || board.isFull() || depth >= maxDepth) { // terminal state of the board
+    private int alphabeta(Board node, int depth, double alpha, double beta, boolean isMaxPlayer) {
+        ruleset.setBoard(node);
 
-            int score = 0;
-            if (ruleset.isWon() && ruleset.getWinningPlayer() == opponent) {
-                score = -1000 + depth;
+        if (ruleset.isWon()) {
+            if (ruleset.getWinningPlayer() == opponent) {
+                return Integer.MIN_VALUE + depth;
             }
-            if (ruleset.isWon() && ruleset.getWinningPlayer() == this) {
-                score = 1000 - depth;
-            }
-            return score;
+
+            return Integer.MAX_VALUE - depth;
+        } else if (ruleset.isDraw()) {
+            return 0;
+        } else if (depth >= maxDepth) {
+            return ruleset.getScore(this);
         }
 
-        if (isMax) { // if we are max player
-            int bestVal = Integer.MIN_VALUE;
-            for (Vector2D move : ruleset.getValidMoves(this)) {
-                Board newBoard = new Board(board);
-                ruleset.setBoard(newBoard);
-                ruleset.handleMove(move, this);
-                boolean nextIsMax = ruleset.isPass(opponent) ? true : false;
-                bestVal = Math.max(bestVal, miniMax(newBoard, depth + 1, nextIsMax));
-                ruleset.setBoard(board);
-            }
-            return bestVal;
+        if (isMaxPlayer) {
+            int value = Integer.MIN_VALUE;
 
-        } else { // if we are min player
-            int bestVal = Integer.MAX_VALUE;
-            for (Vector2D move : ruleset.getValidMoves(opponent)) {
-                Board newBoard = new Board(board);
-                ruleset.setBoard(newBoard);
-                ruleset.handleMove(move, opponent);
-                boolean nextIsMax = ruleset.isPass(this) ? false : true;
-                bestVal = Math.min(bestVal, miniMax(newBoard, depth + 1, nextIsMax));
-                ruleset.setBoard(board);
+            for (Vector2D move: ruleset.getValidMoves(this)) {
+                Board child = new Board(node);
+                ruleset.setBoard(child);
+                ruleset.handleMove(move, this);
+                boolean nextIsMax = ruleset.isPass(opponent);
+                value = Math.max(value, alphabeta(child, depth + 1, alpha, beta, nextIsMax));
+                alpha = Math.max(alpha, value);
+                ruleset.setBoard(node);
+                if (value >= beta) {
+                    break;
+                }
             }
-            return bestVal;
+            return value;
+        } else {
+            int value = Integer.MAX_VALUE;
+
+            for (Vector2D move: ruleset.getValidMoves(opponent)) {
+                Board child = new Board(node);
+                ruleset.setBoard(child);
+                ruleset.handleMove(move, opponent);
+                boolean nextIsMax = ! ruleset.isPass(this);
+                value = Math.min(value, alphabeta(child, depth + 1, alpha, beta, nextIsMax));
+                beta = Math.min(beta, value);
+                ruleset.setBoard(node);
+                if (value <= alpha) {
+                    break;
+                }
+            }
+
+            return value;
         }
     }
 
