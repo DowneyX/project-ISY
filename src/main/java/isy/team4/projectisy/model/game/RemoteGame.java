@@ -105,8 +105,10 @@ public class RemoteGame extends AGame implements IGame, IServerObserver {
         } else if (result.scoreP1 < result.scoreP2) {  // If p2 won, assert it's any but p1
             this.result.setWinningPlayer(this.players[1]);
         } else if (result.result != EResult.DRAW) {  // If no draw, illegal move has been done
+            IPlayer tempPlayer = this.getCurrentPlayer();
             this.rotateCurrentPlayer();  // Assuming other player won
             this.result.setWinningPlayer(this.getCurrentPlayer());
+            this.currentPlayer = tempPlayer;  // Set back to default
         }
 
         this.observers.forEach(IGameObserver::onFinished);
