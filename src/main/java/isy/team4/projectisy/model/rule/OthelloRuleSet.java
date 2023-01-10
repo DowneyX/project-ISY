@@ -1,6 +1,7 @@
 package isy.team4.projectisy.model.rule;
 
 import java.util.*;
+import java.util.stream.IntStream;
 
 import isy.team4.projectisy.model.player.IPlayer;
 import isy.team4.projectisy.util.Board;
@@ -21,13 +22,17 @@ public class OthelloRuleSet implements IRuleSet {
     private IPlayer[] players;
     private IPlayer winningPlayer;
 
+    private int[] presetOrder;
+
     public OthelloRuleSet() {
+        this.presetOrder = getPresortOrder();
     }
 
     public OthelloRuleSet(OthelloRuleSet othelloRuleSet) {
         this.players = othelloRuleSet.players;
         this.board = othelloRuleSet.board;
         this.winningPlayer = othelloRuleSet.winningPlayer;
+        this.presetOrder = getPresortOrder();
     }
 
     @Override
@@ -160,11 +165,11 @@ public class OthelloRuleSet implements IRuleSet {
      * isLegal
      */
     public Vector2D[] getValidMoves(IPlayer player) {
-        List<Vector2D> moves = new ArrayList<Vector2D>();
+        List<Vector2D> moves = new ArrayList<>();
 
-        for (int i = 0; i < board.getWidth() * board.getHeight(); i++) {
-            int x = i % board.getWidth();
-            int y = i / board.getHeight();
+        for (int i = 0; i < presetOrder.length; i++) {
+            int x = presetOrder[i] % board.getWidth();
+            int y = presetOrder[i] / board.getHeight();
 
             // should be empty in order to be valid
             if (board.getElement(x, y) != null) {
@@ -223,7 +228,7 @@ public class OthelloRuleSet implements IRuleSet {
             return null;
         }
 
-        ArrayList<Integer> remember = new ArrayList<>(); // indices to remember. return if valid
+        ArrayList<Integer> remember = new ArrayList<>(64); // indices to remember. return if valid
 
         for (int i = 0; i < board.getWidth(); i++) {
             IPlayer between;
@@ -316,5 +321,22 @@ public class OthelloRuleSet implements IRuleSet {
         }
 
         return new int[]{p1, p2};
+    }
+
+    /**
+     * Returns a list of indices for scores high to low to improve alpha-beta pruning
+     * @return
+     */
+    public int[] getPresortOrder() {
+        Integer[] heuristics = Arrays.stream( cellScores ).boxed().toArray( Integer[]::new );
+
+        int[] sorted = IntStream.range(0, heuristics.length)
+                .boxed().sorted((i, j) -> -heuristics[i].compareTo(heuristics[j]))
+                .mapToInt(ele -> ele).toArray();
+
+        for (int i = 0; i < sorted.length; i++) {
+        }
+
+        return sorted;
     }
 }
