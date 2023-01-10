@@ -9,7 +9,7 @@ public class AIPlayer implements IPlayer {
     private char initial;
     private IPlayer opponent;
     private IRuleSet ruleSet;
-    private int maxDepth = 2; // max depth for minimax
+    private int maxDepth = 5; // max depth for minimax
 
     public AIPlayer(String name) {
         this.name = name;
@@ -50,14 +50,22 @@ public class AIPlayer implements IPlayer {
         Vector2D BestMove = new Vector2D(-1, -1);
 
         long startTime = System.nanoTime();
-        System.out.print("Starting to find move");
+        System.out.println("Starting to find move");
 
         for (Vector2D move : ruleSet.getValidMoves(this)) {
             Board newBoard = new Board(board);
             ruleSet.setBoard(newBoard);
-            ruleSet.handleMove(move, this);
+//            ruleSet.handleMove(move, this); // Not needed?
+
+            long start = System.nanoTime();
+            System.out.print("MINIMAX START ");
 
             int moveVal = this.alphaBeta(newBoard, 0, Integer.MIN_VALUE, Integer.MAX_VALUE, false);
+
+            long elapsedTime = System.nanoTime() - start;
+
+            System.out.print(" DONE " + elapsedTime / 1000000 + "ms");
+            System.out.println();
             ruleSet.setBoard(board);
 
             if (moveVal > bestVal) {
@@ -98,9 +106,11 @@ public class AIPlayer implements IPlayer {
             int value = Integer.MIN_VALUE;
 
             for (Vector2D move : ruleSet.getValidMoves(this)) {
+
                 Board child = new Board(node);
                 ruleSet.setBoard(child);
                 ruleSet.handleMove(move, this);
+
                 boolean nextIsMax = ruleSet.isPass(opponent);
                 value = Math.max(value, alphaBeta(child, depth + 1, alpha, beta, nextIsMax));
                 alpha = Math.max(alpha, value);
@@ -114,9 +124,12 @@ public class AIPlayer implements IPlayer {
             int value = Integer.MAX_VALUE;
 
             for (Vector2D move : ruleSet.getValidMoves(opponent)) {
+
+
                 Board child = new Board(node);
                 ruleSet.setBoard(child);
                 ruleSet.handleMove(move, opponent);
+
                 boolean nextIsMax = !ruleSet.isPass(this);
                 value = Math.min(value, alphaBeta(child, depth + 1, alpha, beta, nextIsMax));
                 beta = Math.min(beta, value);
