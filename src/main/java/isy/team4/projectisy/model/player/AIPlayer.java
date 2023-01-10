@@ -55,7 +55,7 @@ public class AIPlayer implements IPlayer {
         for (Vector2D move : ruleSet.getValidMoves(this)) {
             Board newBoard = new Board(board);
             ruleSet.setBoard(newBoard);
-            ruleSet.handleMove(move, this);
+//            ruleSet.handleMove(move, this); // Not needed?
 
             long start = System.nanoTime();
             System.out.print("MINIMAX START ");

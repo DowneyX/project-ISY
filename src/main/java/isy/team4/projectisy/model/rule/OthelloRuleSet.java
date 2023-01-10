@@ -231,38 +231,64 @@ public class OthelloRuleSet implements IRuleSet {
         ArrayList<Integer> remember = new ArrayList<>(64); // indices to remember. return if valid
 
         for (int i = 0; i < board.getWidth(); i++) {
+            int x2;
+            int y2;
             IPlayer between;
             try {
                 switch (direction) {
                     case 0: // north
+                        x2 = x;
+                        y2 = y+c;
+                        if(!isInBounds(x2, y2)) return null;
                         between = board.getElement(x, y + c);
                         remember.add((y + c) * board.getWidth() + x);
                         break;
                     case 45: // northeast
+                        x2 = x+c;
+                        y2 = y+c;
+                        if(!isInBounds(x2, y2)) return null;
                         between = board.getElement(x + c, y + c);
                         remember.add((y + c) * board.getWidth() + (x + c));
                         break;
                     case 90: // east
+                        x2 = x+c;
+                        y2 = y;
+                        if(!isInBounds(x2, y2)) return null;
                         between = board.getElement(x + c, y);
                         remember.add(y * board.getWidth() + (x + c));
                         break;
                     case 135: // southeast
+                        x2 = x+c;
+                        y2 = y-c;
+                        if(!isInBounds(x2, y2)) return null;
                         between = board.getElement(x + c, y - c);
                         remember.add((y - c) * board.getWidth() + (x + c));
                         break;
                     case 180: // south
+                        x2 = x;
+                        y2 = y-c;
+                        if(!isInBounds(x2, y2)) return null;
                         between = board.getElement(x, y - c);
                         remember.add((y - c) * board.getWidth() + x);
                         break;
                     case 225: // southwest
+                        x2 = x-c;
+                        y2 = y-c;
+                        if(!isInBounds(x2, y2)) return null;
                         between = board.getElement(x - c, y - c);
                         remember.add((y - c) * board.getWidth() + (x - c));
                         break;
                     case 270: // west
+                        x2 = x-c;
+                        y2 = y;
+                        if(!isInBounds(x2, y2)) return null;
                         between = board.getElement(x - c, y);
                         remember.add(y * board.getWidth() + (x - c));
                         break;
                     case 315: // northwest
+                        x2 = x-c;
+                        y2 = y+c;
+                        if(!isInBounds(x2, y2)) return null;
                         between = board.getElement(x - c, y + c);
                         remember.add((y + c) * board.getWidth() + (x - c));
                         break;
@@ -271,6 +297,7 @@ public class OthelloRuleSet implements IRuleSet {
                 }
             } catch (Exception e) {
                 // out of bounds is always false
+                System.out.println("Warning: Out of bounds in doMove. Should not happen.");
                 return null;
             }
 
@@ -293,13 +320,22 @@ public class OthelloRuleSet implements IRuleSet {
         return null;
     }
 
+    /**
+     * Checks if x and y is in bounds instead of try catch
+     * @return
+     */
+    public boolean isInBounds(int x, int y) {
+//        System.out.println(x + " " + y);
+        return x > 0 && x < board.getWidth() && y > 0 && y < board.getHeight();
+    }
+
     @Override
     public int getScore(IPlayer player) {
         int score = 0;
         IPlayer[] data = board.getFlatData().toArray(IPlayer[]::new);
 
         for (int i = 0; i < data.length; i++) {
-            if (data[i] != null && data[i].getInitial() == player.getInitial()) {
+            if (data[i] != null && data[i] == player) {
                 score += cellScores[i];
             }
         }
