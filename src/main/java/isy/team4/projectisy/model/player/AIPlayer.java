@@ -4,12 +4,14 @@ import isy.team4.projectisy.model.rule.IRuleSet;
 import isy.team4.projectisy.util.Board;
 import isy.team4.projectisy.util.Vector2D;
 
+import java.util.Arrays;
+
 public class AIPlayer implements IPlayer {
     private String name;
     private char initial;
     private IPlayer opponent;
     private IRuleSet ruleSet;
-    private int maxDepth = 5; // max depth for minimax
+    private int maxDepth = 2; // max depth for minimax
 
     public AIPlayer(String name) {
         this.name = name;
@@ -49,35 +51,21 @@ public class AIPlayer implements IPlayer {
         int bestVal = Integer.MIN_VALUE;
         Vector2D BestMove = new Vector2D(-1, -1);
 
-        long startTime = System.nanoTime();
-        System.out.println("Starting to find move");
-
         for (Vector2D move : ruleSet.getValidMoves(this)) {
             Board newBoard = new Board(board);
             ruleSet.setBoard(newBoard);
-//            ruleSet.handleMove(move, this); // Not needed?
-
-            long start = System.nanoTime();
-            System.out.print("MINIMAX START ");
+            ruleSet.handleMove(move, this); // Not needed?
 
             int moveVal = this.alphaBeta(newBoard, 0, Integer.MIN_VALUE, Integer.MAX_VALUE, false);
 
-            long elapsedTime = System.nanoTime() - start;
-
-            System.out.print(" DONE " + elapsedTime / 1000000 + "ms");
-            System.out.println();
             ruleSet.setBoard(board);
 
             if (moveVal > bestVal) {
                 bestVal = moveVal;
                 BestMove = new Vector2D(move.x, move.y);
             }
+
         }
-
-        long elapsedTime = System.nanoTime() - startTime;
-
-        System.out.print(" DONE " + elapsedTime / 1000000 + "ms");
-        System.out.println();
 
         return BestMove;
     }

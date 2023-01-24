@@ -117,6 +117,7 @@ public class RemoteGame extends AGame implements IGame, IServerObserver {
     @Override
     public void onMove() {
         // Could be getCurrentPlayer(), but we assume it, so could better hardcode it
+//        Vector2D move = this.getLocalPlayer().getMove(this.getBoard());
         Vector2D move = this.getLocalPlayer().getMove(this.getBoard());
         this.server.sendMove(move.toInt(this.getBoard()));
     }

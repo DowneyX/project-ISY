@@ -47,7 +47,7 @@ public class OthelloRuleSet implements IRuleSet {
 
     @Override
     public char[] getAllowedInitials() {
-        return new char[] { '⭕', '⬤' };
+        return new char[]{'⭕', '⬤'};
     } // ○
 
     @Override
@@ -238,57 +238,57 @@ public class OthelloRuleSet implements IRuleSet {
                 switch (direction) {
                     case 0: // north
                         x2 = x;
-                        y2 = y+c;
-                        if(!isInBounds(x2, y2)) return null;
+                        y2 = y + c;
+                        if (!isInBounds(x2, y2)) return null;
                         between = board.getElement(x, y + c);
                         remember.add((y + c) * board.getWidth() + x);
                         break;
                     case 45: // northeast
-                        x2 = x+c;
-                        y2 = y+c;
-                        if(!isInBounds(x2, y2)) return null;
+                        x2 = x + c;
+                        y2 = y + c;
+                        if (!isInBounds(x2, y2)) return null;
                         between = board.getElement(x + c, y + c);
                         remember.add((y + c) * board.getWidth() + (x + c));
                         break;
                     case 90: // east
-                        x2 = x+c;
+                        x2 = x + c;
                         y2 = y;
-                        if(!isInBounds(x2, y2)) return null;
+                        if (!isInBounds(x2, y2)) return null;
                         between = board.getElement(x + c, y);
                         remember.add(y * board.getWidth() + (x + c));
                         break;
                     case 135: // southeast
-                        x2 = x+c;
-                        y2 = y-c;
-                        if(!isInBounds(x2, y2)) return null;
+                        x2 = x + c;
+                        y2 = y - c;
+                        if (!isInBounds(x2, y2)) return null;
                         between = board.getElement(x + c, y - c);
                         remember.add((y - c) * board.getWidth() + (x + c));
                         break;
                     case 180: // south
                         x2 = x;
-                        y2 = y-c;
-                        if(!isInBounds(x2, y2)) return null;
+                        y2 = y - c;
+                        if (!isInBounds(x2, y2)) return null;
                         between = board.getElement(x, y - c);
                         remember.add((y - c) * board.getWidth() + x);
                         break;
                     case 225: // southwest
-                        x2 = x-c;
-                        y2 = y-c;
-                        if(!isInBounds(x2, y2)) return null;
+                        x2 = x - c;
+                        y2 = y - c;
+                        if (!isInBounds(x2, y2)) return null;
                         between = board.getElement(x - c, y - c);
                         remember.add((y - c) * board.getWidth() + (x - c));
                         break;
                     case 270: // west
-                        x2 = x-c;
+                        x2 = x - c;
                         y2 = y;
-                        if(!isInBounds(x2, y2)) return null;
+                        if (!isInBounds(x2, y2)) return null;
                         between = board.getElement(x - c, y);
                         remember.add(y * board.getWidth() + (x - c));
                         break;
                     case 315: // northwest
-                        x2 = x-c;
-                        y2 = y+c;
-                        if(!isInBounds(x2, y2)) return null;
+                        x2 = x - c;
+                        y2 = y + c;
+                        if (!isInBounds(x2, y2)) return null;
                         between = board.getElement(x - c, y + c);
                         remember.add((y + c) * board.getWidth() + (x - c));
                         break;
@@ -305,9 +305,9 @@ public class OthelloRuleSet implements IRuleSet {
                 return null;
             }
             if (between.getInitial() == player.getInitial()) { // between is the current player, which will end
-                                                               // the check
+                // the check
                 if (c > 1) { // check if there is more than one step, which means that there is at least one
-                             // item in between two of ours
+                    // item in between two of ours
                     return remember.stream().mapToInt(j -> j).toArray();
                 } else {
                     return null;
@@ -322,11 +322,11 @@ public class OthelloRuleSet implements IRuleSet {
 
     /**
      * Checks if x and y is in bounds instead of try catch
+     *
      * @return
      */
     public boolean isInBounds(int x, int y) {
-//        System.out.println(x + " " + y);
-        return x > 0 && x < board.getWidth() && y > 0 && y < board.getHeight();
+        return x >= 0 && x < board.getWidth() && y >= 0 && y < board.getHeight();
     }
 
     @Override
@@ -361,10 +361,11 @@ public class OthelloRuleSet implements IRuleSet {
 
     /**
      * Returns a list of indices for scores high to low to improve alpha-beta pruning
+     *
      * @return
      */
     public int[] getPresortOrder() {
-        Integer[] heuristics = Arrays.stream( cellScores ).boxed().toArray( Integer[]::new );
+        Integer[] heuristics = Arrays.stream(cellScores).boxed().toArray(Integer[]::new);
 
         int[] sorted = IntStream.range(0, heuristics.length)
                 .boxed().sorted((i, j) -> -heuristics[i].compareTo(heuristics[j]))
