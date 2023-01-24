@@ -55,7 +55,7 @@ public abstract class GameController implements IPlayerTurnHandler, IGameObserve
         }).toArray(IPlayer[]::new);
 
         if (gameType == EGame.REMOTE) {
-            players[0].setName(String.format("TetjeTJE", (int)(Math.random() * 100)));  // TODO: Remove, just for testing
+            players[0].setName(String.format("ITV2AGROEP4", (int)(Math.random() * 100)));  // TODO: Remove, just for testing
         }
 
         // Initializing game
