@@ -9,7 +9,7 @@ public class AIPlayer implements IPlayer {
     private char initial;
     private IPlayer opponent;
     private IRuleSet ruleSet;
-    private int maxDepth = 5; // max depth for minimax
+    private int maxDepth = 2; // max depth for minimax
 
     public AIPlayer(String name) {
         this.name = name;
@@ -55,7 +55,7 @@ public class AIPlayer implements IPlayer {
         for (Vector2D move : ruleSet.getValidMoves(this)) {
             Board newBoard = new Board(board);
             ruleSet.setBoard(newBoard);
-//            ruleSet.handleMove(move, this); // Not needed?
+            ruleSet.handleMove(move, this);
 
             long start = System.nanoTime();
             System.out.print("MINIMAX START ");

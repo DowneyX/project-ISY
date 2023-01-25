@@ -114,7 +114,6 @@ public class RemoteGame extends AGame implements IGame, IServerObserver {
             this.currentPlayer = tempPlayer;  // Set back to default
         }
 
-        this.stop();
         this.observers.forEach(IGameObserver::onFinished);
     }
 
