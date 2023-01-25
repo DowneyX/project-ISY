@@ -9,7 +9,7 @@ public class AIPlayer implements IPlayer {
     private char initial;
     private IPlayer opponent;
     private IRuleSet ruleSet;
-    private int maxDepth = 2; // max depth for minimax
+    private int maxDepth = 5; // max depth for minimax
 
     public AIPlayer(String name) {
         this.name = name;
