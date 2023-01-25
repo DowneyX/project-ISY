@@ -57,23 +57,23 @@ public class RemoteGame extends AGame implements IGame, IServerObserver {
     public void onGameMatch(GameMatch gameMatch) {
         // Set opponent(s)
         IPlayer opponent = new RemotePlayer(gameMatch.opponent);
-        IPlayer[] newPlayers = new IPlayer[this.players.length + 1];
+        IPlayer[] newPlayers = new IPlayer[2];
 
-        // If player one == opponent: index 0 = opponent; else: index 0 = player
-        if (Objects.equals(gameMatch.playerToMove, opponent.getName())) {
-            newPlayers[0] = opponent;  // Players one
-            System.arraycopy(this.players, 0, newPlayers, 1, this.players.length);
+        if(Objects.equals(gameMatch.playerToMove, gameMatch.opponent)) {
+            newPlayers[0] = opponent;
+            newPlayers[1] = getLocalPlayer();
         } else {
-            newPlayers[newPlayers.length - 1] = opponent;
-            System.arraycopy(this.players, 0, newPlayers, 0, this.players.length);
+            newPlayers[0] = getLocalPlayer();
+            newPlayers[1] = opponent;
         }
+
         this.players = newPlayers;
 
         // Setup players
         this.setupPlayers();
 
-        // Set current player
-        this.currentPlayer = this.players[0];
+        // not needed?
+        // this.currentPlayer = this.players[0];
 
         // Requesting starting board from RuleSet
         this.board = this.ruleSet.getStartingBoard();
