@@ -55,17 +55,20 @@ public class RemoteGame extends AGame implements IGame, IServerObserver {
 
     @Override
     public void onGameMatch(GameMatch gameMatch) {
+        this.result = null;
+        this.ruleSet.clean();
+
         // Set opponent(s)
-        IPlayer opponent = new RemotePlayer(gameMatch.opponent);
-        IPlayer[] newPlayers = new IPlayer[this.players.length + 1];
+        IPlayer opponent = new RemotePlayer(gameMatch.opponent);  // NOTE: Assuming 1 opponent
+        IPlayer[] newPlayers = new IPlayer[2];  // NOTE: Assuming 2 players
 
         // If player one == opponent: index 0 = opponent; else: index 0 = player
         if (Objects.equals(gameMatch.playerToMove, opponent.getName())) {
-            newPlayers[0] = opponent;  // Players one
-            System.arraycopy(this.players, 0, newPlayers, 1, this.players.length);
+            newPlayers[0] = opponent;
+            newPlayers[1] = this.getLocalPlayer();
         } else {
-            newPlayers[newPlayers.length - 1] = opponent;
-            System.arraycopy(this.players, 0, newPlayers, 0, this.players.length);
+            newPlayers[0] = this.getLocalPlayer();
+            newPlayers[1] = opponent;
         }
         this.players = newPlayers;
 
@@ -111,6 +114,7 @@ public class RemoteGame extends AGame implements IGame, IServerObserver {
             this.currentPlayer = tempPlayer;  // Set back to default
         }
 
+        this.stop();
         this.observers.forEach(IGameObserver::onFinished);
     }
 

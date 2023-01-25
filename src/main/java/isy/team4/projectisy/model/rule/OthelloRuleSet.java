@@ -188,6 +188,14 @@ public class OthelloRuleSet implements IRuleSet {
     }
 
     @Override
+    public void clean() {
+        this.players = null;
+        this.board = null;
+        this.winningPlayer = null;
+        this.presetOrder = this.getPresortOrder();
+    }
+
+    @Override
     public void setBoard(Board board) {
         this.board = board;
     }
