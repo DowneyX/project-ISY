@@ -18,6 +18,19 @@ public class OthelloRuleSet implements IRuleSet {
             -20, -50, -2, -2, -2, -2, -50, -20,
             100, -20, 10, 5, 5, 10, -20, 100
     };
+
+//    // prefer top right
+//    private final int[] cellScores = {
+//            100, -20, 10, 5, 10, 40, -40, 200,
+//            -20, -50, -2, -2, -4, -4, -100, -40,
+//            10, -2, -1, -1, -1, -2, -4, 40,
+//            5, -2, -1, -1, -1, -1, -2, 10,
+//            5, -2, -1, -1, -1, -1, -2, 5,
+//            10, -2, -1, -1, -1, -1, -2, 10,
+//            -20, -50, -2, -2, -2, -2, -50, -20,
+//            100, -20, 10, 5, 5, 10, -20, 100
+//    };
+
     private Board board;
     private IPlayer[] players;
     private IPlayer winningPlayer;
@@ -73,6 +86,7 @@ public class OthelloRuleSet implements IRuleSet {
 
     @Override
     public Board handleMove(Vector2D move, IPlayer player) {
+
         // get changed idx, first difference found
         int x = move.x;
         int y = move.y;
@@ -180,6 +194,7 @@ public class OthelloRuleSet implements IRuleSet {
             for (int j = 0; j < 360; j += 45) {
                 if (doMove(j, new Vector2D(x, y), player) != null) {
                     moves.add(new Vector2D(x, y));
+                    break; // found direction, so there is no need to continue the loop
                 }
             }
         }

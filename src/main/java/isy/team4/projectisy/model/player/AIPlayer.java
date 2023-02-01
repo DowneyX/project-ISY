@@ -52,20 +52,20 @@ public class AIPlayer implements IPlayer {
         long startTime = System.nanoTime();
         System.out.println("Starting to find move");
 
-        for (Vector2D move : ruleSet.getValidMoves(this)) {
+        Vector2D[] validmoves = ruleSet.getValidMoves(this);
+
+        // TODO: sometimes the last move is invalid. Temporary fix, but there is no reason to calculate the best move anyway.
+        if(validmoves.length == 1) {
+            return validmoves[0];
+        }
+
+        for (Vector2D move : validmoves) {
             Board newBoard = new Board(board);
             ruleSet.setBoard(newBoard);
             ruleSet.handleMove(move, this);
 
-            long start = System.nanoTime();
-            System.out.print("MINIMAX START ");
-
             int moveVal = this.alphaBeta(newBoard, 0, Integer.MIN_VALUE, Integer.MAX_VALUE, false);
 
-            long elapsedTime = System.nanoTime() - start;
-
-            System.out.print(" DONE " + elapsedTime / 1000000 + "ms");
-            System.out.println();
             ruleSet.setBoard(board);
 
             if (moveVal > bestVal) {
