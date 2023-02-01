@@ -19,16 +19,16 @@ public class OthelloRuleSet implements IRuleSet {
             100, -20, 10, 5, 5, 10, -20, 100
     };
 
-//    // prefer top right
+//    // prefer right
 //    private final int[] cellScores = {
-//            100, -20, 10, 5, 10, 40, -40, 200,
-//            -20, -50, -2, -2, -4, -4, -100, -40,
-//            10, -2, -1, -1, -1, -2, -4, 40,
-//            5, -2, -1, -1, -1, -1, -2, 10,
-//            5, -2, -1, -1, -1, -1, -2, 5,
-//            10, -2, -1, -1, -1, -1, -2, 10,
-//            -20, -50, -2, -2, -2, -2, -50, -20,
-//            100, -20, 10, 5, 5, 10, -20, 100
+//            100, -20, 10, 5, 10, 20, -50, 200,
+//            -20, -50, -2, -2, -1, -4, -100, -50,
+//            10, -2, -1, -1, -1, -1, -4, 20,
+//            5, -2, -1, -1, -1, -1, -4, 10,
+//            5, -2, -1, -1, -1, -1, -4, 10,
+//            10, -2, -1, -1, -1, -1, -4, 20,
+//            -20, -50, -2, -2, -1, -4, -100, -50,
+//            100, -20, 10, 5, 10, 20, -50, 200
 //    };
 
     private Board board;
@@ -75,7 +75,7 @@ public class OthelloRuleSet implements IRuleSet {
 
     @Override
     public boolean isLegal(IPlayer player, Vector2D move) {
-        // TODO have a diffent way of checking if current situation is legal
+        // TODO have a different way of checking if current situation is legal
         for (Vector2D validMove : getValidMoves(player)) {
             if (validMove.x == move.x && validMove.y == move.y) {
                 return true;

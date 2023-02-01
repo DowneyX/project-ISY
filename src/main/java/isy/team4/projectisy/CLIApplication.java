@@ -14,7 +14,7 @@ public class CLIApplication {
      */
     public static void tournament() {
         CLIController controller = new CLIController(new OthelloRuleSet(), new ServerProperties(
-                "localhost",  // 145.33.225.170
+                "145.33.225.170",  // 145.33.225.170
                 7789,
                 String.format("ITV2A%dGROEP4", (int)(Math.random() * 100))
         ));
