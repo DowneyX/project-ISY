@@ -18,6 +18,19 @@ public class OthelloRuleSet implements IRuleSet {
             -20, -50, -2, -2, -2, -2, -50, -20,
             100, -20, 10, 5, 5, 10, -20, 100
     };
+
+//    // prefer right
+//    private final int[] cellScores = {
+//            100, -20, 10, 5, 10, 20, -50, 200,
+//            -20, -50, -2, -2, -1, -4, -100, -50,
+//            10, -2, -1, -1, -1, -1, -4, 20,
+//            5, -2, -1, -1, -1, -1, -4, 10,
+//            5, -2, -1, -1, -1, -1, -4, 10,
+//            10, -2, -1, -1, -1, -1, -4, 20,
+//            -20, -50, -2, -2, -1, -4, -100, -50,
+//            100, -20, 10, 5, 10, 20, -50, 200
+//    };
+
     private Board board;
     private IPlayer[] players;
     private IPlayer winningPlayer;
@@ -62,7 +75,7 @@ public class OthelloRuleSet implements IRuleSet {
 
     @Override
     public boolean isLegal(IPlayer player, Vector2D move) {
-        // TODO have a diffent way of checking if current situation is legal
+        // TODO have a different way of checking if current situation is legal
         for (Vector2D validMove : getValidMoves(player)) {
             if (validMove.x == move.x && validMove.y == move.y) {
                 return true;
@@ -73,6 +86,7 @@ public class OthelloRuleSet implements IRuleSet {
 
     @Override
     public Board handleMove(Vector2D move, IPlayer player) {
+
         // get changed idx, first difference found
         int x = move.x;
         int y = move.y;
@@ -180,11 +194,20 @@ public class OthelloRuleSet implements IRuleSet {
             for (int j = 0; j < 360; j += 45) {
                 if (doMove(j, new Vector2D(x, y), player) != null) {
                     moves.add(new Vector2D(x, y));
+                    break; // found direction, so there is no need to continue the loop
                 }
             }
         }
 
         return moves.toArray(new Vector2D[0]);
+    }
+
+    @Override
+    public void clean() {
+        this.players = null;
+        this.board = null;
+        this.winningPlayer = null;
+        this.presetOrder = this.getPresortOrder();
     }
 
     @Override
@@ -326,7 +349,7 @@ public class OthelloRuleSet implements IRuleSet {
      */
     public boolean isInBounds(int x, int y) {
 //        System.out.println(x + " " + y);
-        return x > 0 && x < board.getWidth() && y > 0 && y < board.getHeight();
+        return x >= 0 && x < board.getWidth() && y >= 0 && y < board.getHeight();
     }
 
     @Override

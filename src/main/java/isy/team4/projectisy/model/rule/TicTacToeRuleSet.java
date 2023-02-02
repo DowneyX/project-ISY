@@ -105,6 +105,13 @@ public final class TicTacToeRuleSet implements IRuleSet {
     }
 
     @Override
+    public void clean() {
+        this.board = null;
+        this.players = null;
+        this.winningPlayer = null;
+    }
+
+    @Override
     public IRuleSet clone() {
         return new TicTacToeRuleSet(this);
     }
